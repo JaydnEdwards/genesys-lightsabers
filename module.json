@@ -1,0 +1,18 @@
+{
+  "id": "genesys-lightsabers",
+  "title": "Genesys Lightsabers - An Example FVTT Module",
+  "description": "A simple module created as a demo for working in the Foundry Virtual Tabletop framework.",
+  "authors": [
+    {
+      "name": "Jaydn Edwards"
+    }
+  ],
+  "version": "1.0.1",
+  "compatibility": {
+    "minimum": 13,
+    "verified": 13
+  },
+  "esmodules": [
+    "scripts/genesys-lightsabers.js"
+  ]
+}

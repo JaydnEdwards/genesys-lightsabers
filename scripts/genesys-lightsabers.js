@@ -1,0 +1,98 @@
+console.log("Hello from the Genesys Lightsabers module!");
+
+const crystalImages = {
+    blue: "modules/genesys-lightsabers/assets/lightsabers/iw_lghtsbr_001.png",
+    red: "modules/genesys-lightsabers/assets/lightsabers/iw_lghtsbr_002.png",
+    green: "modules/genesys-lightsabers/assets/lightsabers/iw_lghtsbr_003.png",
+    yellow: "modules/genesys-lightsabers/assets/lightsabers/iw_lghtsbr_004.png",
+    violet: "modules/genesys-lightsabers/assets/lightsabers/iw_lghtsbr_005.png",
+    cyan: "modules/genesys-lightsabers/assets/lightsabers/iw_lghtsbr_008.png",
+    silver: "modules/genesys-lightsabers/assets/lightsabers/iw_lghtsbr_010.png",
+    orange: "modules/genesys-lightsabers/assets/lightsabers/iw_lghtsbr_007.png",
+    viridian: "modules/genesys-lightsabers/assets/lightsabers/iw_lghtsbr_009.png"
+}
+
+Hooks.on("renderItemSheet", (app, html) => {
+  const weapon = app.item;
+  if (!weapon) return;
+  if (weapon.type !== "weapon") return;
+
+  const crystalColours = [
+    "blue",
+    "green",
+    "yellow",
+    "red",
+    "violet",
+    "cyan",
+    "silver",
+    "orange",
+    "viridian"
+  ];
+
+  const crystalQualityNames = new Set(
+    crystalColours.map((colour) => colour + " crystal")
+  );
+
+  function getCrystalColourFromName(name) {
+    const lowerName = String(name ?? "").toLowerCase();
+    for (const colour of crystalColours) {
+      if (lowerName.includes("crystal") && lowerName.includes(colour)) {
+        return colour;
+      }
+    }
+    return null;
+  }
+
+  if (html[0].dataset.glCrystalDropBound === "1") return;
+  html[0].dataset.glCrystalDropBound = "1";
+
+  html[0].addEventListener("drop", async (event) => {
+    const dropData = foundry.applications.ux.TextEditor.implementation.getDragEventData(event);
+    if (!dropData) return;
+
+    const dropped = await Item.implementation.fromDropData(dropData);
+    if (!dropped) return;
+
+    const colour = dropped.type === "gear" ? getCrystalColourFromName(dropped.name) : null;
+    if (!colour) return;
+
+    const qualityName = colour.charAt(0).toUpperCase() + colour.slice(1) + " Crystal";
+    const currentQualities = Array.isArray(weapon.system.qualities)
+      ? foundry.utils.deepClone(weapon.system.qualities)
+      : [];
+
+    console.log("existing quality sample", weapon.system.qualities?.[0]);
+
+    const filtered = currentQualities.filter((quality) => {
+      const qName = String(quality?.name ?? quality?.label ?? "").toLowerCase();
+      return !crystalQualityNames.has(qName);
+    });
+
+    const crystalQuality = {
+      name: qualityName,
+      description: "",
+      isRated: true,
+      rating: 1
+    };
+    filtered.push(crystalQuality);
+
+    const baseImg = weapon.getFlag("genesys-lightsabers", "baseImg") ?? weapon.img;
+    const crystalImg = crystalImages[colour] ?? null;
+
+    const updateData = { "system.qualities": filtered };
+    if (crystalImg) updateData.img = crystalImg;
+
+    await weapon.update(updateData);
+    await weapon.setFlag("genesys-lightsabers", "baseImg", baseImg);
+
+    await weapon.setFlag("genesys-lightsabers", "activeCrystal", {
+      sourceGearId: dropped.id,
+      sourceGearName: dropped.name,
+      colour,
+      qualityName,
+      image: crystalImg
+    });
+
+    console.log("[genesys-lightsabers] applied crystal", qualityName, "to", weapon.name);
+  });
+});
