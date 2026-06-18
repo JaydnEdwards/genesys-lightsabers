@@ -1,7 +1,7 @@
 {
   "id": "genesys-lightsabers",
-  "title": "Genesys Lightsabers - An Example FVTT Module",
-  "description": "A simple module created as a demo for working in the Foundry Virtual Tabletop framework.",
+  "title": "Genesys Lightsabers",
+  "description": "Allows lightsaber colour crystals.",
   "authors": [
     {
       "name": "Jaydn Edwards"
