@@ -24,23 +24,24 @@ const crystalImages = {
         viridian: "modules/genesys-lightsabers/assets/lightsabers/double/iw_dblsbr_008.png"
     },
     short: {
-        blue: "modules/genesys-lightsabers/assets/lightsabers/short/iw_lghtsbr_001.png",
-        red: "modules/genesys-lightsabers/assets/lightsabers/short/iw_lghtsbr_002.png",
-        green: "modules/genesys-lightsabers/assets/lightsabers/short/iw_lghtsbr_003.png",
-        yellow: "modules/genesys-lightsabers/assets/lightsabers/short/iw_lghtsbr_004.png",
-        violet: "modules/genesys-lightsabers/assets/lightsabers/short/iw_lghtsbr_005.png",
-        cyan: "modules/genesys-lightsabers/assets/lightsabers/short/iw_lghtsbr_008.png",
-        silver: "modules/genesys-lightsabers/assets/lightsabers/short/iw_lghtsbr_010.png",
-        orange: "modules/genesys-lightsabers/assets/lightsabers/short/iw_lghtsbr_007.png",
-        viridian: "modules/genesys-lightsabers/assets/lightsabers/short/iw_lghtsbr_009.png"
+        blue: "modules/genesys-lightsabers/assets/lightsabers/short/iw_shortsbr_001.png",
+        red: "modules/genesys-lightsabers/assets/lightsabers/short/iw_shortsbr_002.png",
+        green: "modules/genesys-lightsabers/assets/lightsabers/short/iw_shortsbr_003.png",
+        yellow: "modules/genesys-lightsabers/assets/lightsabers/short/iw_shortsbr_004.png",
+        violet: "modules/genesys-lightsabers/assets/lightsabers/short/iw_shortsbr_005.png",
+        cyan: "modules/genesys-lightsabers/assets/lightsabers/short/iw_shortsbr_008.png",
+        silver: "modules/genesys-lightsabers/assets/lightsabers/short/iw_shortsbr_010.png",
+        orange: "modules/genesys-lightsabers/assets/lightsabers/short/iw_shortsbr_007.png",
+        viridian: "modules/genesys-lightsabers/assets/lightsabers/short/iw_shortsbr_009.png"
     }
     
 }
 
-Hooks.on("renderItemSheet", (app, html) => {
-  const weapon = app.item;
-  if (!weapon) return;
-  if (weapon.type !== "weapon") return;
+const baseImages = {
+  single: "modules/genesys-lightsabers/assets/lightsabers/single/iw_lghtsbr_006.png",
+  double: "modules/genesys-lightsabers/assets/lightsabers/double/iw_dblsbr_010.png",
+  short: "modules/genesys-lightsabers/assets/lightsabers/short/iw_lghtsbr_006.png"
+};
 
   const crystalColours = [
     "blue",
@@ -57,6 +58,30 @@ Hooks.on("renderItemSheet", (app, html) => {
   const crystalQualityNames = new Set(
     crystalColours.map((colour) => colour + " crystal")
   );
+
+function weaponHasCrystalQuality(weapon) {
+    const qualities = Array.isArray(weapon.system?.qualities) ? weapon.system.qualities : [];
+    return qualities.some((q) => {
+        const qName = String(q?.name ?? q?.label ?? "").toLowerCase();
+        return qName.includes(" crystal");
+    });
+}
+
+function getWeaponVariant(weapon) {
+    const flagged = weapon.getFlag("genesys-lightsabers", "variant");
+
+    if (flagged) return flagged;
+
+    const name = String(weapon.name ?? "").toLowerCase();
+    if (name.includes("lightsaber, double-bladed")) return "double";
+    if (name.includes("lightsaber, short")) return "short";
+    return "single";
+}
+
+Hooks.on("renderItemSheet", (app, html) => {
+  const weapon = app.item;
+  if (!weapon) return;
+  if (weapon.type !== "weapon") return;
 
   function getCrystalColourFromName(name) {
     const lowerName = String(name ?? "").toLowerCase();
@@ -101,19 +126,9 @@ Hooks.on("renderItemSheet", (app, html) => {
     };
     filtered.push(crystalQuality);
 
-    function getWeaponVariant(weapon) {
-        const flagged = weapon.getFlag("genesys-lightsabers", "variant");
-
-        if (flagged) return flagged;
-
-        const name = String(weapon.name ?? "").toLowerCase();
-        if (name.includes("lightsaber, double-bladed")) return "double";
-        if (name.includes("lightsaber, short")) return "short";
-        return "single";
-    }
-
-    const baseImg = weapon.getFlag("genesys-lightsabers", "baseImg") ?? weapon.img;
     const variant = getWeaponVariant(weapon);
+    const fallbackBaseImg = baseImages[variant] ?? baseImages.single ?? weapon.img;
+    const baseImg = weapon.getFlag("genesys-lightsabers", "baseImg") ?? fallbackBaseImg;
     const crystalImg = crystalImages[variant]?.[colour] ?? null;
 
     const updateData = { "system.qualities": filtered };
@@ -134,3 +149,32 @@ Hooks.on("renderItemSheet", (app, html) => {
     console.log("[genesys-lightsabers] applied crystal", qualityName, "to", weapon.name);
   });
 });
+
+if (!globalThis.GLS_WEAPON_CRYSTAL_WATCHER) {
+  globalThis.GLS_WEAPON_CRYSTAL_WATCHER = true;
+
+  Hooks.on("updateItem", async (item, changed) => {
+    if (item.type !== "weapon") return;
+
+    if (!foundry.utils.hasProperty(changed, "system.qualities")) return;
+
+    const active = item.getFlag("genesys-lightsabers", "activeCrystal");
+    if (!active) return;
+
+    const stillHasCrystal = weaponHasCrystalQuality(item);
+    if (stillHasCrystal) return;
+
+    const variant = getWeaponVariant(item);
+    const fallbackBaseImg = baseImages[variant] ?? baseImages.single ?? item.img;
+    const baseImg = item.getFlag("genesys-lightsabers", "baseImg") ?? fallbackBaseImg;
+    const updateData = {};
+    if (baseImg) updateData.img = baseImg;
+
+    if (Object.keys(updateData).length > 0) await item.update(updateData);
+
+    await item.unsetFlag("genesys-lightsabers", "activeCrystal");
+    await item.unsetFlag("genesys-lightsabers", "baseImg");
+
+    console.log("[genesys-lightsabers] crystal removed from weapon", item.name);
+  });
+}
