@@ -1,15 +1,40 @@
 console.log("Hello from the Genesys Lightsabers module!");
 
 const crystalImages = {
-    blue: "modules/genesys-lightsabers/assets/lightsabers/iw_lghtsbr_001.png",
-    red: "modules/genesys-lightsabers/assets/lightsabers/iw_lghtsbr_002.png",
-    green: "modules/genesys-lightsabers/assets/lightsabers/iw_lghtsbr_003.png",
-    yellow: "modules/genesys-lightsabers/assets/lightsabers/iw_lghtsbr_004.png",
-    violet: "modules/genesys-lightsabers/assets/lightsabers/iw_lghtsbr_005.png",
-    cyan: "modules/genesys-lightsabers/assets/lightsabers/iw_lghtsbr_008.png",
-    silver: "modules/genesys-lightsabers/assets/lightsabers/iw_lghtsbr_010.png",
-    orange: "modules/genesys-lightsabers/assets/lightsabers/iw_lghtsbr_007.png",
-    viridian: "modules/genesys-lightsabers/assets/lightsabers/iw_lghtsbr_009.png"
+    single: {
+        blue: "modules/genesys-lightsabers/assets/lightsabers/single/iw_lghtsbr_001.png",
+        red: "modules/genesys-lightsabers/assets/lightsabers/single/iw_lghtsbr_002.png",
+        green: "modules/genesys-lightsabers/assets/lightsabers/single/iw_lghtsbr_003.png",
+        yellow: "modules/genesys-lightsabers/assets/lightsabers/single/iw_lghtsbr_004.png",
+        violet: "modules/genesys-lightsabers/assets/lightsabers/single/iw_lghtsbr_005.png",
+        cyan: "modules/genesys-lightsabers/assets/lightsabers/single/iw_lghtsbr_008.png",
+        silver: "modules/genesys-lightsabers/assets/lightsabers/single/iw_lghtsbr_010.png",
+        orange: "modules/genesys-lightsabers/assets/lightsabers/single/iw_lghtsbr_007.png",
+        viridian: "modules/genesys-lightsabers/assets/lightsabers/single/iw_lghtsbr_009.png"
+    },
+    double: {
+        blue: "modules/genesys-lightsabers/assets/lightsabers/double/iw_dblsbr_001.png",
+        red: "modules/genesys-lightsabers/assets/lightsabers/double/iw_dblsbr_002.png",
+        green: "modules/genesys-lightsabers/assets/lightsabers/double/iw_dblsbr_003.png",
+        yellow: "modules/genesys-lightsabers/assets/lightsabers/double/iw_dblsbr_004.png",
+        violet: "modules/genesys-lightsabers/assets/lightsabers/double/iw_dblsbr_005.png",
+        cyan: "modules/genesys-lightsabers/assets/lightsabers/double/iw_dblsbr_007.png",
+        silver: "modules/genesys-lightsabers/assets/lightsabers/double/iw_dblsbr_009.png",
+        orange: "modules/genesys-lightsabers/assets/lightsabers/double/iw_dblsbr_006.png",
+        viridian: "modules/genesys-lightsabers/assets/lightsabers/double/iw_dblsbr_008.png"
+    },
+    short: {
+        blue: "modules/genesys-lightsabers/assets/lightsabers/short/iw_lghtsbr_001.png",
+        red: "modules/genesys-lightsabers/assets/lightsabers/short/iw_lghtsbr_002.png",
+        green: "modules/genesys-lightsabers/assets/lightsabers/short/iw_lghtsbr_003.png",
+        yellow: "modules/genesys-lightsabers/assets/lightsabers/short/iw_lghtsbr_004.png",
+        violet: "modules/genesys-lightsabers/assets/lightsabers/short/iw_lghtsbr_005.png",
+        cyan: "modules/genesys-lightsabers/assets/lightsabers/short/iw_lghtsbr_008.png",
+        silver: "modules/genesys-lightsabers/assets/lightsabers/short/iw_lghtsbr_010.png",
+        orange: "modules/genesys-lightsabers/assets/lightsabers/short/iw_lghtsbr_007.png",
+        viridian: "modules/genesys-lightsabers/assets/lightsabers/short/iw_lghtsbr_009.png"
+    }
+    
 }
 
 Hooks.on("renderItemSheet", (app, html) => {
@@ -76,8 +101,20 @@ Hooks.on("renderItemSheet", (app, html) => {
     };
     filtered.push(crystalQuality);
 
+    function getWeaponVariant(weapon) {
+        const flagged = weapon.getFlag("genesys-lightsabers", "variant");
+
+        if (flagged) return flagged;
+
+        const name = String(weapon.name ?? "").toLowerCase();
+        if (name.includes("lightsaber, double-bladed")) return "double";
+        if (name.includes("lightsaber, short")) return "short";
+        return "single";
+    }
+
     const baseImg = weapon.getFlag("genesys-lightsabers", "baseImg") ?? weapon.img;
-    const crystalImg = crystalImages[colour] ?? null;
+    const variant = getWeaponVariant(weapon);
+    const crystalImg = crystalImages[variant]?.[colour] ?? null;
 
     const updateData = { "system.qualities": filtered };
     if (crystalImg) updateData.img = crystalImg;
@@ -90,7 +127,8 @@ Hooks.on("renderItemSheet", (app, html) => {
       sourceGearName: dropped.name,
       colour,
       qualityName,
-      image: crystalImg
+      image: crystalImg,
+      variant
     });
 
     console.log("[genesys-lightsabers] applied crystal", qualityName, "to", weapon.name);
