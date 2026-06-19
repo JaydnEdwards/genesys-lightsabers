@@ -1,0 +1,831 @@
+{
+  "Discharge Energy Cell": {
+    "upgradeType": "energyCell",
+    "qualityData": {
+      "name": "Discharge Energy Cell",
+      "description": "Adds Vicious 1 (add 10 to critical hit rolls).",
+      "isRated": false,
+      "rating": 0
+    },
+    "effectData": {
+      "statMods": {},
+      "addedQualities": [
+        {
+            "name": "Vicious",
+            "description": "Add 10 to any critical hit rolls a target makes.",
+            "isRated": true,
+            "rating": 1
+        }
+      ],
+      "tags": ["energy-cell"],
+      "rollHooks": []
+    }
+  },
+  "Diatium Energy Cell": {
+    "upgradeType": "energyCell",
+    "qualityData": {
+      "name": "Diatium Energy Cell",
+      "description": "Adds +1 base damage",
+      "isRated": false,
+      "rating": 0
+    },
+    "effectData": {
+      "statMods": {
+        "baseDamage": 1
+      },
+      "addedQualities": [],
+      "tags": ["energy-cell"],
+      "rollHooks": []
+    }
+  },
+  "Ion Energy Cell": {
+    "upgradeType": "energyCell",
+    "qualityData": {
+      "name": "Ion Energy Cell",
+      "description": "Against Droid targets, add +1 damage. Also apply Vicious 1 (add 10 to critical hit rolls).",
+      "isRated": false,
+      "rating": 0
+    },
+    "effectData": {
+      "statMods": {},
+      "addedQualities": [
+        {
+            "name": "Vicious",
+            "description": "Add 10 to any critical hit rolls a target makes.",
+            "isRated": true,
+            "rating": 1
+        }
+      ],
+      "tags": ["energy-cell"],
+      "rollHooks": []
+    }
+  },
+  "Telgorn Jolt Cell": {
+    "upgradeType": "energyCell",
+    "qualityData": {
+      "name": "Telgorn Jolt Cell",
+      "description": "Adds +1 base damage",
+      "isRated": false,
+      "rating": 0
+    },
+    "effectData": {
+      "statMods": {
+        "baseDamage": 1
+      },
+      "addedQualities": [],
+      "tags": ["energy-cell"],
+      "rollHooks": ["jolt-cell"]
+    }
+  },
+  "Deflection Emitter": {
+    "upgradeType": "emitter",
+    "qualityData": {
+      "name": "Deflection Emitter",
+      "description": "Deflection: Increase Ranged Defense by 1",
+      "isRated": false,
+      "rating": 0
+    },
+    "effectData": {
+      "statMods": {
+        "rangedDefence": 1
+      },
+      "addedQualities": [],
+      "tags": ["emitter"],
+      "rollHooks": []
+    }
+  },
+  "Disrupting Emitter": {
+    "upgradeType": "emitter",
+    "qualityData": {
+      "name": "Disrupting Emitter",
+      "description": "You cannot benefit from the Guarded Stance manoeuvre while wielding this weapon. Deals 1 strain to target on hit.",
+      "isRated": true,
+      "rating": 1
+    },
+    "effectData": {
+      "statMods": {},
+      "addedQualities": [],
+      "tags": ["emitter"],
+      "rollHooks": []
+    }
+  },
+  "Phobium Emitter": {
+    "upgradeType": "emitter",
+    "qualityData": {
+      "name": "Phobium Emitter",
+      "description": "A much stronger and volatile version of the Disrupting Emitter. Deals strain equal to weapon damage to target on hit. You cannot benefit from the Guarded Stance manoeuvre while wielding this weapon. Attacks against you gain 2 Boost Die.",
+      "isRated": false,
+      "rating": 0
+    },
+    "effectData": {
+      "statMods": {},
+      "addedQualities": [],
+      "tags": ["emitter"],
+      "rollHooks": []
+    }
+  },
+  "Fencing Emitter": {
+    "upgradeType": "emitter",
+    "qualityData": {
+      "name": "Fencing Emitter",
+      "description": "Deal 1 extra damage on hit, and gain 1 Physical Defence.",
+      "isRated": false,
+      "rating": 0
+    },
+    "effectData": {
+      "statMods": {
+        "baseDamage": 1,
+        "physicalDefence": 1
+      },
+      "addedQualities": [],
+      "tags": ["emitter"],
+      "rollHooks": []
+    }
+  },
+  "Kunda Lens": {
+    "upgradeType": "lens",
+    "qualityData": {
+      "name": "Kunda Lens",
+      "description": "Adds 1 boost die and +1 ranged defence",
+      "isRated": false,
+      "rating": 0
+    },
+    "effectData": {
+      "statMods": {
+        "rangedDefence": 1
+      },
+      "addedQualities": [],
+      "tags": ["lens"],
+      "rollHooks": []
+    }
+  },
+  "Ossus Dueling Lens": {
+    "upgradeType": "lens",
+    "qualityData": {
+      "name": "Ossus Dueling Lens",
+      "description": "Adds 1 boost die and +3 ranged defence",
+      "isRated": false,
+      "rating": 0
+    },
+    "effectData": {
+      "statMods": {
+        "rangedDefence": 3
+      },
+      "addedQualities": [],
+      "tags": ["lens"],
+      "rollHooks": []
+    }
+  },
+  "Dragite Lens": {
+    "upgradeType": "lens",
+    "qualityData": {
+      "name": "Dragite Lens",
+      "description": "Deal +2 damage on hit.",
+      "isRated": false,
+      "rating": 0
+    },
+    "effectData": {
+      "statMods": {
+        "baseDamage": 2
+      },
+      "addedQualities": [],
+      "tags": ["lens"],
+      "rollHooks": []
+    }
+  },
+  "Adegan Lens": {
+    "upgradeType": "lens",
+    "qualityData": {
+      "name": "Adegan Lens",
+      "description": "Add 5 base damage on hit.",
+      "isRated": false,
+      "rating": 0
+    },
+    "effectData": {
+      "statMods": {
+        "baseDamage": 5
+      },
+      "addedQualities": [],
+      "tags": ["lens"],
+      "rollHooks": []
+    }
+  },
+  "Pontite Lens": {
+    "upgradeType": "lens",
+    "qualityData": {
+      "name": "Pontite Lens",
+      "description": "Gains 1 boost die on attack rolls.",
+      "isRated": false,
+      "rating": 0
+    },
+    "effectData": {
+      "statMods": {},
+      "addedQualities": [],
+      "tags": ["lens"],
+      "rollHooks": []
+    }
+  },
+  "Byrothsis Lens": {
+    "upgradeType": "lens",
+    "qualityData": {
+      "name": "Byrothsis Lens",
+      "description": "Gains 1 boost die on attack rolls. Deals +1 damage on hit. Cannot benefit from the Guarded Stance manoeuvre while wielding this weapon.",
+      "isRated": false,
+      "rating": 0
+    },
+    "effectData": {
+      "statMods": {
+        "baseDamage": 1
+      },
+      "addedQualities": [],
+      "tags": ["lens"],
+      "rollHooks": []
+    }
+  },
+  "Beam Gem Lens": {
+    "upgradeType": "lens",
+    "qualityData": {
+      "name": "Beam Gem Lens",
+      "description": "Deals +1 damage on hit. Adds Vicious 1 (add 10 to enemy critical hit rolls).",
+      "isRated": false,
+      "rating": 0
+    },
+    "effectData": {
+      "statMods": {
+        "baseDamage": 1
+      },
+      "addedQualities": [],
+      "tags": ["lens"],
+      "rollHooks": []
+    }
+  },
+  "Vibration Lens": {
+    "upgradeType": "lens",
+    "qualityData": {
+      "name": "Vibration Lens",
+      "description": "add +6 base damage. Add 1 setback die to all attack rolls. Cannot benefit from the Guarded Stance manoeuvre while wielding this weapon.",
+      "isRated": false,
+      "rating": 0
+    },
+    "effectData": {
+      "statMods": {
+        "baseDamage": 6
+      },
+      "addedQualities": [],
+      "tags": ["lens"],
+      "rollHooks": []
+    }
+  },
+  "Crystal, Blue": {
+    "upgradeType": "colorCrystal",
+    "color": "blue",
+    "qualityData": {
+      "name": "Blue Crystal",
+      "description": "",
+      "isRated": false,
+      "rating": 0
+    },
+    "effectData": {
+      "statMods": {},
+      "addedQualities": [],
+      "tags": ["color-crystal"],
+      "rollHooks": []
+    }
+  },
+  "Crystal, Green": {
+    "upgradeType": "colorCrystal",
+    "color": "green",
+    "qualityData": {
+      "name": "Green Crystal",
+      "description": "",
+      "isRated": false,
+      "rating": 0
+    },
+    "effectData": {
+      "statMods": {},
+      "addedQualities": [],
+      "tags": ["color-crystal"],
+      "rollHooks": []
+    }
+  },
+  "Crystal, Yellow": {
+    "upgradeType": "colorCrystal",
+    "color": "yellow",
+    "qualityData": {
+      "name": "Yellow Crystal",
+      "description": "",
+      "isRated": false,
+      "rating": 0
+    },
+    "effectData": {
+      "statMods": {},
+      "addedQualities": [],
+      "tags": ["color-crystal"],
+      "rollHooks": []
+    }
+  },
+  "Crystal, Red": {
+    "upgradeType": "colorCrystal",
+    "color": "red",
+    "qualityData": {
+      "name": "Red Crystal",
+      "description": "",
+      "isRated": false,
+      "rating": 0
+    },
+    "effectData": {
+      "statMods": {},
+      "addedQualities": [],
+      "tags": ["color-crystal"],
+      "rollHooks": []
+    }
+  },
+  "Crystal, Violet": {
+    "upgradeType": "colorCrystal",
+    "color": "violet",
+    "qualityData": {
+      "name": "Violet Crystal",
+      "description": "",
+      "isRated": false,
+      "rating": 0
+    },
+    "effectData": {
+      "statMods": {},
+      "addedQualities": [],
+      "tags": ["color-crystal"],
+      "rollHooks": []
+    }
+  },
+  "Crystal, Cyan": {
+    "upgradeType": "colorCrystal",
+    "color": "cyan",
+    "qualityData": {
+      "name": "Cyan Crystal",
+      "description": "",
+      "isRated": false,
+      "rating": 0
+    },
+    "effectData": {
+      "statMods": {},
+      "addedQualities": [],
+      "tags": ["color-crystal"],
+      "rollHooks": []
+    }
+  },
+  "Crystal, Silver": {
+    "upgradeType": "colorCrystal",
+    "color": "silver",
+    "qualityData": {
+      "name": "Silver Crystal",
+      "description": "",
+      "isRated": false,
+      "rating": 0
+    },
+    "effectData": {
+      "statMods": {},
+      "addedQualities": [],
+      "tags": ["color-crystal"],
+      "rollHooks": []
+    }
+  },
+  "Crystal, Orange": {
+    "upgradeType": "colorCrystal",
+    "color": "orange",
+    "qualityData": {
+      "name": "Orange Crystal",
+      "description": "",
+      "isRated": false,
+      "rating": 0
+    },
+    "effectData": {
+      "statMods": {},
+      "addedQualities": [],
+      "tags": ["color-crystal"],
+      "rollHooks": []
+    }
+  },
+  "Crystal, Viridian": {
+    "upgradeType": "colorCrystal",
+    "color": "viridian",
+    "qualityData": {
+      "name": "Viridian Crystal",
+      "description": "",
+      "isRated": false,
+      "rating": 0
+    },
+    "effectData": {
+      "statMods": {},
+      "addedQualities": [],
+      "tags": ["color-crystal"],
+      "rollHooks": []
+    }
+  },
+  "Crystal, Adegan": {
+    "upgradeType": "powerCrystal",
+    "qualityData": {
+      "name": "Crystal, Adegan",
+      "description": "",
+      "isRated": true,
+      "rating": 2
+    },
+    "effectData": {
+      "statMods": {},
+      "addedQualities": [],
+      "tags": ["power-crystal"],
+      "rollHooks": []
+    }
+  },
+  "Crystal, Rubat": {
+    "upgradeType": "powerCrystal",
+    "qualityData": {
+      "name": "Crystal, Rubat",
+      "description": "",
+      "isRated": true,
+      "rating": 2
+    },
+    "effectData": {
+      "statMods": {
+        "baseDamage": 1,
+        "critical": -1
+      },
+      "addedQualities": [],
+      "tags": ["power-crystal"],
+      "rollHooks": []
+    }
+  },
+  "Crystal, Ruusan": {
+    "upgradeType": "powerCrystal",
+    "qualityData": {
+      "name": "Crystal, Ruusan",
+      "description": "",
+      "isRated": true,
+      "rating": 2
+    },
+    "effectData": {
+      "statMods": {},
+      "addedQualities": [],
+      "tags": ["power-crystal"],
+      "rollHooks": []
+    }
+  },
+  "Crystal, Nextor": {
+    "upgradeType": "powerCrystal",
+    "qualityData": {
+      "name": "Crystal, Nextor",
+      "description": "",
+      "isRated": true,
+      "rating": 2
+    },
+    "effectData": {
+      "statMods": {},
+      "addedQualities": [],
+      "tags": ["power-crystal"],
+      "rollHooks": []
+    }
+  },
+  "Crystal, Dragite": {
+    "upgradeType": "powerCrystal",
+    "qualityData": {
+      "name": "Crystal, Dragite",
+      "description": "",
+      "isRated": true,
+      "rating": 2
+    },
+    "effectData": {
+      "statMods": {},
+      "addedQualities": [],
+      "tags": ["power-crystal"],
+      "rollHooks": []
+    }
+  },
+  "Crystal, Firkrann": {
+    "upgradeType": "powerCrystal",
+    "qualityData": {
+      "name": "Crystal, Firkrann",
+      "description": "",
+      "isRated": true,
+      "rating": 2
+    },
+    "effectData": {
+      "statMods": {},
+      "addedQualities": [],
+      "tags": ["power-crystal"],
+      "rollHooks": []
+    }
+  },
+  "Crystal, Phond": {
+    "upgradeType": "powerCrystal",
+    "qualityData": {
+      "name": "Crystal, Phond",
+      "description": "",
+      "isRated": true,
+      "rating": 2
+    },
+    "effectData": {
+      "statMods": {},
+      "addedQualities": [],
+      "tags": ["power-crystal"],
+      "rollHooks": []
+    }
+  },
+  "Crystal, Bondar": {
+    "upgradeType": "powerCrystal",
+    "qualityData": {
+      "name": "Crystal, Bondar",
+      "description": "",
+      "isRated": true,
+      "rating": 2
+    },
+    "effectData": {
+      "statMods": {},
+      "addedQualities": [],
+      "tags": ["power-crystal"],
+      "rollHooks": []
+    }
+  },
+  "Crystal, Velmorite": {
+    "upgradeType": "powerCrystal",
+    "qualityData": {
+      "name": "Crystal, Velmorite",
+      "description": "",
+      "isRated": true,
+      "rating": 2
+    },
+    "effectData": {
+      "statMods": {},
+      "addedQualities": [],
+      "tags": ["power-crystal"],
+      "rollHooks": []
+    }
+  },
+  "Crystal, Sigil": {
+    "upgradeType": "powerCrystal",
+    "qualityData": {
+      "name": "Crystal, Sigil",
+      "description": "",
+      "isRated": true,
+      "rating": 2
+    },
+    "effectData": {
+      "statMods": {},
+      "addedQualities": [],
+      "tags": ["power-crystal"],
+      "rollHooks": []
+    }
+  },
+  "Crystal, Jenruax": {
+    "upgradeType": "powerCrystal",
+    "qualityData": {
+      "name": "Crystal, Jenruax",
+      "description": "",
+      "isRated": true,
+      "rating": 2
+    },
+    "effectData": {
+      "statMods": {},
+      "addedQualities": [],
+      "tags": ["power-crystal"],
+      "rollHooks": []
+    }
+  },
+  "Crystal, Kasha": {
+    "upgradeType": "powerCrystal",
+    "qualityData": {
+      "name": "Crystal, Kasha",
+      "description": "",
+      "isRated": true,
+      "rating": 2
+    },
+    "effectData": {
+      "statMods": {},
+      "addedQualities": [],
+      "tags": ["power-crystal"],
+      "rollHooks": []
+    }
+  },
+  "Crystal, Opila": {
+    "upgradeType": "powerCrystal",
+    "qualityData": {
+      "name": "Crystal, Opila",
+      "description": "",
+      "isRated": true,
+      "rating": 2
+    },
+    "effectData": {
+      "statMods": {},
+      "addedQualities": [],
+      "tags": ["power-crystal"],
+      "rollHooks": []
+    }
+  },
+  "Crystal, Eralam": {
+    "upgradeType": "powerCrystal",
+    "qualityData": {
+      "name": "Crystal, Eralam",
+      "description": "",
+      "isRated": true,
+      "rating": 2
+    },
+    "effectData": {
+      "statMods": {},
+      "addedQualities": [],
+      "tags": ["power-crystal"],
+      "rollHooks": []
+    }
+  },
+  "Crystal, Stygium": {
+    "upgradeType": "powerCrystal",
+    "qualityData": {
+      "name": "Crystal, Stygium",
+      "description": "",
+      "isRated": true,
+      "rating": 2
+    },
+    "effectData": {
+      "statMods": {},
+      "addedQualities": [],
+      "tags": ["power-crystal"],
+      "rollHooks": []
+    }
+  },
+  "Crystal, Damind": {
+    "upgradeType": "powerCrystal",
+    "qualityData": {
+      "name": "Crystal, Damind",
+      "description": "",
+      "isRated": true,
+      "rating": 2
+    },
+    "effectData": {
+      "statMods": {},
+      "addedQualities": [],
+      "tags": ["power-crystal"],
+      "rollHooks": []
+    }
+  },
+  "Crystal, Sapith": {
+    "upgradeType": "powerCrystal",
+    "qualityData": {
+      "name": "Crystal, Sapith",
+      "description": "",
+      "isRated": true,
+      "rating": 2
+    },
+    "effectData": {
+      "statMods": {},
+      "addedQualities": [],
+      "tags": ["power-crystal"],
+      "rollHooks": []
+    }
+  },
+  "Crystal, Pontite": {
+    "upgradeType": "powerCrystal",
+    "qualityData": {
+      "name": "Crystal, Pontite",
+      "description": "",
+      "isRated": true,
+      "rating": 2
+    },
+    "effectData": {
+      "statMods": {},
+      "addedQualities": [],
+      "tags": ["power-crystal"],
+      "rollHooks": []
+    }
+  },
+  "Crystal, Upari": {
+    "upgradeType": "powerCrystal",
+    "qualityData": {
+      "name": "Crystal, Upari",
+      "description": "",
+      "isRated": true,
+      "rating": 2
+    },
+    "effectData": {
+      "statMods": {},
+      "addedQualities": [],
+      "tags": ["power-crystal"],
+      "rollHooks": []
+    }
+  },
+  "Ultima-pearl": {
+    "upgradeType": "powerCrystal",
+    "qualityData": {
+      "name": "Ultima-pearl",
+      "description": "",
+      "isRated": true,
+      "rating": 3
+    },
+    "effectData": {
+      "statMods": {},
+      "addedQualities": [],
+      "tags": ["power-crystal"],
+      "rollHooks": []
+    }
+  },
+  "Crystal, Solari": {
+    "upgradeType": "powerCrystal",
+    "qualityData": {
+      "name": "Crystal, Solari",
+      "description": "",
+      "isRated": true,
+      "rating": 2
+    },
+    "effectData": {
+      "statMods": {},
+      "addedQualities": [],
+      "tags": ["power-crystal"],
+      "rollHooks": []
+    }
+  },
+  "Lorrdian Gemstone": {
+    "upgradeType": "powerCrystal",
+    "qualityData": {
+      "name": "Lorrdian Gemstone",
+      "description": "",
+      "isRated": true,
+      "rating": 2
+    },
+    "effectData": {
+      "statMods": {},
+      "addedQualities": [],
+      "tags": ["power-crystal"],
+      "rollHooks": []
+    }
+  },
+  "Barab Ore Ingot": {
+    "upgradeType": "powerCrystal",
+    "qualityData": {
+      "name": "Barab Ore Ingot",
+      "description": "",
+      "isRated": true,
+      "rating": 3
+    },
+    "effectData": {
+      "statMods": {},
+      "addedQualities": [],
+      "tags": ["power-crystal"],
+      "rollHooks": []
+    }
+  },
+  "Ankarres Sapphire": {
+    "upgradeType": "powerCrystal",
+    "qualityData": {
+      "name": "Ankarres Sapphire",
+      "description": "",
+      "isRated": true,
+      "rating": 4
+    },
+    "effectData": {
+      "statMods": {},
+      "addedQualities": [],
+      "tags": ["power-crystal"],
+      "rollHooks": ["heal-on-hit"]
+    }
+  },
+  "Crystal, Kaiburr": {
+    "upgradeType": "powerCrystal",
+    "qualityData": {
+      "name": "Crystal, Kaiburr",
+      "description": "",
+      "isRated": true,
+      "rating": 2
+    },
+    "effectData": {
+      "statMods": {},
+      "addedQualities": [],
+      "tags": ["power-crystal"],
+      "rollHooks": []
+    }
+  },
+  "Crystal, Qixoni": {
+    "upgradeType": "powerCrystal",
+    "qualityData": {
+      "name": "Crystal, Qixoni",
+      "description": "",
+      "isRated": true,
+      "rating": 2
+    },
+    "effectData": {
+      "statMods": {},
+      "addedQualities": [],
+      "tags": ["power-crystal"],
+      "rollHooks": []
+    }
+  },
+  "Crystal, Hurrikaine": {
+    "upgradeType": "powerCrystal",
+    "qualityData": {
+      "name": "Crystal, Hurrikaine",
+      "description": "",
+      "isRated": true,
+      "rating": 2
+    },
+    "effectData": {
+      "statMods": {},
+      "addedQualities": [],
+      "tags": ["power-crystal"],
+      "rollHooks": []
+    }
+  }
+}

@@ -1,4 +1,6 @@
-console.log("Hello from the Genesys Lightsabers module!");
+console.log("Hello from the Genesys Lightsabers module! [build 1.0.3]");
+
+const MODULE_ID = "genesys-lightsabers";
 
 const upgradeSlots = ["colorCrystal", "powerCrystal", "emitter", "lens", "energyCell"];
 
@@ -11,41 +13,40 @@ const upgradeMatchers = [
 ];
 
 const crystalImages = {
-    single: {
-        blue: "modules/genesys-lightsabers/assets/lightsabers/single/iw_lghtsbr_001.png",
-        red: "modules/genesys-lightsabers/assets/lightsabers/single/iw_lghtsbr_002.png",
-        green: "modules/genesys-lightsabers/assets/lightsabers/single/iw_lghtsbr_003.png",
-        yellow: "modules/genesys-lightsabers/assets/lightsabers/single/iw_lghtsbr_004.png",
-        violet: "modules/genesys-lightsabers/assets/lightsabers/single/iw_lghtsbr_005.png",
-        cyan: "modules/genesys-lightsabers/assets/lightsabers/single/iw_lghtsbr_008.png",
-        silver: "modules/genesys-lightsabers/assets/lightsabers/single/iw_lghtsbr_010.png",
-        orange: "modules/genesys-lightsabers/assets/lightsabers/single/iw_lghtsbr_007.png",
-        viridian: "modules/genesys-lightsabers/assets/lightsabers/single/iw_lghtsbr_009.png"
-    },
-    double: {
-        blue: "modules/genesys-lightsabers/assets/lightsabers/double/iw_dblsbr_001.png",
-        red: "modules/genesys-lightsabers/assets/lightsabers/double/iw_dblsbr_002.png",
-        green: "modules/genesys-lightsabers/assets/lightsabers/double/iw_dblsbr_003.png",
-        yellow: "modules/genesys-lightsabers/assets/lightsabers/double/iw_dblsbr_004.png",
-        violet: "modules/genesys-lightsabers/assets/lightsabers/double/iw_dblsbr_005.png",
-        cyan: "modules/genesys-lightsabers/assets/lightsabers/double/iw_dblsbr_007.png",
-        silver: "modules/genesys-lightsabers/assets/lightsabers/double/iw_dblsbr_009.png",
-        orange: "modules/genesys-lightsabers/assets/lightsabers/double/iw_dblsbr_006.png",
-        viridian: "modules/genesys-lightsabers/assets/lightsabers/double/iw_dblsbr_008.png"
-    },
-    short: {
-        blue: "modules/genesys-lightsabers/assets/lightsabers/short/iw_shortsbr_001.png",
-        red: "modules/genesys-lightsabers/assets/lightsabers/short/iw_shortsbr_002.png",
-        green: "modules/genesys-lightsabers/assets/lightsabers/short/iw_shortsbr_008.png",
-        yellow: "modules/genesys-lightsabers/assets/lightsabers/short/iw_shortsbr_004.png",
-        violet: "modules/genesys-lightsabers/assets/lightsabers/short/iw_shortsbr_005.png",
-        cyan: "modules/genesys-lightsabers/assets/lightsabers/short/iw_shortsbr_007.png",
-        silver: "modules/genesys-lightsabers/assets/lightsabers/short/iw_shortsbr_009.png",
-        orange: "modules/genesys-lightsabers/assets/lightsabers/short/iw_shortsbr_006.png",
-        viridian: "modules/genesys-lightsabers/assets/lightsabers/short/iw_shortsbr_003.png"
-    }
-    
-}
+  single: {
+    blue: "modules/genesys-lightsabers/assets/lightsabers/single/iw_lghtsbr_001.png",
+    red: "modules/genesys-lightsabers/assets/lightsabers/single/iw_lghtsbr_002.png",
+    green: "modules/genesys-lightsabers/assets/lightsabers/single/iw_lghtsbr_003.png",
+    yellow: "modules/genesys-lightsabers/assets/lightsabers/single/iw_lghtsbr_004.png",
+    violet: "modules/genesys-lightsabers/assets/lightsabers/single/iw_lghtsbr_005.png",
+    cyan: "modules/genesys-lightsabers/assets/lightsabers/single/iw_lghtsbr_008.png",
+    silver: "modules/genesys-lightsabers/assets/lightsabers/single/iw_lghtsbr_010.png",
+    orange: "modules/genesys-lightsabers/assets/lightsabers/single/iw_lghtsbr_007.png",
+    viridian: "modules/genesys-lightsabers/assets/lightsabers/single/iw_lghtsbr_009.png"
+  },
+  double: {
+    blue: "modules/genesys-lightsabers/assets/lightsabers/double/iw_dblsbr_001.png",
+    red: "modules/genesys-lightsabers/assets/lightsabers/double/iw_dblsbr_002.png",
+    green: "modules/genesys-lightsabers/assets/lightsabers/double/iw_dblsbr_003.png",
+    yellow: "modules/genesys-lightsabers/assets/lightsabers/double/iw_dblsbr_004.png",
+    violet: "modules/genesys-lightsabers/assets/lightsabers/double/iw_dblsbr_005.png",
+    cyan: "modules/genesys-lightsabers/assets/lightsabers/double/iw_dblsbr_007.png",
+    silver: "modules/genesys-lightsabers/assets/lightsabers/double/iw_dblsbr_009.png",
+    orange: "modules/genesys-lightsabers/assets/lightsabers/double/iw_dblsbr_006.png",
+    viridian: "modules/genesys-lightsabers/assets/lightsabers/double/iw_dblsbr_008.png"
+  },
+  short: {
+    blue: "modules/genesys-lightsabers/assets/lightsabers/short/iw_shortsbr_001.png",
+    red: "modules/genesys-lightsabers/assets/lightsabers/short/iw_shortsbr_002.png",
+    green: "modules/genesys-lightsabers/assets/lightsabers/short/iw_shortsbr_008.png",
+    yellow: "modules/genesys-lightsabers/assets/lightsabers/short/iw_shortsbr_004.png",
+    violet: "modules/genesys-lightsabers/assets/lightsabers/short/iw_shortsbr_005.png",
+    cyan: "modules/genesys-lightsabers/assets/lightsabers/short/iw_shortsbr_007.png",
+    silver: "modules/genesys-lightsabers/assets/lightsabers/short/iw_shortsbr_009.png",
+    orange: "modules/genesys-lightsabers/assets/lightsabers/short/iw_shortsbr_006.png",
+    viridian: "modules/genesys-lightsabers/assets/lightsabers/short/iw_shortsbr_003.png"
+  }
+};
 
 const baseImages = {
   single: "modules/genesys-lightsabers/assets/lightsabers/single/iw_lghtsbr_006.png",
@@ -54,15 +55,15 @@ const baseImages = {
 };
 
 const crystalColours = [
-    "blue",
-    "green",
-    "yellow",
-    "red",
-    "violet",
-    "cyan",
-    "silver",
-    "orange",
-    "viridian"
+  "blue",
+  "green",
+  "yellow",
+  "red",
+  "violet",
+  "cyan",
+  "silver",
+  "orange",
+  "viridian"
 ];
 
 const crystalQualityNames = new Set(
@@ -78,6 +79,116 @@ function parseColorFromText(text) {
   }
 
   return null;
+}
+
+function normalizeAddedQuality(entry) {
+  if (typeof entry === "string") {
+    return {
+      name: entry,
+      description: "",
+      isRated: false,
+      rating: 0
+    };
+  }
+
+  if (entry && typeof entry === "object") {
+    return {
+      name: String(entry.name ?? "").trim(),
+      description: String(entry.description ?? ""),
+      isRated: Boolean(entry.isRated),
+      rating: Number(entry.rating ?? 0)
+    };
+  }
+
+  return null;
+}
+
+function getAddedQualitiesFromSlot(slotData) {
+  const entries = Array.isArray(slotData?.effectData?.addedQualities)
+    ? slotData.effectData.addedQualities
+    : [];
+
+  return entries
+    .map((entry) => normalizeAddedQuality(entry))
+    .filter((quality) => quality?.name);
+}
+
+function collectManagedNamesFromSlot(slotData, targetSet) {
+  const primaryName = String(slotData?.qualityData?.name ?? "").toLowerCase().trim();
+  if (primaryName) targetSet.add(primaryName);
+
+  for (const addedQuality of getAddedQualitiesFromSlot(slotData)) {
+    const addedName = String(addedQuality?.name ?? "").toLowerCase().trim();
+    if (addedName) targetSet.add(addedName);
+  }
+}
+
+function toFiniteNumber(value, fallback = 0) {
+  const num = Number(value);
+  return Number.isFinite(num) ? num : fallback;
+}
+
+function asFiniteNumberOrNull(value) {
+  const num = Number(value);
+  return Number.isFinite(num) ? num : null;
+}
+
+function collectStatMods(upgrades) {
+  const totals = { baseDamage: 0, critical: 0, rangedDefence: 0 };
+
+  for (const slotData of Object.values(upgrades || {})) {
+    const mods = slotData?.effectData?.statMods;
+    if (!mods || typeof mods !== "object") continue;
+
+    totals.baseDamage += toFiniteNumber(mods.baseDamage, 0);
+    totals.critical += toFiniteNumber(mods.critical, 0);
+    totals.rangedDefence += toFiniteNumber(mods.rangedDefence, 0);
+  }
+
+  return totals;
+}
+
+function getBaseWeaponStats(weapon) {
+  const flagged = weapon.getFlag("genesys-lightsabers", "baseStats") || {};
+  const currentBaseDamage = weapon.system?.baseDamage;
+  const currentCritical = weapon.system?.critical;
+  const currentRangedDefence = weapon.system?.rangedDefence;
+
+  return {
+    baseDamage: foundry.utils.hasProperty(flagged, "baseDamage") ? flagged.baseDamage : currentBaseDamage,
+    critical: foundry.utils.hasProperty(flagged, "critical") ? flagged.critical : currentCritical,
+    rangedDefence: foundry.utils.hasProperty(flagged, "rangedDefence") ? flagged.rangedDefence : currentRangedDefence
+  };
+}
+
+function applyNumericMod(baseValue, modAmount) {
+  const baseNumeric = asFiniteNumberOrNull(baseValue);
+  if (baseNumeric === null) return baseValue;
+
+  const modNumeric = toFiniteNumber(modAmount, 0);
+  return baseNumeric + modNumeric;
+}
+
+function inferBaseStatValue(currentValue, appliedModTotal) {
+  const currentNumeric = asFiniteNumberOrNull(currentValue);
+  if (currentNumeric === null) return currentValue;
+
+  return currentNumeric - toFiniteNumber(appliedModTotal, 0);
+}
+
+function deriveStatsFromBase(baseStats, upgrades) {
+  const modTotals = collectStatMods(upgrades);
+
+  return {
+    baseDamage: applyNumericMod(baseStats?.baseDamage, modTotals.baseDamage),
+    critical: applyNumericMod(baseStats?.critical, modTotals.critical),
+    rangedDefence: applyNumericMod(baseStats?.rangedDefence, modTotals.rangedDefence)
+  };
+}
+
+function getDerivedWeaponStats(weapon, upgrades) {
+  const baseStats = getBaseWeaponStats(weapon);
+  return deriveStatsFromBase(baseStats, upgrades);
 }
 
 function weaponHasCrystalQuality(weapon) {
@@ -117,6 +228,7 @@ Hooks.on("renderItemSheet", (app, html) => {
     const upgradeType = dropped.getFlag("genesys-lightsabers", "upgradeType");
     const qualityData = dropped.getFlag("genesys-lightsabers", "qualityData");
     const colorFlag = dropped.getFlag("genesys-lightsabers", "color");
+    const effectData = dropped.getFlag("genesys-lightsabers", "effectData") || {};
 
     if (!upgradeType || !qualityData) {
       ui.notifications.warn("This upgrade is missing genesys-lightsabers flags.");
@@ -146,11 +258,20 @@ Hooks.on("renderItemSheet", (app, html) => {
     }
 
     const normalizedColorFlag = typeof colorFlag === "string" ? colorFlag.toLowerCase().trim() : null;
+
+    const existingModTotals = collectStatMods(oldUpgrades);
+    const inferredBaseStats = {
+      baseDamage: inferBaseStatValue(weapon.system?.baseDamage, existingModTotals.baseDamage),
+      critical: inferBaseStatValue(weapon.system?.critical, existingModTotals.critical),
+      rangedDefence: inferBaseStatValue(weapon.system?.rangedDefence, existingModTotals.rangedDefence)
+    };
+
     const upgrades = foundry.utils.deepClone(oldUpgrades);
     upgrades[upgradeType] = {
       sourceGearId: dropped.id,
       sourceGearName: dropped.name,
       qualityData: foundry.utils.deepClone(qualityData),
+      effectData: foundry.utils.deepClone(effectData),
       color: upgradeType === "colorCrystal"
         ? (normalizedColorFlag || parseColorFromText(dropped.name))
         : null
@@ -161,13 +282,11 @@ Hooks.on("renderItemSheet", (app, html) => {
     ]);
 
     for (const slot of Object.values(oldUpgrades)) {
-      const qName = String(slot?.qualityData?.name ?? "").toLowerCase().trim();
-      if (qName) moduleManagedNames.add(qName);
+      collectManagedNamesFromSlot(slot, moduleManagedNames);
     }
 
     for (const slot of Object.values(upgrades)) {
-      const qName = String(slot?.qualityData?.name ?? "").toLowerCase().trim();
-      if (qName) moduleManagedNames.add(qName);
+      collectManagedNamesFromSlot(slot, moduleManagedNames);
     }
 
     const filtered = currentQualities.filter((q) => {
@@ -191,12 +310,18 @@ Hooks.on("renderItemSheet", (app, html) => {
       if (crystalImg) img = crystalImg;
     }
 
+    const derivedStats = deriveStatsFromBase(inferredBaseStats, upgrades);
+
     // Save slot state first so the update watcher sees the new color crystal immediately.
     await weapon.setFlag("genesys-lightsabers", "baseImg", baseImg);
     await weapon.setFlag("genesys-lightsabers", "upgrades", upgrades);
+    await weapon.setFlag("genesys-lightsabers", "baseStats", inferredBaseStats);
 
     await weapon.update({
       "system.qualities": filtered,
+      "system.baseDamage": derivedStats.baseDamage,
+      "system.critical": derivedStats.critical,
+      "system.rangedDefence": derivedStats.rangedDefence,
       img
     });
 
@@ -214,7 +339,6 @@ if (!globalThis.GLS_WEAPON_CRYSTAL_WATCHER) {
     const upgrades = foundry.utils.deepClone(
       item.getFlag("genesys-lightsabers", "upgrades") || {}
     );
-    if (!Object.keys(upgrades).length) return;
 
     const currentNames = new Set(
       (Array.isArray(item.system?.qualities) ? item.system.qualities : [])
@@ -258,12 +382,75 @@ if (!globalThis.GLS_WEAPON_CRYSTAL_WATCHER) {
       ? (crystalImages[variant]?.[activeColor] ?? baseImg)
       : baseImg;
 
-    if (item.img !== desiredImg) {
-      await item.update({ img: desiredImg });
+    const hasAnyUpgrades = Object.keys(upgrades).length > 0;
+    const derivedStats = hasAnyUpgrades
+      ? getDerivedWeaponStats(item, upgrades)
+      : getBaseWeaponStats(item);
+
+    const desiredBaseDamage = derivedStats.baseDamage;
+    const desiredCritical = derivedStats.critical;
+    const desiredRangedDefence = derivedStats.rangedDefence;
+
+    const currentBaseDamage = item.system?.baseDamage;
+    const currentCritical = item.system?.critical;
+    const currentRangedDefence = item.system?.rangedDefence;
+
+    const currentBaseDamageNumeric = asFiniteNumberOrNull(currentBaseDamage);
+    const desiredBaseDamageNumeric = asFiniteNumberOrNull(desiredBaseDamage);
+    const currentCriticalNumeric = asFiniteNumberOrNull(currentCritical);
+    const desiredCriticalNumeric = asFiniteNumberOrNull(desiredCritical);
+    const currentRangedDefenceNumeric = asFiniteNumberOrNull(currentRangedDefence);
+    const desiredRangedDefenceNumeric = asFiniteNumberOrNull(desiredRangedDefence);
+
+    const baseDamageChanged = (
+      currentBaseDamageNumeric !== null && desiredBaseDamageNumeric !== null
+        ? currentBaseDamageNumeric !== desiredBaseDamageNumeric
+        : currentBaseDamage !== desiredBaseDamage
+    );
+
+    const criticalChanged = (
+      currentCriticalNumeric !== null && desiredCriticalNumeric !== null
+        ? currentCriticalNumeric !== desiredCriticalNumeric
+        : currentCritical !== desiredCritical
+    );
+
+    const rangedDefenceChanged = (
+      currentRangedDefenceNumeric !== null && desiredRangedDefenceNumeric !== null
+        ? currentRangedDefenceNumeric !== desiredRangedDefenceNumeric
+        : currentRangedDefence !== desiredRangedDefence
+    );
+
+    const needsStatUpdate = baseDamageChanged || criticalChanged || rangedDefenceChanged;
+
+    if (item.img !== desiredImg || needsStatUpdate) {
+      await item.update({
+        img: desiredImg,
+        "system.baseDamage": desiredBaseDamage,
+        "system.critical": desiredCritical,
+        "system.rangedDefence": desiredRangedDefence
+      });
     }
 
     if (!activeColor) {
       await item.unsetFlag("genesys-lightsabers", "baseImg");
     }
+
+    if (!hasAnyUpgrades) {
+      await item.unsetFlag("genesys-lightsabers", "baseStats");
+    }
   });
 }
+
+function attachModuleApi() {
+  const moduleRef = game?.modules?.get(MODULE_ID);
+  const moduleApi = moduleRef?.api ?? {};
+
+  if (moduleRef) {
+    moduleRef.api = moduleApi;
+  }
+
+  globalThis.GenesysLightsabersApi = moduleApi;
+  console.log("[genesys-lightsabers] API ready", Object.keys(moduleApi));
+}
+
+Hooks.once("ready", attachModuleApi);
