@@ -1,5 +1,15 @@
 console.log("Hello from the Genesys Lightsabers module!");
 
+const upgradeSlots = ["colorCrystal", "powerCrystal", "emitter", "lens", "energyCell"];
+
+const upgradeMatchers = [
+{ slot: "colorCrystal", test: (name) => /crystal/i.test(name) && /(blue|green|yellow|red|violet|cyan|silver|orange|viridian)/i.test(name) },
+{ slot: "powerCrystal", test: (name) => /power crystal/i.test(name) },
+{ slot: "emitter", test: (name) => /emitter/i.test(name) },
+{ slot: "lens", test: (name) => /lens/i.test(name) },
+{ slot: "energyCell", test: (name) => /energy cell/i.test(name) }
+];
+
 const crystalImages = {
     single: {
         blue: "modules/genesys-lightsabers/assets/lightsabers/single/iw_lghtsbr_001.png",
@@ -26,13 +36,13 @@ const crystalImages = {
     short: {
         blue: "modules/genesys-lightsabers/assets/lightsabers/short/iw_shortsbr_001.png",
         red: "modules/genesys-lightsabers/assets/lightsabers/short/iw_shortsbr_002.png",
-        green: "modules/genesys-lightsabers/assets/lightsabers/short/iw_shortsbr_003.png",
+        green: "modules/genesys-lightsabers/assets/lightsabers/short/iw_shortsbr_008.png",
         yellow: "modules/genesys-lightsabers/assets/lightsabers/short/iw_shortsbr_004.png",
         violet: "modules/genesys-lightsabers/assets/lightsabers/short/iw_shortsbr_005.png",
-        cyan: "modules/genesys-lightsabers/assets/lightsabers/short/iw_shortsbr_008.png",
-        silver: "modules/genesys-lightsabers/assets/lightsabers/short/iw_shortsbr_010.png",
-        orange: "modules/genesys-lightsabers/assets/lightsabers/short/iw_shortsbr_007.png",
-        viridian: "modules/genesys-lightsabers/assets/lightsabers/short/iw_shortsbr_009.png"
+        cyan: "modules/genesys-lightsabers/assets/lightsabers/short/iw_shortsbr_007.png",
+        silver: "modules/genesys-lightsabers/assets/lightsabers/short/iw_shortsbr_009.png",
+        orange: "modules/genesys-lightsabers/assets/lightsabers/short/iw_shortsbr_006.png",
+        viridian: "modules/genesys-lightsabers/assets/lightsabers/short/iw_shortsbr_003.png"
     }
     
 }
@@ -43,7 +53,7 @@ const baseImages = {
   short: "modules/genesys-lightsabers/assets/lightsabers/short/iw_lghtsbr_006.png"
 };
 
-  const crystalColours = [
+const crystalColours = [
     "blue",
     "green",
     "yellow",
@@ -53,11 +63,22 @@ const baseImages = {
     "silver",
     "orange",
     "viridian"
-  ];
+];
 
-  const crystalQualityNames = new Set(
-    crystalColours.map((colour) => colour + " crystal")
-  );
+const crystalQualityNames = new Set(
+  crystalColours.map((colour) => colour + " crystal")
+);
+
+function parseColorFromText(text) {
+  const normalizedText = String(text ?? "").toLowerCase().trim();
+  if (!normalizedText) return null;
+
+  for (const colour of crystalColours) {
+    if (normalizedText.includes(colour)) return colour;
+  }
+
+  return null;
+}
 
 function weaponHasCrystalQuality(weapon) {
     const qualities = Array.isArray(weapon.system?.qualities) ? weapon.system.qualities : [];
@@ -83,16 +104,6 @@ Hooks.on("renderItemSheet", (app, html) => {
   if (!weapon) return;
   if (weapon.type !== "weapon") return;
 
-  function getCrystalColourFromName(name) {
-    const lowerName = String(name ?? "").toLowerCase();
-    for (const colour of crystalColours) {
-      if (lowerName.includes("crystal") && lowerName.includes(colour)) {
-        return colour;
-      }
-    }
-    return null;
-  }
-
   if (html[0].dataset.glCrystalDropBound === "1") return;
   html[0].dataset.glCrystalDropBound = "1";
 
@@ -101,52 +112,95 @@ Hooks.on("renderItemSheet", (app, html) => {
     if (!dropData) return;
 
     const dropped = await Item.implementation.fromDropData(dropData);
-    if (!dropped) return;
+    if (!dropped || dropped.type !== "gear") return;
 
-    const colour = dropped.type === "gear" ? getCrystalColourFromName(dropped.name) : null;
-    if (!colour) return;
+    const upgradeType = dropped.getFlag("genesys-lightsabers", "upgradeType");
+    const qualityData = dropped.getFlag("genesys-lightsabers", "qualityData");
+    const colorFlag = dropped.getFlag("genesys-lightsabers", "color");
 
-    const qualityName = colour.charAt(0).toUpperCase() + colour.slice(1) + " Crystal";
+    if (!upgradeType || !qualityData) {
+      ui.notifications.warn("This upgrade is missing genesys-lightsabers flags.");
+      return;
+    }
+
     const currentQualities = Array.isArray(weapon.system.qualities)
       ? foundry.utils.deepClone(weapon.system.qualities)
       : [];
 
-    console.log("existing quality sample", weapon.system.qualities?.[0]);
+    const currentQualityNames = new Set(
+      currentQualities
+        .map((q) => String(q?.name ?? q?.label ?? "").toLowerCase().trim())
+        .filter(Boolean)
+    );
 
-    const filtered = currentQualities.filter((quality) => {
-      const qName = String(quality?.name ?? quality?.label ?? "").toLowerCase();
-      return !crystalQualityNames.has(qName);
+    const oldUpgrades = foundry.utils.deepClone(
+      weapon.getFlag("genesys-lightsabers", "upgrades") || {}
+    );
+
+    // Discard stale slots whose qualities were manually removed from the weapon.
+    for (const [slotKey, slotData] of Object.entries(oldUpgrades)) {
+      const qName = String(slotData?.qualityData?.name ?? "").toLowerCase().trim();
+      if (qName && !currentQualityNames.has(qName)) {
+        delete oldUpgrades[slotKey];
+      }
+    }
+
+    const normalizedColorFlag = typeof colorFlag === "string" ? colorFlag.toLowerCase().trim() : null;
+    const upgrades = foundry.utils.deepClone(oldUpgrades);
+    upgrades[upgradeType] = {
+      sourceGearId: dropped.id,
+      sourceGearName: dropped.name,
+      qualityData: foundry.utils.deepClone(qualityData),
+      color: upgradeType === "colorCrystal"
+        ? (normalizedColorFlag || parseColorFromText(dropped.name))
+        : null
+    };
+
+    const moduleManagedNames = new Set([
+      "blue crystal", "green crystal", "yellow crystal", "red crystal", "violet crystal", "cyan crystal", "silver crystal", "orange crystal", "viridian crystal"
+    ]);
+
+    for (const slot of Object.values(oldUpgrades)) {
+      const qName = String(slot?.qualityData?.name ?? "").toLowerCase().trim();
+      if (qName) moduleManagedNames.add(qName);
+    }
+
+    for (const slot of Object.values(upgrades)) {
+      const qName = String(slot?.qualityData?.name ?? "").toLowerCase().trim();
+      if (qName) moduleManagedNames.add(qName);
+    }
+
+    const filtered = currentQualities.filter((q) => {
+      const qName = String(q?.name ?? q?.label ?? "").toLowerCase().trim();
+      return !moduleManagedNames.has(qName);
     });
 
-    const crystalQuality = {
-      name: qualityName,
-      description: "",
-      isRated: true,
-      rating: 1
-    };
-    filtered.push(crystalQuality);
+    for (const slotKey of ["colorCrystal", "powerCrystal", "emitter", "lens", "energyCell"]) {
+      const slot = upgrades[slotKey];
+      if (slot?.qualityData) filtered.push(foundry.utils.deepClone(slot.qualityData));
+    }
 
     const variant = getWeaponVariant(weapon);
     const fallbackBaseImg = baseImages[variant] ?? baseImages.single ?? weapon.img;
     const baseImg = weapon.getFlag("genesys-lightsabers", "baseImg") ?? fallbackBaseImg;
-    const crystalImg = crystalImages[variant]?.[colour] ?? null;
 
-    const updateData = { "system.qualities": filtered };
-    if (crystalImg) updateData.img = crystalImg;
+    let img = baseImg;
+    const activeColor = String(upgrades.colorCrystal?.color ?? "").toLowerCase().trim() || null;
+    if (activeColor) {
+      const crystalImg = crystalImages[variant]?.[activeColor] ?? null;
+      if (crystalImg) img = crystalImg;
+    }
 
-    await weapon.update(updateData);
+    // Save slot state first so the update watcher sees the new color crystal immediately.
     await weapon.setFlag("genesys-lightsabers", "baseImg", baseImg);
+    await weapon.setFlag("genesys-lightsabers", "upgrades", upgrades);
 
-    await weapon.setFlag("genesys-lightsabers", "activeCrystal", {
-      sourceGearId: dropped.id,
-      sourceGearName: dropped.name,
-      colour,
-      qualityName,
-      image: crystalImg,
-      variant
+    await weapon.update({
+      "system.qualities": filtered,
+      img
     });
 
-    console.log("[genesys-lightsabers] applied crystal", qualityName, "to", weapon.name);
+    console.log("[genesys-lightsabers] applied upgrade", upgradeType, dropped.name, "to", weapon.name);
   });
 });
 
@@ -155,26 +209,61 @@ if (!globalThis.GLS_WEAPON_CRYSTAL_WATCHER) {
 
   Hooks.on("updateItem", async (item, changed) => {
     if (item.type !== "weapon") return;
-
     if (!foundry.utils.hasProperty(changed, "system.qualities")) return;
 
-    const active = item.getFlag("genesys-lightsabers", "activeCrystal");
-    if (!active) return;
+    const upgrades = foundry.utils.deepClone(
+      item.getFlag("genesys-lightsabers", "upgrades") || {}
+    );
+    if (!Object.keys(upgrades).length) return;
 
-    const stillHasCrystal = weaponHasCrystalQuality(item);
-    if (stillHasCrystal) return;
+    const currentNames = new Set(
+      (Array.isArray(item.system?.qualities) ? item.system.qualities : [])
+        .map((q) => String(q?.name ?? q?.label ?? "").toLowerCase().trim())
+        .filter(Boolean)
+    );
 
+    // Remove stale slots whose quality was manually deleted from the weapon.
+    let upgradesChanged = false;
+    for (const [slotKey, slotData] of Object.entries(upgrades)) {
+      const qName = String(slotData?.qualityData?.name ?? "").toLowerCase().trim();
+      if (qName && !currentNames.has(qName)) {
+        delete upgrades[slotKey];
+        upgradesChanged = true;
+      }
+    }
+
+    if (upgradesChanged) {
+      if (Object.keys(upgrades).length) {
+        await item.setFlag("genesys-lightsabers", "upgrades", upgrades);
+      } else {
+        await item.unsetFlag("genesys-lightsabers", "upgrades");
+      }
+    }
+
+    // Recompute image from remaining color crystal slot only.
     const variant = getWeaponVariant(item);
     const fallbackBaseImg = baseImages[variant] ?? baseImages.single ?? item.img;
     const baseImg = item.getFlag("genesys-lightsabers", "baseImg") ?? fallbackBaseImg;
-    const updateData = {};
-    if (baseImg) updateData.img = baseImg;
 
-    if (Object.keys(updateData).length > 0) await item.update(updateData);
+    const activeColor = (
+      String(
+        upgrades.colorCrystal?.color
+        ?? parseColorFromText(upgrades.colorCrystal?.sourceGearName)
+        ?? parseColorFromText(upgrades.colorCrystal?.qualityData?.name)
+        ?? ""
+      ).toLowerCase().trim()
+      || null
+    );
+    const desiredImg = activeColor
+      ? (crystalImages[variant]?.[activeColor] ?? baseImg)
+      : baseImg;
 
-    await item.unsetFlag("genesys-lightsabers", "activeCrystal");
-    await item.unsetFlag("genesys-lightsabers", "baseImg");
+    if (item.img !== desiredImg) {
+      await item.update({ img: desiredImg });
+    }
 
-    console.log("[genesys-lightsabers] crystal removed from weapon", item.name);
+    if (!activeColor) {
+      await item.unsetFlag("genesys-lightsabers", "baseImg");
+    }
   });
 }
