@@ -424,12 +424,14 @@
     "upgradeType": "powerCrystal",
     "qualityData": {
       "name": "Crystal, Adegan",
-      "description": "",
+      "description": "Add +2 base damage.",
       "isRated": true,
       "rating": 2
     },
     "effectData": {
-      "statMods": {},
+      "statMods": {
+        "baseDamage": 2
+      },
       "addedQualities": [],
       "tags": ["power-crystal"],
       "rollHooks": []
@@ -439,7 +441,60 @@
     "upgradeType": "powerCrystal",
     "qualityData": {
       "name": "Crystal, Rubat",
-      "description": "",
+      "description": "Add +1 base damage, and add 1 boost die to all attack rolls.",
+      "isRated": true,
+      "rating": 2
+    },
+    "effectData": {
+      "statMods": {
+        "baseDamage": 1
+      },
+      "addedQualities": [],
+      "tags": ["power-crystal"],
+      "rollHooks": []
+    }
+  },
+  "Crystal, Ruusan": {
+    "upgradeType": "powerCrystal",
+    "qualityData": {
+      "name": "Crystal, Ruusan",
+      "description": "Add + 1 to Willpower and Presence.",
+      "isRated": true,
+      "rating": 2
+    },
+    "effectData": {
+      "statMods": {},
+      "wielderMods": {
+        "system.characteristics.willpower.value": 1,
+        "system.characteristics.presence.value": 1
+      },
+      "addedQualities": [],
+      "tags": ["power-crystal"],
+      "rollHooks": []
+    }
+  },
+  "Crystal, Nextor": {
+    "upgradeType": "powerCrystal",
+    "qualityData": {
+      "name": "Crystal, Nextor",
+      "description": "Reduces the amount of Advantages needed to crit by 1.",
+      "isRated": true,
+      "rating": 2
+    },
+    "effectData": {
+      "statMods": {
+        "critical": -1
+      },
+      "addedQualities": [],
+      "tags": ["power-crystal"],
+      "rollHooks": []
+    }
+  },
+  "Crystal, Dragite": {
+    "upgradeType": "powerCrystal",
+    "qualityData": {
+      "name": "Crystal, Dragite",
+      "description": "Add +1 base damage, and reduces the amount of Advantages needed to crit by 1.",
       "isRated": true,
       "rating": 2
     },
@@ -453,56 +508,11 @@
       "rollHooks": []
     }
   },
-  "Crystal, Ruusan": {
-    "upgradeType": "powerCrystal",
-    "qualityData": {
-      "name": "Crystal, Ruusan",
-      "description": "",
-      "isRated": true,
-      "rating": 2
-    },
-    "effectData": {
-      "statMods": {},
-      "addedQualities": [],
-      "tags": ["power-crystal"],
-      "rollHooks": []
-    }
-  },
-  "Crystal, Nextor": {
-    "upgradeType": "powerCrystal",
-    "qualityData": {
-      "name": "Crystal, Nextor",
-      "description": "",
-      "isRated": true,
-      "rating": 2
-    },
-    "effectData": {
-      "statMods": {},
-      "addedQualities": [],
-      "tags": ["power-crystal"],
-      "rollHooks": []
-    }
-  },
-  "Crystal, Dragite": {
-    "upgradeType": "powerCrystal",
-    "qualityData": {
-      "name": "Crystal, Dragite",
-      "description": "",
-      "isRated": true,
-      "rating": 2
-    },
-    "effectData": {
-      "statMods": {},
-      "addedQualities": [],
-      "tags": ["power-crystal"],
-      "rollHooks": []
-    }
-  },
   "Crystal, Firkrann": {
     "upgradeType": "powerCrystal",
     "qualityData": {
       "name": "Crystal, Firkrann",
-      "description": "",
+      "description": "Against Droids, add 5 damage on hit.",
       "isRated": true,
       "rating": 2
     },
@@ -517,12 +527,14 @@
     "upgradeType": "powerCrystal",
     "qualityData": {
       "name": "Crystal, Phond",
-      "description": "",
+      "description": "Add +3 to damage on hit.",
       "isRated": true,
       "rating": 2
     },
     "effectData": {
-      "statMods": {},
+      "statMods": {
+        "baseDamage": 3
+      },
       "addedQualities": [],
       "tags": ["power-crystal"],
       "rollHooks": []
@@ -532,7 +544,7 @@
     "upgradeType": "powerCrystal",
     "qualityData": {
       "name": "Crystal, Bondar",
-      "description": "",
+      "description": "Deals 1 strain to target on hit.",
       "isRated": true,
       "rating": 2
     },
@@ -547,12 +559,15 @@
     "upgradeType": "powerCrystal",
     "qualityData": {
       "name": "Crystal, Velmorite",
-      "description": "",
+      "description": "+1 Agility, and reduces the amount of Advantages needed to crit by 1.",
       "isRated": true,
       "rating": 2
     },
     "effectData": {
-      "statMods": {},
+      "statMods": {
+        "system.characteristics.agility.value": 1,
+        "critical": -1
+      },
       "addedQualities": [],
       "tags": ["power-crystal"],
       "rollHooks": []
@@ -562,12 +577,14 @@
     "upgradeType": "powerCrystal",
     "qualityData": {
       "name": "Crystal, Sigil",
-      "description": "",
+      "description": "Add +3 to damage on hit, and add 1 boost die to attack rolls.",
       "isRated": true,
       "rating": 2
     },
     "effectData": {
-      "statMods": {},
+      "statMods": {
+        "baseDamage": 3
+      },
       "addedQualities": [],
       "tags": ["power-crystal"],
       "rollHooks": []
@@ -577,12 +594,15 @@
     "upgradeType": "powerCrystal",
     "qualityData": {
       "name": "Crystal, Jenruax",
-      "description": "",
+      "description": "Add +2 damage on hit, add +5 ranged defence while equipped.",
       "isRated": true,
       "rating": 2
     },
     "effectData": {
-      "statMods": {},
+      "statMods": {
+        "baseDamage": 2,
+        "rangedDefence": 5
+      },
       "addedQualities": [],
       "tags": ["power-crystal"],
       "rollHooks": []
@@ -592,12 +612,14 @@
     "upgradeType": "powerCrystal",
     "qualityData": {
       "name": "Crystal, Kasha",
-      "description": "",
+      "description": "+2 to Willpower, and add 1 boost die to all attack rolls.",
       "isRated": true,
       "rating": 2
     },
     "effectData": {
-      "statMods": {},
+      "statMods": {
+        "system.characteristics.willpower.value": 2
+      },
       "addedQualities": [],
       "tags": ["power-crystal"],
       "rollHooks": []
@@ -607,12 +629,14 @@
     "upgradeType": "powerCrystal",
     "qualityData": {
       "name": "Crystal, Opila",
-      "description": "",
+      "description": "Add +3 to damage on hit, and add Vicious 1 (add 10 to enemy critical hit rolls).",
       "isRated": true,
       "rating": 2
     },
     "effectData": {
-      "statMods": {},
+      "statMods": {
+        "baseDamage": 3
+      },
       "addedQualities": [],
       "tags": ["power-crystal"],
       "rollHooks": []
@@ -622,12 +646,14 @@
     "upgradeType": "powerCrystal",
     "qualityData": {
       "name": "Crystal, Eralam",
-      "description": "",
+      "description": "Add +2 base damage, and add 1 boost die to all attack rolls.",
       "isRated": true,
       "rating": 2
     },
     "effectData": {
-      "statMods": {},
+      "statMods": {
+        "baseDamage": 2
+      },
       "addedQualities": [],
       "tags": ["power-crystal"],
       "rollHooks": []
@@ -637,12 +663,15 @@
     "upgradeType": "powerCrystal",
     "qualityData": {
       "name": "Crystal, Stygium",
-      "description": "",
+      "description": "Add 1 boost die to all attack rolls, +2 to Stealth, +1 to Agility.",
       "isRated": true,
       "rating": 2
     },
     "effectData": {
-      "statMods": {},
+      "statMods": {
+        "system.characteristics.stealth.value": 2,
+        "system.characteristics.agility.value": 1
+      },
       "addedQualities": [],
       "tags": ["power-crystal"],
       "rollHooks": []

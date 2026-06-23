@@ -1,6 +1,8 @@
 console.log("Hello from the Genesys Lightsabers module! [build 1.0.3]");
 
 const MODULE_ID = "genesys-lightsabers";
+const WIELDER_MOD_EFFECT_FLAG = "wielderModEffect";
+const WIELDER_MOD_EFFECT_SOURCE_FLAG = "wielderModSource";
 
 const upgradeSlots = ["colorCrystal", "powerCrystal", "emitter", "lens", "energyCell"];
 
@@ -146,6 +148,162 @@ function collectStatMods(upgrades) {
   }
 
   return totals;
+}
+
+function collectWielderMods(upgrades) {
+  const totals = {};
+
+  function walk(obj, prefix = "") {
+    if (!obj || typeof obj !== "object") return;
+
+    for (const [key, value] of Object.entries(obj)) {
+      const path = prefix ? `${prefix}.${key}` : key;
+
+      if (typeof value === "number") {
+        totals[path] = toFiniteNumber(totals[path], 0) + value;
+      } else {
+        walk(value, path);
+      }
+    }
+  }
+
+  for (const slotData of Object.values(upgrades || {})) {
+    const mods = slotData?.effectData?.wielderMods;
+    walk(mods);
+  }
+
+  return totals;
+}
+
+function isWeaponWielded(weapon) {
+  if (!weapon || weapon.type !== "weapon") return false;
+
+  if (foundry.utils.hasProperty(weapon, "system.equipped")) {
+    return Boolean(weapon.system?.equipped);
+  }
+
+  if (foundry.utils.hasProperty(weapon, "system.carried")) {
+    return Boolean(weapon.system?.carried);
+  }
+
+  return true;
+}
+
+function buildWielderEffectChanges(wielderMods) {
+  return Object.entries(wielderMods)
+    .sort(([leftPath], [rightPath]) => leftPath.localeCompare(rightPath))
+    .filter(([, amount]) => toFiniteNumber(amount, 0) !== 0)
+    .map(([path, amount]) => ({
+      key: path,
+      mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+      value: String(toFiniteNumber(amount, 0)),
+      priority: 20
+    }));
+}
+
+function getWielderEffectPayload(weapon, changes) {
+  return {
+    name: `${weapon.name}`,
+    icon: weapon.img,
+    origin: weapon.uuid,
+    disabled: false,
+    transfer: false,
+    changes,
+    flags: {
+      [MODULE_ID]: {
+        [WIELDER_MOD_EFFECT_FLAG]: true,
+        [WIELDER_MOD_EFFECT_SOURCE_FLAG]: weapon.id
+      }
+    }
+  };
+}
+
+function didWielderPayloadChange(effect, nextPayload) {
+  if (!effect) return true;
+
+  if (String(effect.name ?? "") !== String(nextPayload.name ?? "")) return true;
+  if (String(effect.icon ?? "") !== String(nextPayload.icon ?? "")) return true;
+  if (Boolean(effect.disabled) !== Boolean(nextPayload.disabled)) return true;
+
+  const currentChanges = Array.isArray(effect.changes) ? effect.changes : [];
+  const nextChanges = Array.isArray(nextPayload.changes) ? nextPayload.changes : [];
+  return JSON.stringify(currentChanges) !== JSON.stringify(nextChanges);
+}
+
+async function syncActorWielderEffects(actor) {
+    console.log("[GLS] syncing actor effects", actor.name, actor.items.size);
+  if (!actor || actor.documentName !== "Actor" || !actor.isOwner) return;
+
+  const desiredByWeapon = new Map();
+  const weapons = Array.isArray(actor.items)
+    ? actor.items.filter((item) => item?.type === "weapon" && isWeaponWielded(item))
+    : Array.from(actor.items?.values?.() ?? []).filter((item) => item?.type === "weapon" && isWeaponWielded(item));
+
+  for (const weapon of weapons) {
+    const upgrades = weapon.getFlag(MODULE_ID, "upgrades") || {};
+    const wieldMods = collectWielderMods(upgrades);
+    const effectChanges = buildWielderEffectChanges(wieldMods);
+    if (!effectChanges.length) continue;
+
+    desiredByWeapon.set(weapon.id, getWielderEffectPayload(weapon, effectChanges));
+  }
+
+  const existingEffects = actor.effects.filter((effect) => effect.getFlag(MODULE_ID, WIELDER_MOD_EFFECT_FLAG));
+
+  const toDelete = [];
+  const existingByWeapon = new Map();
+  for (const effect of existingEffects) {
+    const sourceWeaponId = String(effect.getFlag(MODULE_ID, WIELDER_MOD_EFFECT_SOURCE_FLAG) ?? "").trim();
+    if (!sourceWeaponId || !desiredByWeapon.has(sourceWeaponId)) {
+      toDelete.push(effect.id);
+      continue;
+    }
+
+    existingByWeapon.set(sourceWeaponId, effect);
+  }
+
+  if (toDelete.length) {
+    await actor.deleteEmbeddedDocuments("ActiveEffect", toDelete);
+  }
+
+  const toCreate = [];
+  const toUpdate = [];
+  for (const [weaponId, payload] of desiredByWeapon.entries()) {
+    const existing = existingByWeapon.get(weaponId);
+    if (!existing) {
+      toCreate.push(payload);
+      continue;
+    }
+
+    if (didWielderPayloadChange(existing, payload)) {
+      toUpdate.push({
+        _id: existing.id,
+        name: payload.name,
+        icon: payload.icon,
+        origin: payload.origin,
+        disabled: payload.disabled,
+        transfer: payload.transfer,
+        changes: payload.changes,
+        flags: payload.flags
+      });
+    }
+  }
+
+  if (toCreate.length) {
+    await actor.createEmbeddedDocuments("ActiveEffect", toCreate);
+  }
+
+  if (toUpdate.length) {
+    await actor.updateEmbeddedDocuments("ActiveEffect", toUpdate);
+  }
+}
+
+function shouldSyncWielderEffects(changed) {
+  return foundry.utils.hasProperty(changed, `flags.${MODULE_ID}.upgrades`)
+    || foundry.utils.hasProperty(changed, "system.equipped")
+    || foundry.utils.hasProperty(changed, "system.carried")
+    || foundry.utils.hasProperty(changed, "img")
+    || foundry.utils.hasProperty(changed, "name");
 }
 
 function getBaseWeaponStats(weapon) {
@@ -454,3 +612,70 @@ function attachModuleApi() {
 }
 
 Hooks.once("ready", attachModuleApi);
+
+Hooks.once("ready", async () => {
+  for (const actor of game.actors ?? []) {
+    for (const weapon of actor.items.filter(i => i.type === "weapon")) {
+      await syncActorWeaponEffect(actor, weapon);
+    }
+  }
+});
+
+Hooks.on("createItem", async (item) => {
+  if (item?.type !== "weapon") return;
+
+  const actor = item.parent;
+  if (!actor || actor.documentName !== "Actor") return;
+  await syncActorWielderEffects(actor);
+});
+
+Hooks.on("deleteItem", async (item) => {
+  if (item?.type !== "weapon") return;
+
+  const actor = item.parent;
+  if (!actor || actor.documentName !== "Actor") return;
+  await syncActorWielderEffects(actor);
+});
+
+async function syncActorWeaponEffect(actor, weapon) {
+  if (!actor || !weapon) return;
+
+  const upgrades = weapon.getFlag(MODULE_ID, "upgrades") || {};
+  const wieldMods = collectWielderMods(upgrades);
+  const effectChanges = buildWielderEffectChanges(wieldMods);
+
+  const existingEffects = actor.effects.filter(e =>
+    e.getFlag(MODULE_ID, WIELDER_MOD_EFFECT_FLAG) &&
+    e.getFlag(MODULE_ID, WIELDER_MOD_EFFECT_SOURCE_FLAG) === weapon.id
+  );
+
+  const payload = getWielderEffectPayload(weapon, effectChanges);
+
+  const existing = existingEffects[0];
+
+  if (!effectChanges.length) {
+    if (existing) await existing.delete();
+    return;
+  }
+
+  if (!existing) {
+    await actor.createEmbeddedDocuments("ActiveEffect", [payload]);
+    return;
+  }
+
+  if (didWielderPayloadChange(existing, payload)) {
+    await actor.updateEmbeddedDocuments("ActiveEffect", [{
+      _id: existing.id,
+      ...payload
+    }]);
+  }
+}
+
+Hooks.on("updateItem", async (item, changed) => {
+  if (item.type !== "weapon") return;
+
+  const actor = item.parent;
+  if (!actor || actor.documentName !== "Actor") return;
+
+  await syncActorWeaponEffect(actor, item);
+});
