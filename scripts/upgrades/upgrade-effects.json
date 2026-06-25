@@ -4,19 +4,10 @@
     "qualityData": {
       "name": "Discharge Energy Cell",
       "description": "Adds Vicious 1 (add 10 to critical hit rolls).",
-      "isRated": false,
-      "rating": 0
+      "isRated": false
     },
     "effectData": {
       "statMods": {},
-      "addedQualities": [
-        {
-            "name": "Vicious",
-            "description": "Add 10 to any critical hit rolls a target makes.",
-            "isRated": true,
-            "rating": 1
-        }
-      ],
       "tags": ["energy-cell"],
       "rollHooks": []
     }
@@ -26,14 +17,12 @@
     "qualityData": {
       "name": "Diatium Energy Cell",
       "description": "Adds +1 base damage",
-      "isRated": false,
-      "rating": 0
+      "isRated": false
     },
     "effectData": {
       "statMods": {
         "baseDamage": 1
       },
-      "addedQualities": [],
       "tags": ["energy-cell"],
       "rollHooks": []
     }
@@ -43,19 +32,10 @@
     "qualityData": {
       "name": "Ion Energy Cell",
       "description": "Against Droid targets, add +1 damage. Also apply Vicious 1 (add 10 to critical hit rolls).",
-      "isRated": false,
-      "rating": 0
+      "isRated": false
     },
     "effectData": {
       "statMods": {},
-      "addedQualities": [
-        {
-            "name": "Vicious",
-            "description": "Add 10 to any critical hit rolls a target makes.",
-            "isRated": true,
-            "rating": 1
-        }
-      ],
       "tags": ["energy-cell"],
       "rollHooks": []
     }
@@ -65,14 +45,12 @@
     "qualityData": {
       "name": "Telgorn Jolt Cell",
       "description": "Adds +1 base damage",
-      "isRated": false,
-      "rating": 0
+      "isRated": false
     },
     "effectData": {
       "statMods": {
         "baseDamage": 1
       },
-      "addedQualities": [],
       "tags": ["energy-cell"],
       "rollHooks": ["jolt-cell"]
     }
@@ -82,14 +60,12 @@
     "qualityData": {
       "name": "Deflection Emitter",
       "description": "Deflection: Increase Ranged Defense by 1",
-      "isRated": false,
-      "rating": 0
+      "isRated": false
     },
     "effectData": {
       "statMods": {
         "rangedDefence": 1
       },
-      "addedQualities": [],
       "tags": ["emitter"],
       "rollHooks": []
     }
@@ -99,12 +75,10 @@
     "qualityData": {
       "name": "Disrupting Emitter",
       "description": "You cannot benefit from the Guarded Stance manoeuvre while wielding this weapon. Deals 1 strain to target on hit.",
-      "isRated": true,
-      "rating": 1
+      "isRated": false
     },
     "effectData": {
       "statMods": {},
-      "addedQualities": [],
       "tags": ["emitter"],
       "rollHooks": []
     }
@@ -114,12 +88,10 @@
     "qualityData": {
       "name": "Phobium Emitter",
       "description": "A much stronger and volatile version of the Disrupting Emitter. Deals strain equal to weapon damage to target on hit. You cannot benefit from the Guarded Stance manoeuvre while wielding this weapon. Attacks against you gain 2 Boost Die.",
-      "isRated": false,
-      "rating": 0
+      "isRated": false
     },
     "effectData": {
       "statMods": {},
-      "addedQualities": [],
       "tags": ["emitter"],
       "rollHooks": []
     }
@@ -129,8 +101,7 @@
     "qualityData": {
       "name": "Fencing Emitter",
       "description": "Deal 1 extra damage on hit, and gain 1 Physical Defence.",
-      "isRated": false,
-      "rating": 0
+      "isRated": false
     },
     "effectData": {
       "statMods": {
@@ -139,7 +110,6 @@
       "wielderMods": {
         "system.defense.melee": 1
       },
-      "addedQualities": [],
       "tags": ["emitter"],
       "rollHooks": []
     }
@@ -149,14 +119,12 @@
     "qualityData": {
       "name": "Kunda Lens",
       "description": "Adds 1 boost die and +1 ranged defence",
-      "isRated": false,
-      "rating": 0
+      "isRated": false
     },
     "effectData": {
       "statMods": {
         "rangedDefence": 1
       },
-      "addedQualities": [],
       "tags": ["lens"],
       "rollHooks": []
     }
@@ -166,14 +134,12 @@
     "qualityData": {
       "name": "Ossus Dueling Lens",
       "description": "Adds 1 boost die and +3 ranged defence",
-      "isRated": false,
-      "rating": 0
+      "isRated": false
     },
     "effectData": {
       "statMods": {
         "rangedDefence": 3
       },
-      "addedQualities": [],
       "tags": ["lens"],
       "rollHooks": []
     }
@@ -183,14 +149,12 @@
     "qualityData": {
       "name": "Dragite Lens",
       "description": "Deal +2 damage on hit.",
-      "isRated": false,
-      "rating": 0
+      "isRated": false
     },
     "effectData": {
       "statMods": {
         "baseDamage": 2
       },
-      "addedQualities": [],
       "tags": ["lens"],
       "rollHooks": []
     }
@@ -200,14 +164,12 @@
     "qualityData": {
       "name": "Adegan Lens",
       "description": "Add 5 base damage on hit.",
-      "isRated": false,
-      "rating": 0
+      "isRated": false
     },
     "effectData": {
       "statMods": {
         "baseDamage": 5
       },
-      "addedQualities": [],
       "tags": ["lens"],
       "rollHooks": []
     }
@@ -217,12 +179,10 @@
     "qualityData": {
       "name": "Pontite Lens",
       "description": "Gains 1 boost die on attack rolls.",
-      "isRated": false,
-      "rating": 0
+      "isRated": false
     },
     "effectData": {
       "statMods": {},
-      "addedQualities": [],
       "tags": ["lens"],
       "rollHooks": []
     }
@@ -232,14 +192,12 @@
     "qualityData": {
       "name": "Byrothsis Lens",
       "description": "Gains 1 boost die on attack rolls. Deals +1 damage on hit. Cannot benefit from the Guarded Stance manoeuvre while wielding this weapon.",
-      "isRated": false,
-      "rating": 0
+      "isRated": false
     },
     "effectData": {
       "statMods": {
         "baseDamage": 1
       },
-      "addedQualities": [],
       "tags": ["lens"],
       "rollHooks": []
     }
@@ -249,14 +207,12 @@
     "qualityData": {
       "name": "Beam Gem Lens",
       "description": "Deals +1 damage on hit. Adds Vicious 1 (add 10 to enemy critical hit rolls).",
-      "isRated": false,
-      "rating": 0
+      "isRated": false
     },
     "effectData": {
       "statMods": {
         "baseDamage": 1
       },
-      "addedQualities": [],
       "tags": ["lens"],
       "rollHooks": []
     }
@@ -266,14 +222,12 @@
     "qualityData": {
       "name": "Vibration Lens",
       "description": "add +6 base damage. Add 1 setback die to all attack rolls. Cannot benefit from the Guarded Stance manoeuvre while wielding this weapon.",
-      "isRated": false,
-      "rating": 0
+      "isRated": false
     },
     "effectData": {
       "statMods": {
         "baseDamage": 6
       },
-      "addedQualities": [],
       "tags": ["lens"],
       "rollHooks": []
     }
@@ -284,12 +238,10 @@
     "qualityData": {
       "name": "Blue Crystal",
       "description": "",
-      "isRated": false,
-      "rating": 0
+      "isRated": false
     },
     "effectData": {
       "statMods": {},
-      "addedQualities": [],
       "tags": ["color-crystal"],
       "rollHooks": []
     }
@@ -300,12 +252,10 @@
     "qualityData": {
       "name": "Green Crystal",
       "description": "",
-      "isRated": false,
-      "rating": 0
+      "isRated": false
     },
     "effectData": {
       "statMods": {},
-      "addedQualities": [],
       "tags": ["color-crystal"],
       "rollHooks": []
     }
@@ -316,12 +266,10 @@
     "qualityData": {
       "name": "Yellow Crystal",
       "description": "",
-      "isRated": false,
-      "rating": 0
+      "isRated": false
     },
     "effectData": {
       "statMods": {},
-      "addedQualities": [],
       "tags": ["color-crystal"],
       "rollHooks": []
     }
@@ -332,12 +280,10 @@
     "qualityData": {
       "name": "Red Crystal",
       "description": "",
-      "isRated": false,
-      "rating": 0
+      "isRated": false
     },
     "effectData": {
       "statMods": {},
-      "addedQualities": [],
       "tags": ["color-crystal"],
       "rollHooks": []
     }
@@ -348,12 +294,10 @@
     "qualityData": {
       "name": "Violet Crystal",
       "description": "",
-      "isRated": false,
-      "rating": 0
+      "isRated": false
     },
     "effectData": {
       "statMods": {},
-      "addedQualities": [],
       "tags": ["color-crystal"],
       "rollHooks": []
     }
@@ -364,12 +308,10 @@
     "qualityData": {
       "name": "Cyan Crystal",
       "description": "",
-      "isRated": false,
-      "rating": 0
+      "isRated": false
     },
     "effectData": {
       "statMods": {},
-      "addedQualities": [],
       "tags": ["color-crystal"],
       "rollHooks": []
     }
@@ -380,12 +322,10 @@
     "qualityData": {
       "name": "Silver Crystal",
       "description": "",
-      "isRated": false,
-      "rating": 0
+      "isRated": false
     },
     "effectData": {
       "statMods": {},
-      "addedQualities": [],
       "tags": ["color-crystal"],
       "rollHooks": []
     }
@@ -396,12 +336,10 @@
     "qualityData": {
       "name": "Orange Crystal",
       "description": "",
-      "isRated": false,
-      "rating": 0
+      "isRated": false
     },
     "effectData": {
       "statMods": {},
-      "addedQualities": [],
       "tags": ["color-crystal"],
       "rollHooks": []
     }
@@ -412,12 +350,10 @@
     "qualityData": {
       "name": "Viridian Crystal",
       "description": "",
-      "isRated": false,
-      "rating": 0
+      "isRated": false
     },
     "effectData": {
       "statMods": {},
-      "addedQualities": [],
       "tags": ["color-crystal"],
       "rollHooks": []
     }
@@ -427,14 +363,12 @@
     "qualityData": {
       "name": "Crystal, Adegan",
       "description": "Add +2 base damage.",
-      "isRated": true,
-      "rating": 2
+      "isRated": false
     },
     "effectData": {
       "statMods": {
         "baseDamage": 2
       },
-      "addedQualities": [],
       "tags": ["power-crystal"],
       "rollHooks": []
     }
@@ -444,14 +378,12 @@
     "qualityData": {
       "name": "Crystal, Rubat",
       "description": "Add +1 base damage, and add 1 boost die to all attack rolls.",
-      "isRated": true,
-      "rating": 2
+      "isRated": false
     },
     "effectData": {
       "statMods": {
         "baseDamage": 1
       },
-      "addedQualities": [],
       "tags": ["power-crystal"],
       "rollHooks": []
     }
@@ -461,8 +393,7 @@
     "qualityData": {
       "name": "Crystal, Ruusan",
       "description": "Add + 1 to Willpower and Presence.",
-      "isRated": true,
-      "rating": 2
+      "isRated": false
     },
     "effectData": {
       "statMods": {},
@@ -470,7 +401,6 @@
         "system.characteristics.willpower": 1,
         "system.characteristics.presence": 1
       },
-      "addedQualities": [],
       "tags": ["power-crystal"],
       "rollHooks": []
     }
@@ -480,14 +410,12 @@
     "qualityData": {
       "name": "Crystal, Nextor",
       "description": "Reduces the amount of Advantages needed to crit by 1.",
-      "isRated": true,
-      "rating": 2
+      "isRated": false
     },
     "effectData": {
       "statMods": {
         "critical": -1
       },
-      "addedQualities": [],
       "tags": ["power-crystal"],
       "rollHooks": []
     }
@@ -497,15 +425,13 @@
     "qualityData": {
       "name": "Crystal, Dragite",
       "description": "Add +1 base damage, and reduces the amount of Advantages needed to crit by 1.",
-      "isRated": true,
-      "rating": 2
+      "isRated": false
     },
     "effectData": {
       "statMods": {
         "baseDamage": 1,
         "critical": -1
       },
-      "addedQualities": [],
       "tags": ["power-crystal"],
       "rollHooks": []
     }
@@ -515,12 +441,10 @@
     "qualityData": {
       "name": "Crystal, Firkrann",
       "description": "Against Droids, add 5 damage on hit.",
-      "isRated": true,
-      "rating": 2
+      "isRated": false
     },
     "effectData": {
       "statMods": {},
-      "addedQualities": [],
       "tags": ["power-crystal"],
       "rollHooks": []
     }
@@ -530,14 +454,12 @@
     "qualityData": {
       "name": "Crystal, Phond",
       "description": "Add +3 to damage on hit.",
-      "isRated": true,
-      "rating": 2
+      "isRated": false
     },
     "effectData": {
       "statMods": {
         "baseDamage": 3
       },
-      "addedQualities": [],
       "tags": ["power-crystal"],
       "rollHooks": []
     }
@@ -547,12 +469,10 @@
     "qualityData": {
       "name": "Crystal, Bondar",
       "description": "Deals 1 strain to target on hit.",
-      "isRated": true,
-      "rating": 2
+      "isRated": false
     },
     "effectData": {
       "statMods": {},
-      "addedQualities": [],
       "tags": ["power-crystal"],
       "rollHooks": []
     }
@@ -562,8 +482,7 @@
     "qualityData": {
       "name": "Crystal, Velmorite",
       "description": "+1 Agility, and reduces the amount of Advantages needed to crit by 1.",
-      "isRated": true,
-      "rating": 2
+      "isRated": false
     },
     "effectData": {
       "statMods": {
@@ -572,7 +491,6 @@
       "wielderMods": {
         "system.characteristics.agility": 1
       },
-      "addedQualities": [],
       "tags": ["power-crystal"],
       "rollHooks": []
     }
@@ -582,14 +500,12 @@
     "qualityData": {
       "name": "Crystal, Sigil",
       "description": "Add +3 to damage on hit, and add 1 boost die to attack rolls.",
-      "isRated": true,
-      "rating": 2
+      "isRated": false
     },
     "effectData": {
       "statMods": {
         "baseDamage": 3
       },
-      "addedQualities": [],
       "tags": ["power-crystal"],
       "rollHooks": []
     }
@@ -599,15 +515,13 @@
     "qualityData": {
       "name": "Crystal, Jenruax",
       "description": "Add +2 damage on hit, add +5 ranged defence while equipped.",
-      "isRated": true,
-      "rating": 2
+      "isRated": false
     },
     "effectData": {
       "statMods": {
         "baseDamage": 2,
         "rangedDefence": 5
       },
-      "addedQualities": [],
       "tags": ["power-crystal"],
       "rollHooks": []
     }
@@ -617,15 +531,13 @@
     "qualityData": {
       "name": "Crystal, Kasha",
       "description": "+2 to Willpower, and add 1 boost die to all attack rolls.",
-      "isRated": true,
-      "rating": 2
+      "isRated": false
     },
     "effectData": {
       "statMods": {},
       "wielderMods": {
         "system.characteristics.willpower": 2
       },
-      "addedQualities": [],
       "tags": ["power-crystal"],
       "rollHooks": []
     }
@@ -635,14 +547,12 @@
     "qualityData": {
       "name": "Crystal, Opila",
       "description": "Add +3 to damage on hit, and add Vicious 1 (add 10 to enemy critical hit rolls).",
-      "isRated": true,
-      "rating": 2
+      "isRated": false
     },
     "effectData": {
       "statMods": {
         "baseDamage": 3
       },
-      "addedQualities": [],
       "tags": ["power-crystal"],
       "rollHooks": []
     }
@@ -652,14 +562,12 @@
     "qualityData": {
       "name": "Crystal, Eralam",
       "description": "Add +2 base damage, and add 1 boost die to all attack rolls.",
-      "isRated": true,
-      "rating": 2
+      "isRated": false
     },
     "effectData": {
       "statMods": {
         "baseDamage": 2
       },
-      "addedQualities": [],
       "tags": ["power-crystal"],
       "rollHooks": []
     }
@@ -668,16 +576,17 @@
     "upgradeType": "powerCrystal",
     "qualityData": {
       "name": "Crystal, Stygium",
-      "description": "Add 1 boost die to all attack rolls, +2 to Stealth, +1 to Agility.",
-      "isRated": true,
-      "rating": 2
+      "description": "Add 1 boost die to all attack rolls, +1 to Stealth, +1 to Agility.",
+      "isRated": false
     },
     "effectData": {
       "statMods": {},
       "wielderMods": {
         "system.characteristics.agility": 1
       },
-      "addedQualities": [],
+      "skillMods": {
+        "Stealth": 1
+      },
       "tags": ["power-crystal"],
       "rollHooks": []
     }
@@ -686,13 +595,11 @@
     "upgradeType": "powerCrystal",
     "qualityData": {
       "name": "Crystal, Damind",
-      "description": "",
-      "isRated": true,
-      "rating": 2
+      "description": "Add 2 boost dice to all attack rolls.",
+      "isRated": false
     },
     "effectData": {
       "statMods": {},
-      "addedQualities": [],
       "tags": ["power-crystal"],
       "rollHooks": []
     }
@@ -701,13 +608,13 @@
     "upgradeType": "powerCrystal",
     "qualityData": {
       "name": "Crystal, Sapith",
-      "description": "",
-      "isRated": true,
-      "rating": 2
+      "description": "Add 1 boost die to all attack rolls, +3 base damage.",
+      "isRated": false
     },
     "effectData": {
-      "statMods": {},
-      "addedQualities": [],
+      "statMods": {
+        "baseDamage": 3
+      },
       "tags": ["power-crystal"],
       "rollHooks": []
     }
@@ -716,13 +623,16 @@
     "upgradeType": "powerCrystal",
     "qualityData": {
       "name": "Crystal, Pontite",
-      "description": "",
-      "isRated": true,
-      "rating": 2
+      "description": "+2 Presence, +5 base damage.",
+      "isRated": false
     },
     "effectData": {
-      "statMods": {},
-      "addedQualities": [],
+      "statMods": {
+        "baseDamage": 5
+      },
+      "wielderMods": {
+        "system.characteristics.presence": 2
+      },
       "tags": ["power-crystal"],
       "rollHooks": []
     }
@@ -731,13 +641,13 @@
     "upgradeType": "powerCrystal",
     "qualityData": {
       "name": "Crystal, Upari",
-      "description": "",
-      "isRated": true,
-      "rating": 2
+      "description": "Add 2 boost dice to all attack rolls, and add +3 base damage.",
+      "isRated": false
     },
     "effectData": {
-      "statMods": {},
-      "addedQualities": [],
+      "statMods": {
+        "baseDamage": 3
+      },
       "tags": ["power-crystal"],
       "rollHooks": []
     }
@@ -746,13 +656,13 @@
     "upgradeType": "powerCrystal",
     "qualityData": {
       "name": "Ultima-pearl",
-      "description": "",
-      "isRated": true,
-      "rating": 3
+      "description": "Add 2 boost dice to attack rolls, +2 base damage, add Vicious 1 (add 10 to enemy critical hit rolls).",
+      "isRated": false
     },
     "effectData": {
-      "statMods": {},
-      "addedQualities": [],
+      "statMods": {
+        "baseDamage": 2
+      },
       "tags": ["power-crystal"],
       "rollHooks": []
     }
@@ -761,13 +671,13 @@
     "upgradeType": "powerCrystal",
     "qualityData": {
       "name": "Crystal, Solari",
-      "description": "",
-      "isRated": true,
-      "rating": 2
+      "description": "Add 2 boost dice to all attack rolls, and add +3 base damage, deal +4 base damage to dark side users. Weapon only usable by Light Side users.",
+      "isRated": false
     },
     "effectData": {
-      "statMods": {},
-      "addedQualities": [],
+      "statMods": {
+        "baseDamage": 3
+      },
       "tags": ["power-crystal"],
       "rollHooks": []
     }
@@ -776,13 +686,14 @@
     "upgradeType": "powerCrystal",
     "qualityData": {
       "name": "Lorrdian Gemstone",
-      "description": "",
-      "isRated": true,
-      "rating": 2
+      "description": "+2 Physical Defence, +3 Ranged Defence.",
+      "isRated": false
     },
     "effectData": {
-      "statMods": {},
-      "addedQualities": [],
+      "statMods": {
+        "physicalDefence": 2,
+        "rangedDefence": 3
+      },
       "tags": ["power-crystal"],
       "rollHooks": []
     }
@@ -791,13 +702,13 @@
     "upgradeType": "powerCrystal",
     "qualityData": {
       "name": "Barab Ore Ingot",
-      "description": "",
-      "isRated": true,
-      "rating": 3
+      "description": "+3 base damage, and cause Burn (3) on hit.",
+      "isRated": false
     },
     "effectData": {
-      "statMods": {},
-      "addedQualities": [],
+      "statMods": {
+        "baseDamage": 3
+      },
       "tags": ["power-crystal"],
       "rollHooks": []
     }
@@ -806,28 +717,30 @@
     "upgradeType": "powerCrystal",
     "qualityData": {
       "name": "Ankarres Sapphire",
-      "description": "",
-      "isRated": true,
-      "rating": 4
+      "description": "+1 Agility, +2 Brawn, heal self for 1 wound per round, -1 Advantage needed to crit.",
+      "isRated": false
     },
     "effectData": {
-      "statMods": {},
-      "addedQualities": [],
+      "statMods": {
+        "critical": -1
+      },
+      "wielderMods": {
+        "system.characteristics.agility": 1,
+        "system.characteristics.brawn": 2
+      },
       "tags": ["power-crystal"],
-      "rollHooks": ["heal-on-hit"]
+      "rollHooks": [""]
     }
   },
   "Crystal, Kaiburr": {
     "upgradeType": "powerCrystal",
     "qualityData": {
       "name": "Crystal, Kaiburr",
-      "description": "",
-      "isRated": true,
-      "rating": 2
+      "description": "+3 Brawn, +3 Willpower, Heal 2 wounds per round.",
+      "isRated": false
     },
     "effectData": {
       "statMods": {},
-      "addedQualities": [],
       "tags": ["power-crystal"],
       "rollHooks": []
     }
@@ -836,13 +749,13 @@
     "upgradeType": "powerCrystal",
     "qualityData": {
       "name": "Crystal, Qixoni",
-      "description": "",
-      "isRated": true,
-      "rating": 2
+      "description": "+5 base damage, recover 1 strain per round. Weapon usable only by dark side users.",
+      "isRated": false
     },
     "effectData": {
-      "statMods": {},
-      "addedQualities": [],
+      "statMods": {
+        "baseDamage": 5
+      },
       "tags": ["power-crystal"],
       "rollHooks": []
     }
@@ -851,13 +764,13 @@
     "upgradeType": "powerCrystal",
     "qualityData": {
       "name": "Crystal, Hurrikaine",
-      "description": "",
-      "isRated": true,
-      "rating": 2
+      "description": "+4 base damage, Breach (+1).",
+      "isRated": false
     },
     "effectData": {
-      "statMods": {},
-      "addedQualities": [],
+      "statMods": {
+        "baseDamage": 4
+      },
       "tags": ["power-crystal"],
       "rollHooks": []
     }

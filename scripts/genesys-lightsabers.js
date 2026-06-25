@@ -83,46 +83,9 @@ function parseColorFromText(text) {
   return null;
 }
 
-function normalizeAddedQuality(entry) {
-  if (typeof entry === "string") {
-    return {
-      name: entry,
-      description: "",
-      isRated: false,
-      rating: 0
-    };
-  }
-
-  if (entry && typeof entry === "object") {
-    return {
-      name: String(entry.name ?? "").trim(),
-      description: String(entry.description ?? ""),
-      isRated: Boolean(entry.isRated),
-      rating: Number(entry.rating ?? 0)
-    };
-  }
-
-  return null;
-}
-
-function getAddedQualitiesFromSlot(slotData) {
-  const entries = Array.isArray(slotData?.effectData?.addedQualities)
-    ? slotData.effectData.addedQualities
-    : [];
-
-  return entries
-    .map((entry) => normalizeAddedQuality(entry))
-    .filter((quality) => quality?.name);
-}
-
 function collectManagedNamesFromSlot(slotData, targetSet) {
   const primaryName = String(slotData?.qualityData?.name ?? "").toLowerCase().trim();
   if (primaryName) targetSet.add(primaryName);
-
-  for (const addedQuality of getAddedQualitiesFromSlot(slotData)) {
-    const addedName = String(addedQuality?.name ?? "").toLowerCase().trim();
-    if (addedName) targetSet.add(addedName);
-  }
 }
 
 function toFiniteNumber(value, fallback = 0) {
@@ -237,6 +200,26 @@ function collectWielderMods(upgrades) {
   return totals;
 }
 
+// Skill ranks live on separate owned Item documents (type "skill"), not on actor.system, so
+// they can't be targeted by an ActiveEffect change key the way characteristics can. Bonuses
+// are tracked here by skill name and applied via direct mutation in syncActorSkillMods.
+function collectSkillMods(upgrades) {
+  const totals = {};
+
+  for (const slotData of Object.values(upgrades || {})) {
+    const mods = slotData?.effectData?.skillMods;
+    if (!mods || typeof mods !== "object") continue;
+
+    for (const [skillName, amount] of Object.entries(mods)) {
+      const name = String(skillName ?? "").trim();
+      if (!name) continue;
+      totals[name] = toFiniteNumber(totals[name], 0) + toFiniteNumber(amount, 0);
+    }
+  }
+
+  return totals;
+}
+
 function buildWielderEffectChanges(wielderMods) {
   return Object.entries(wielderMods)
     .sort(([leftPath], [rightPath]) => leftPath.localeCompare(rightPath))
@@ -313,6 +296,7 @@ function queueSync(actor) {
     for (const queuedActor of actors) {
       try {
         await syncActorWielderEffects(queuedActor);
+        await syncActorSkillMods(queuedActor);
       } catch (error) {
         console.error(`[${MODULE_ID}] Error syncing effects for ${queuedActor.name}:`, error);
       }
@@ -564,6 +548,85 @@ async function syncActorWielderEffects(actor) {
   }
 }
 
+const SKILL_MOD_AMOUNT_FLAG = "skillModAmount";
+const warnedMissingSkills = new Set();
+
+// Applies/removes skillMods bonuses by directly mutating the matching owned skill Item's rank.
+// The previously-applied amount is tracked in a flag and subtracted from the skill's current
+// rank to infer its true base each run, so a GM manually changing the rank in between syncs
+// (e.g. spending XP) is respected rather than overwritten.
+async function syncActorSkillMods(actor) {
+  if (!actor || actor.documentName !== "Actor") return;
+  if (!actor.isOwner && !game.user.isGM) return;
+
+  try {
+    const desiredBySkillName = new Map();
+    const weapons = actor.items.filter((item) =>
+      item?.type === "weapon" && isWeaponWielded(item)
+    );
+
+    for (const weapon of weapons) {
+      const upgrades = weapon.getFlag(MODULE_ID, "upgrades") || {};
+      const skillMods = collectSkillMods(upgrades);
+
+      for (const [skillName, amount] of Object.entries(skillMods)) {
+        if (toFiniteNumber(amount, 0) === 0) continue;
+        const key = skillName.toLowerCase();
+        const entry = desiredBySkillName.get(key) ?? { displayName: skillName, amount: 0 };
+        entry.amount += toFiniteNumber(amount, 0);
+        desiredBySkillName.set(key, entry);
+      }
+    }
+
+    const skillItems = actor.items.filter((item) => item?.type === "skill");
+    const skillByName = new Map(
+      skillItems.map((item) => [String(item.name ?? "").toLowerCase().trim(), item])
+    );
+
+    const touchedNames = new Set([
+      ...desiredBySkillName.keys(),
+      ...skillItems
+        .filter((item) => toFiniteNumber(item.getFlag(MODULE_ID, SKILL_MOD_AMOUNT_FLAG), 0) !== 0)
+        .map((item) => String(item.name ?? "").toLowerCase().trim())
+    ]);
+
+    for (const key of touchedNames) {
+      const skill = skillByName.get(key);
+      const desired = desiredBySkillName.get(key);
+
+      if (!skill) {
+        if (desired) {
+          const warnKey = `${actor.id}:${key}`;
+          if (!warnedMissingSkills.has(warnKey)) {
+            warnedMissingSkills.add(warnKey);
+            ui.notifications.warn(`${actor.name} has no "${desired.displayName}" skill — cannot apply upgrade bonus.`);
+          }
+        }
+        continue;
+      }
+
+      const previousAmount = toFiniteNumber(skill.getFlag(MODULE_ID, SKILL_MOD_AMOUNT_FLAG), 0);
+      const currentRank = toFiniteNumber(skill.system?.rank, 0);
+      const baseRank = currentRank - previousAmount;
+      const desiredAmount = toFiniteNumber(desired?.amount, 0);
+      const desiredRank = baseRank + desiredAmount;
+
+      if (desiredAmount === previousAmount && currentRank === desiredRank) continue;
+
+      if (desiredAmount === 0) {
+        await skill.unsetFlag(MODULE_ID, SKILL_MOD_AMOUNT_FLAG);
+        await skill.update({ "system.rank": baseRank });
+        continue;
+      }
+
+      await skill.setFlag(MODULE_ID, SKILL_MOD_AMOUNT_FLAG, desiredAmount);
+      await skill.update({ "system.rank": desiredRank });
+    }
+  } catch (error) {
+    console.error(`[${MODULE_ID}] Error syncing skill mods for ${actor.name}:`, error);
+  }
+}
+
 // Improved event handlers with debouncing
 Hooks.on("createItem", async (item) => {
   if (item?.type !== "weapon") return;
@@ -605,15 +668,116 @@ Hooks.on("updateActor", async (actor, changed) => {
   }
 });
 
-// Full data-integrity pass on world load: clears stale upgrade slots, recalculates weapon
-// stats/images, and syncs wielder effects for every actor. GM-only so multiple connected
-// clients don't redundantly race to write the same documents, and silent unless it actually
-// fixes something (no notification on a clean load).
+// Pushes scripts/upgrades/upgrade-effects.json onto the matching compendium items' flags,
+// mirroring the manual reflag macro. Skips items that already match (diffed against current
+// flags) so a clean world doesn't rewrite all 50+ items on every load. Temporarily unlocks the
+// pack if needed and restores its original lock state afterward.
+async function reflagCompendiumItems() {
+  const PACK_ID = `${MODULE_ID}.lightsaber-upgrades`;
+  const EFFECTS_PATH = `modules/${MODULE_ID}/scripts/upgrades/upgrade-effects.json`;
+  const result = { updated: [], missing: [], failed: [] };
+
+  const pack = game.packs.get(PACK_ID);
+  if (!pack) {
+    console.warn(`[${MODULE_ID}] Compendium not found: ${PACK_ID}`);
+    return result;
+  }
+
+  let effectsData;
+  try {
+    const response = await fetch(EFFECTS_PATH, { cache: "no-store" });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    effectsData = await response.json();
+  } catch (error) {
+    console.error(`[${MODULE_ID}] Failed to load ${EFFECTS_PATH}`, error);
+    return result;
+  }
+
+  const wasLocked = pack.locked;
+  if (wasLocked) await pack.configure({ locked: false });
+
+  try {
+    const index = await pack.getIndex({ fields: ["name"] });
+    const byName = new Map(index.map((e) => [String(e.name).toLowerCase().trim(), e]));
+
+    for (const [itemName, payload] of Object.entries(effectsData)) {
+      const hit = byName.get(String(itemName).toLowerCase().trim());
+      if (!hit) {
+        result.missing.push(itemName);
+        continue;
+      }
+
+      try {
+        const doc = await pack.getDocument(hit._id);
+
+        const desiredUpgradeType = payload.upgradeType ?? null;
+        const desiredQualityData = foundry.utils.deepClone(payload.qualityData ?? {});
+        const desiredEffectData = foundry.utils.deepClone(payload.effectData ?? {});
+        const hasColor = Object.prototype.hasOwnProperty.call(payload, "color");
+        const desiredColor = hasColor ? payload.color : undefined;
+
+        const currentUpgradeType = doc.getFlag(MODULE_ID, "upgradeType") ?? null;
+        const currentQualityData = doc.getFlag(MODULE_ID, "qualityData") ?? {};
+        const currentEffectData = doc.getFlag(MODULE_ID, "effectData") ?? {};
+        const currentColor = doc.getFlag(MODULE_ID, "color");
+
+        const needsUpdate = (
+          currentUpgradeType !== desiredUpgradeType
+          || JSON.stringify(currentQualityData) !== JSON.stringify(desiredQualityData)
+          || JSON.stringify(currentEffectData) !== JSON.stringify(desiredEffectData)
+          || (hasColor ? currentColor !== desiredColor : currentColor !== undefined)
+        );
+
+        if (!needsUpdate) continue;
+
+        // setFlag()/update() deep-merge nested objects with whatever is already stored (see
+        // replaceUpgradesFlag above) so qualityData/effectData must be cleared before rewriting,
+        // or stale sub-keys from a previous run never actually go away.
+        await doc.unsetFlag(MODULE_ID, "qualityData");
+        await doc.unsetFlag(MODULE_ID, "effectData");
+        await doc.update({ [`flags.${MODULE_ID}.upgradeType`]: desiredUpgradeType });
+        await doc.setFlag(MODULE_ID, "qualityData", desiredQualityData);
+        await doc.setFlag(MODULE_ID, "effectData", desiredEffectData);
+
+        if (hasColor) {
+          await doc.setFlag(MODULE_ID, "color", desiredColor);
+        } else {
+          await doc.unsetFlag(MODULE_ID, "color");
+        }
+
+        result.updated.push(itemName);
+      } catch (error) {
+        console.error(`[${MODULE_ID}] Reflag failed for`, itemName, error);
+        result.failed.push(itemName);
+      }
+    }
+  } finally {
+    if (wasLocked) await pack.configure({ locked: true });
+  }
+
+  return result;
+}
+
+// Full data-integrity pass on world load: reflags compendium items from upgrade-effects.json,
+// clears stale upgrade slots, recalculates weapon stats/images, and syncs wielder/skill effects
+// for every actor. GM-only so multiple connected clients don't redundantly race to write the
+// same documents, and silent unless it actually fixes something (no notification on a clean load).
 Hooks.once("ready", async () => {
   if (!game.user.isGM) return;
 
   let weaponsFixed = 0;
   let errors = 0;
+
+  const reflagResult = await reflagCompendiumItems().catch((error) => {
+    console.error(`[${MODULE_ID}] Compendium reflag failed:`, error);
+    errors++;
+    return { updated: [], missing: [], failed: [] };
+  });
+
+  if (reflagResult.missing.length > 0) {
+    console.log(`[${MODULE_ID}] Reflag: items in upgrade-effects.json with no compendium match:`, reflagResult.missing);
+  }
+  errors += reflagResult.failed.length;
 
   for (const actor of game.actors) {
     for (const weapon of actor.items.filter((i) => i.type === "weapon")) {
@@ -627,15 +791,17 @@ Hooks.once("ready", async () => {
 
     try {
       await syncActorWielderEffects(actor);
+      await syncActorSkillMods(actor);
     } catch (error) {
       console.error(`[${MODULE_ID}] Error syncing wielder effects for ${actor.name}:`, error);
       errors++;
     }
   }
 
-  if (weaponsFixed > 0 || errors > 0) {
-    console.log(`[${MODULE_ID}] Startup refresh: ${weaponsFixed} weapon(s) fixed${errors > 0 ? `, ${errors} error(s)` : ""}`);
-    ui.notifications.info(`Genesys Lightsabers: refreshed ${weaponsFixed} weapon(s) on startup.`);
+  const reflagged = reflagResult.updated.length;
+  if (weaponsFixed > 0 || reflagged > 0 || errors > 0) {
+    console.log(`[${MODULE_ID}] Startup refresh: ${weaponsFixed} weapon(s) fixed, ${reflagged} compendium item(s) reflagged${errors > 0 ? `, ${errors} error(s)` : ""}`);
+    ui.notifications.info(`Genesys Lightsabers: refreshed ${weaponsFixed} weapon(s), reflagged ${reflagged} upgrade(s) on startup.`);
   }
 });
 
