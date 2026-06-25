@@ -134,8 +134,10 @@
     },
     "effectData": {
       "statMods": {
-        "baseDamage": 1,
-        "physicalDefence": 1
+        "baseDamage": 1
+      },
+      "wielderMods": {
+        "system.defense.melee": 1
       },
       "addedQualities": [],
       "tags": ["emitter"],
@@ -465,8 +467,8 @@
     "effectData": {
       "statMods": {},
       "wielderMods": {
-        "system.characteristics.willpower.value": 1,
-        "system.characteristics.presence.value": 1
+        "system.characteristics.willpower": 1,
+        "system.characteristics.presence": 1
       },
       "addedQualities": [],
       "tags": ["power-crystal"],
@@ -565,8 +567,10 @@
     },
     "effectData": {
       "statMods": {
-        "system.characteristics.agility.value": 1,
         "critical": -1
+      },
+      "wielderMods": {
+        "system.characteristics.agility": 1
       },
       "addedQualities": [],
       "tags": ["power-crystal"],
@@ -617,8 +621,9 @@
       "rating": 2
     },
     "effectData": {
-      "statMods": {
-        "system.characteristics.willpower.value": 2
+      "statMods": {},
+      "wielderMods": {
+        "system.characteristics.willpower": 2
       },
       "addedQualities": [],
       "tags": ["power-crystal"],
@@ -668,9 +673,9 @@
       "rating": 2
     },
     "effectData": {
-      "statMods": {
-        "system.characteristics.stealth.value": 2,
-        "system.characteristics.agility.value": 1
+      "statMods": {},
+      "wielderMods": {
+        "system.characteristics.agility": 1
       },
       "addedQualities": [],
       "tags": ["power-crystal"],

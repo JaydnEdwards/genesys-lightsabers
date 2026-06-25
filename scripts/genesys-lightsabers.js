@@ -1,4 +1,4 @@
-console.log("Hello from the Genesys Lightsabers module! [build 1.0.3]");
+console.log("Hello from the Genesys Lightsabers module! [build 1.0.4]");
 
 const MODULE_ID = "genesys-lightsabers";
 const WIELDER_MOD_EFFECT_FLAG = "wielderModEffect";
@@ -7,11 +7,11 @@ const WIELDER_MOD_EFFECT_SOURCE_FLAG = "wielderModSource";
 const upgradeSlots = ["colorCrystal", "powerCrystal", "emitter", "lens", "energyCell"];
 
 const upgradeMatchers = [
-{ slot: "colorCrystal", test: (name) => /crystal/i.test(name) && /(blue|green|yellow|red|violet|cyan|silver|orange|viridian)/i.test(name) },
-{ slot: "powerCrystal", test: (name) => /power crystal/i.test(name) },
-{ slot: "emitter", test: (name) => /emitter/i.test(name) },
-{ slot: "lens", test: (name) => /lens/i.test(name) },
-{ slot: "energyCell", test: (name) => /energy cell/i.test(name) }
+  { slot: "colorCrystal", test: (name) => /crystal/i.test(name) && /(blue|green|yellow|red|violet|cyan|silver|orange|viridian)/i.test(name) },
+  { slot: "powerCrystal", test: (name) => /power crystal/i.test(name) },
+  { slot: "emitter", test: (name) => /emitter/i.test(name) },
+  { slot: "lens", test: (name) => /lens/i.test(name) },
+  { slot: "energyCell", test: (name) => /energy cell/i.test(name) }
 ];
 
 const crystalImages = {
@@ -150,6 +150,68 @@ function collectStatMods(upgrades) {
   return totals;
 }
 
+function getBaseWeaponStats(weapon) {
+  const flagged = weapon.getFlag(MODULE_ID, "baseStats") || {};
+  const currentBaseDamage = weapon.system?.baseDamage;
+  const currentCritical = weapon.system?.critical;
+  const currentRangedDefence = weapon.system?.rangedDefence;
+
+  return {
+    baseDamage: foundry.utils.hasProperty(flagged, "baseDamage") ? flagged.baseDamage : currentBaseDamage,
+    critical: foundry.utils.hasProperty(flagged, "critical") ? flagged.critical : currentCritical,
+    rangedDefence: foundry.utils.hasProperty(flagged, "rangedDefence") ? flagged.rangedDefence : currentRangedDefence
+  };
+}
+
+function applyNumericMod(baseValue, modAmount) {
+  const baseNumeric = asFiniteNumberOrNull(baseValue);
+  if (baseNumeric === null) return baseValue;
+
+  const modNumeric = toFiniteNumber(modAmount, 0);
+  return baseNumeric + modNumeric;
+}
+
+function inferBaseStatValue(currentValue, appliedModTotal) {
+  const currentNumeric = asFiniteNumberOrNull(currentValue);
+  if (currentNumeric === null) return currentValue;
+
+  return currentNumeric - toFiniteNumber(appliedModTotal, 0);
+}
+
+function deriveStatsFromBase(baseStats, upgrades) {
+  const modTotals = collectStatMods(upgrades);
+
+  return {
+    baseDamage: applyNumericMod(baseStats?.baseDamage, modTotals.baseDamage),
+    critical: applyNumericMod(baseStats?.critical, modTotals.critical),
+    rangedDefence: applyNumericMod(baseStats?.rangedDefence, modTotals.rangedDefence)
+  };
+}
+
+function getDerivedWeaponStats(weapon, upgrades) {
+  const baseStats = getBaseWeaponStats(weapon);
+  return deriveStatsFromBase(baseStats, upgrades);
+}
+
+function weaponHasCrystalQuality(weapon) {
+  const qualities = Array.isArray(weapon.system?.qualities) ? weapon.system.qualities : [];
+  return qualities.some((q) => {
+    const qName = String(q?.name ?? q?.label ?? "").toLowerCase();
+    return qName.includes(" crystal");
+  });
+}
+
+function getWeaponVariant(weapon) {
+  const flagged = weapon.getFlag(MODULE_ID, "variant");
+
+  if (flagged) return flagged;
+
+  const name = String(weapon.name ?? "").toLowerCase();
+  if (name.includes("lightsaber, double-bladed")) return "double";
+  if (name.includes("lightsaber, short")) return "short";
+  return "single";
+}
+
 function collectWielderMods(upgrades) {
   const totals = {};
 
@@ -173,20 +235,6 @@ function collectWielderMods(upgrades) {
   }
 
   return totals;
-}
-
-function isWeaponWielded(weapon) {
-  if (!weapon || weapon.type !== "weapon") return false;
-
-  if (foundry.utils.hasProperty(weapon, "system.equipped")) {
-    return Boolean(weapon.system?.equipped);
-  }
-
-  if (foundry.utils.hasProperty(weapon, "system.carried")) {
-    return Boolean(weapon.system?.carried);
-  }
-
-  return true;
 }
 
 function buildWielderEffectChanges(wielderMods) {
@@ -230,144 +278,385 @@ function didWielderPayloadChange(effect, nextPayload) {
   return JSON.stringify(currentChanges) !== JSON.stringify(nextChanges);
 }
 
-async function syncActorWielderEffects(actor) {
-    console.log("[GLS] syncing actor effects", actor.name, actor.items.size);
-  if (!actor || actor.documentName !== "Actor" || !actor.isOwner) return;
-
-  const desiredByWeapon = new Map();
-  const weapons = Array.isArray(actor.items)
-    ? actor.items.filter((item) => item?.type === "weapon" && isWeaponWielded(item))
-    : Array.from(actor.items?.values?.() ?? []).filter((item) => item?.type === "weapon" && isWeaponWielded(item));
-
-  for (const weapon of weapons) {
-    const upgrades = weapon.getFlag(MODULE_ID, "upgrades") || {};
-    const wieldMods = collectWielderMods(upgrades);
-    const effectChanges = buildWielderEffectChanges(wieldMods);
-    if (!effectChanges.length) continue;
-
-    desiredByWeapon.set(weapon.id, getWielderEffectPayload(weapon, effectChanges));
-  }
-
-  const existingEffects = actor.effects.filter((effect) => effect.getFlag(MODULE_ID, WIELDER_MOD_EFFECT_FLAG));
-
-  const toDelete = [];
-  const existingByWeapon = new Map();
-  for (const effect of existingEffects) {
-    const sourceWeaponId = String(effect.getFlag(MODULE_ID, WIELDER_MOD_EFFECT_SOURCE_FLAG) ?? "").trim();
-    if (!sourceWeaponId || !desiredByWeapon.has(sourceWeaponId)) {
-      toDelete.push(effect.id);
-      continue;
-    }
-
-    existingByWeapon.set(sourceWeaponId, effect);
-  }
-
-  if (toDelete.length) {
-    await actor.deleteEmbeddedDocuments("ActiveEffect", toDelete);
-  }
-
-  const toCreate = [];
-  const toUpdate = [];
-  for (const [weaponId, payload] of desiredByWeapon.entries()) {
-    const existing = existingByWeapon.get(weaponId);
-    if (!existing) {
-      toCreate.push(payload);
-      continue;
-    }
-
-    if (didWielderPayloadChange(existing, payload)) {
-      toUpdate.push({
-        _id: existing.id,
-        name: payload.name,
-        icon: payload.icon,
-        origin: payload.origin,
-        disabled: payload.disabled,
-        transfer: payload.transfer,
-        changes: payload.changes,
-        flags: payload.flags
-      });
-    }
-  }
-
-  if (toCreate.length) {
-    await actor.createEmbeddedDocuments("ActiveEffect", toCreate);
-  }
-
-  if (toUpdate.length) {
-    await actor.updateEmbeddedDocuments("ActiveEffect", toUpdate);
-  }
-}
-
 function shouldSyncWielderEffects(changed) {
-  return foundry.utils.hasProperty(changed, `flags.${MODULE_ID}.upgrades`)
+  const moduleFlags = changed?.flags?.[MODULE_ID];
+  // unsetFlag() encodes removal as a "-=upgrades" deletion key rather than "upgrades",
+  // so both forms need to be checked or a fully-cleared upgrade slot never re-syncs.
+  const upgradesTouched = Boolean(
+    moduleFlags && (
+      foundry.utils.hasProperty(moduleFlags, "upgrades")
+      || foundry.utils.hasProperty(moduleFlags, "-=upgrades")
+    )
+  );
+
+  return upgradesTouched
     || foundry.utils.hasProperty(changed, "system.equipped")
     || foundry.utils.hasProperty(changed, "system.carried")
     || foundry.utils.hasProperty(changed, "img")
     || foundry.utils.hasProperty(changed, "name");
 }
 
-function getBaseWeaponStats(weapon) {
-  const flagged = weapon.getFlag("genesys-lightsabers", "baseStats") || {};
+// Centralized effect syncing queue to prevent race conditions
+const syncQueue = new Map();
+let syncTimer = null;
+
+function queueSync(actor) {
+  if (!actor) return;
+
+  syncQueue.set(actor.id, actor);
+
+  if (syncTimer) clearTimeout(syncTimer);
+  syncTimer = setTimeout(async () => {
+    const actors = Array.from(syncQueue.values());
+    syncQueue.clear();
+
+    for (const queuedActor of actors) {
+      try {
+        await syncActorWielderEffects(queuedActor);
+      } catch (error) {
+        console.error(`[${MODULE_ID}] Error syncing effects for ${queuedActor.name}:`, error);
+      }
+    }
+  }, 100); // Debounce 100ms
+}
+
+// setFlag()/update() deep-merge nested objects with whatever is already stored, so writing a
+// trimmed-down "upgrades" object on top of stale data (e.g. a removed slot, or a slot's old
+// wielderMods/statMods sub-keys) never actually clears the old keys. Unset first so there's
+// nothing left for the next write to merge against.
+async function replaceUpgradesFlag(item, upgrades) {
+  await item.unsetFlag(MODULE_ID, "upgrades");
+  if (upgrades && Object.keys(upgrades).length > 0) {
+    await item.setFlag(MODULE_ID, "upgrades", upgrades);
+  }
+}
+
+// Clears stale upgrade slots (quality removed from the weapon sheet) and recalculates
+// stats/image from whatever upgrades remain. Returns true if anything was actually changed,
+// so callers can stay silent when there was nothing to fix.
+async function refreshWeaponData(weapon) {
+  let changed = false;
+
+  const upgrades = foundry.utils.deepClone(weapon.getFlag(MODULE_ID, "upgrades") || {});
+
+  const currentNames = new Set(
+    (Array.isArray(weapon.system?.qualities) ? weapon.system.qualities : [])
+      .map((q) => String(q?.name ?? q?.label ?? "").toLowerCase().trim())
+      .filter(Boolean)
+  );
+
+  let upgradesChanged = false;
+  for (const [slotKey, slotData] of Object.entries(upgrades)) {
+    const qName = String(slotData?.qualityData?.name ?? "").toLowerCase().trim();
+    if (qName && !currentNames.has(qName)) {
+      delete upgrades[slotKey];
+      upgradesChanged = true;
+    }
+  }
+
+  if (upgradesChanged) {
+    await replaceUpgradesFlag(weapon, upgrades);
+    changed = true;
+  }
+
+  const variant = getWeaponVariant(weapon);
+  const fallbackBaseImg = baseImages[variant] ?? baseImages.single ?? weapon.img;
+  const baseImg = weapon.getFlag(MODULE_ID, "baseImg") ?? fallbackBaseImg;
+
+  const activeColor = (
+    String(
+      upgrades.colorCrystal?.color
+      ?? parseColorFromText(upgrades.colorCrystal?.sourceGearName)
+      ?? parseColorFromText(upgrades.colorCrystal?.qualityData?.name)
+      ?? ""
+    ).toLowerCase().trim()
+    || null
+  );
+  const desiredImg = activeColor
+    ? (crystalImages[variant]?.[activeColor] ?? baseImg)
+    : baseImg;
+
+  const hasAnyUpgrades = Object.keys(upgrades).length > 0;
+  const derivedStats = hasAnyUpgrades
+    ? getDerivedWeaponStats(weapon, upgrades)
+    : getBaseWeaponStats(weapon);
+
+  const desiredBaseDamage = derivedStats.baseDamage;
+  const desiredCritical = derivedStats.critical;
+  const desiredRangedDefence = derivedStats.rangedDefence;
+
   const currentBaseDamage = weapon.system?.baseDamage;
   const currentCritical = weapon.system?.critical;
   const currentRangedDefence = weapon.system?.rangedDefence;
 
-  return {
-    baseDamage: foundry.utils.hasProperty(flagged, "baseDamage") ? flagged.baseDamage : currentBaseDamage,
-    critical: foundry.utils.hasProperty(flagged, "critical") ? flagged.critical : currentCritical,
-    rangedDefence: foundry.utils.hasProperty(flagged, "rangedDefence") ? flagged.rangedDefence : currentRangedDefence
-  };
-}
+  const currentBaseDamageNumeric = asFiniteNumberOrNull(currentBaseDamage);
+  const desiredBaseDamageNumeric = asFiniteNumberOrNull(desiredBaseDamage);
+  const currentCriticalNumeric = asFiniteNumberOrNull(currentCritical);
+  const desiredCriticalNumeric = asFiniteNumberOrNull(desiredCritical);
+  const currentRangedDefenceNumeric = asFiniteNumberOrNull(currentRangedDefence);
+  const desiredRangedDefenceNumeric = asFiniteNumberOrNull(desiredRangedDefence);
 
-function applyNumericMod(baseValue, modAmount) {
-  const baseNumeric = asFiniteNumberOrNull(baseValue);
-  if (baseNumeric === null) return baseValue;
+  const baseDamageChanged = (
+    currentBaseDamageNumeric !== null && desiredBaseDamageNumeric !== null
+      ? currentBaseDamageNumeric !== desiredBaseDamageNumeric
+      : currentBaseDamage !== desiredBaseDamage
+  );
 
-  const modNumeric = toFiniteNumber(modAmount, 0);
-  return baseNumeric + modNumeric;
-}
+  const criticalChanged = (
+    currentCriticalNumeric !== null && desiredCriticalNumeric !== null
+      ? currentCriticalNumeric !== desiredCriticalNumeric
+      : currentCritical !== desiredCritical
+  );
 
-function inferBaseStatValue(currentValue, appliedModTotal) {
-  const currentNumeric = asFiniteNumberOrNull(currentValue);
-  if (currentNumeric === null) return currentValue;
+  const rangedDefenceChanged = (
+    currentRangedDefenceNumeric !== null && desiredRangedDefenceNumeric !== null
+      ? currentRangedDefenceNumeric !== desiredRangedDefenceNumeric
+      : currentRangedDefence !== desiredRangedDefence
+  );
 
-  return currentNumeric - toFiniteNumber(appliedModTotal, 0);
-}
+  const needsStatUpdate = baseDamageChanged || criticalChanged || rangedDefenceChanged;
 
-function deriveStatsFromBase(baseStats, upgrades) {
-  const modTotals = collectStatMods(upgrades);
-
-  return {
-    baseDamage: applyNumericMod(baseStats?.baseDamage, modTotals.baseDamage),
-    critical: applyNumericMod(baseStats?.critical, modTotals.critical),
-    rangedDefence: applyNumericMod(baseStats?.rangedDefence, modTotals.rangedDefence)
-  };
-}
-
-function getDerivedWeaponStats(weapon, upgrades) {
-  const baseStats = getBaseWeaponStats(weapon);
-  return deriveStatsFromBase(baseStats, upgrades);
-}
-
-function weaponHasCrystalQuality(weapon) {
-    const qualities = Array.isArray(weapon.system?.qualities) ? weapon.system.qualities : [];
-    return qualities.some((q) => {
-        const qName = String(q?.name ?? q?.label ?? "").toLowerCase();
-        return qName.includes(" crystal");
+  if (weapon.img !== desiredImg || needsStatUpdate) {
+    await weapon.update({
+      img: desiredImg,
+      "system.baseDamage": desiredBaseDamage,
+      "system.critical": desiredCritical,
+      "system.rangedDefence": desiredRangedDefence
     });
+    changed = true;
+  }
+
+  if (!activeColor) {
+    await weapon.unsetFlag(MODULE_ID, "baseImg");
+  }
+
+  if (!hasAnyUpgrades) {
+    await weapon.unsetFlag(MODULE_ID, "baseStats");
+  }
+
+  return changed;
 }
 
-function getWeaponVariant(weapon) {
-    const flagged = weapon.getFlag("genesys-lightsabers", "variant");
+// Fixed isWeaponWielded function
+function isWeaponWielded(weapon) {
+  if (!weapon || weapon.type !== "weapon") return false;
 
-    if (flagged) return flagged;
+  // Check equipped status (primary method)
+  if (foundry.utils.hasProperty(weapon, "system.equipped")) {
+    return Boolean(weapon.system?.equipped);
+  }
 
-    const name = String(weapon.name ?? "").toLowerCase();
-    if (name.includes("lightsaber, double-bladed")) return "double";
-    if (name.includes("lightsaber, short")) return "short";
-    return "single";
+  // Check carried status (alternative method)
+  if (foundry.utils.hasProperty(weapon, "system.carried")) {
+    return Boolean(weapon.system?.carried);
+  }
+
+  // If neither property exists, assume wielded (backward compatibility)
+  return true;
 }
 
+// Improved syncActorWielderEffects with better error handling
+async function syncActorWielderEffects(actor) {
+  if (!actor || actor.documentName !== "Actor") return;
+
+  // Check permissions more carefully
+  if (!actor.isOwner && !game.user.isGM) {
+    console.debug(`[${MODULE_ID}] Skipping sync for ${actor.name} - insufficient permissions`);
+    return;
+  }
+
+  console.log(`[${MODULE_ID}] Syncing wielder effects for actor: ${actor.name}`);
+
+  try {
+    // Collect all wielded weapons and their desired effects
+    const desiredByWeapon = new Map();
+    const weapons = actor.items.filter(item =>
+      item?.type === "weapon" && isWeaponWielded(item)
+    );
+
+    for (const weapon of weapons) {
+      const upgrades = weapon.getFlag(MODULE_ID, "upgrades") || {};
+      const wieldMods = collectWielderMods(upgrades);
+      const effectChanges = buildWielderEffectChanges(wieldMods);
+
+      if (effectChanges.length > 0) {
+        desiredByWeapon.set(weapon.id, getWielderEffectPayload(weapon, effectChanges));
+      }
+    }
+
+    // Get all existing module-managed effects
+    const existingEffects = actor.effects.filter(effect =>
+      effect.getFlag(MODULE_ID, WIELDER_MOD_EFFECT_FLAG)
+    );
+
+    // Determine which effects to delete
+    const toDelete = [];
+    const existingByWeapon = new Map();
+
+    for (const effect of existingEffects) {
+      const sourceWeaponId = effect.getFlag(MODULE_ID, WIELDER_MOD_EFFECT_SOURCE_FLAG);
+
+      if (!sourceWeaponId) {
+        // Clean up effects with missing source ID
+        toDelete.push(effect.id);
+        console.warn(`[${MODULE_ID}] Found orphaned effect without source weapon ID`);
+        continue;
+      }
+
+      if (!desiredByWeapon.has(sourceWeaponId)) {
+        toDelete.push(effect.id);
+        continue;
+      }
+
+      // If a prior run ever left more than one effect for the same weapon, keep
+      // only the first and delete the rest instead of silently shadowing them.
+      if (existingByWeapon.has(sourceWeaponId)) {
+        toDelete.push(effect.id);
+        continue;
+      }
+
+      existingByWeapon.set(sourceWeaponId, effect);
+    }
+
+    // Delete stale effects
+    if (toDelete.length > 0) {
+      console.log(`[${MODULE_ID}] Deleting ${toDelete.length} stale effects for ${actor.name}`);
+      await actor.deleteEmbeddedDocuments("ActiveEffect", toDelete);
+    }
+
+    // Determine which effects to create or update
+    const toCreate = [];
+    const toUpdate = [];
+
+    for (const [weaponId, payload] of desiredByWeapon.entries()) {
+      const existing = existingByWeapon.get(weaponId);
+
+      if (!existing) {
+        toCreate.push(payload);
+      } else if (didWielderPayloadChange(existing, payload)) {
+        toUpdate.push({
+          _id: existing.id,
+          name: payload.name,
+          icon: payload.icon,
+          origin: payload.origin,
+          disabled: payload.disabled,
+          transfer: payload.transfer,
+          changes: payload.changes,
+          flags: payload.flags
+        });
+      }
+    }
+
+    // Batch create new effects
+    if (toCreate.length > 0) {
+      console.log(`[${MODULE_ID}] Creating ${toCreate.length} new effects for ${actor.name}`);
+      await actor.createEmbeddedDocuments("ActiveEffect", toCreate);
+    }
+
+    // Batch update existing effects
+    if (toUpdate.length > 0) {
+      console.log(`[${MODULE_ID}] Updating ${toUpdate.length} effects for ${actor.name}`);
+      await actor.updateEmbeddedDocuments("ActiveEffect", toUpdate);
+    }
+
+  } catch (error) {
+    console.error(`[${MODULE_ID}] Error syncing wielder effects for ${actor.name}:`, error);
+  }
+}
+
+// Improved event handlers with debouncing
+Hooks.on("createItem", async (item) => {
+  if (item?.type !== "weapon") return;
+  const actor = item.parent;
+  if (actor?.documentName === "Actor" && isWeaponWielded(item)) {
+    queueSync(actor);
+  }
+});
+
+Hooks.on("deleteItem", async (item) => {
+  if (item?.type !== "weapon") return;
+  const actor = item.parent;
+  if (actor?.documentName === "Actor") {
+    queueSync(actor);
+  }
+});
+
+Hooks.on("updateItem", async (item, changed) => {
+  if (item.type !== "weapon") return;
+
+  const actor = item.parent;
+  if (!actor || actor.documentName !== "Actor") return;
+
+  // Only sync if relevant properties changed
+  if (shouldSyncWielderEffects(changed)) {
+    queueSync(actor);
+  }
+});
+
+// Add hook for when items are equipped/unequipped
+Hooks.on("updateActor", async (actor, changed) => {
+  // Check if any owned items' wielded status changed
+  const hasWieldChange = actor.items.some(item =>
+    item.type === "weapon" && shouldSyncWielderEffects(changed)
+  );
+
+  if (hasWieldChange) {
+    queueSync(actor);
+  }
+});
+
+// Full data-integrity pass on world load: clears stale upgrade slots, recalculates weapon
+// stats/images, and syncs wielder effects for every actor. GM-only so multiple connected
+// clients don't redundantly race to write the same documents, and silent unless it actually
+// fixes something (no notification on a clean load).
+Hooks.once("ready", async () => {
+  if (!game.user.isGM) return;
+
+  let weaponsFixed = 0;
+  let errors = 0;
+
+  for (const actor of game.actors) {
+    for (const weapon of actor.items.filter((i) => i.type === "weapon")) {
+      try {
+        if (await refreshWeaponData(weapon)) weaponsFixed++;
+      } catch (error) {
+        console.error(`[${MODULE_ID}] Error refreshing ${weapon.name} on ${actor.name}:`, error);
+        errors++;
+      }
+    }
+
+    try {
+      await syncActorWielderEffects(actor);
+    } catch (error) {
+      console.error(`[${MODULE_ID}] Error syncing wielder effects for ${actor.name}:`, error);
+      errors++;
+    }
+  }
+
+  if (weaponsFixed > 0 || errors > 0) {
+    console.log(`[${MODULE_ID}] Startup refresh: ${weaponsFixed} weapon(s) fixed${errors > 0 ? `, ${errors} error(s)` : ""}`);
+    ui.notifications.info(`Genesys Lightsabers: refreshed ${weaponsFixed} weapon(s) on startup.`);
+  }
+});
+
+// Optional: Add a cleanup hook when module is disabled
+Hooks.on("closeModuleSettings", async () => {
+  // Clean up all module-managed effects if module is being disabled
+  if (game.modules.get(MODULE_ID)?.active === false) {
+    for (const actor of game.actors) {
+      if (actor.isOwner || game.user.isGM) {
+        const effects = actor.effects.filter(e =>
+          e.getFlag(MODULE_ID, WIELDER_MOD_EFFECT_FLAG)
+        );
+        if (effects.length > 0) {
+          await actor.deleteEmbeddedDocuments("ActiveEffect", effects.map(e => e.id));
+        }
+      }
+    }
+  }
+});
+
+// Drag-and-drop: applying an upgrade (gear item) onto a lightsaber weapon sheet
 Hooks.on("renderItemSheet", (app, html) => {
   const weapon = app.item;
   if (!weapon) return;
@@ -383,10 +672,10 @@ Hooks.on("renderItemSheet", (app, html) => {
     const dropped = await Item.implementation.fromDropData(dropData);
     if (!dropped || dropped.type !== "gear") return;
 
-    const upgradeType = dropped.getFlag("genesys-lightsabers", "upgradeType");
-    const qualityData = dropped.getFlag("genesys-lightsabers", "qualityData");
-    const colorFlag = dropped.getFlag("genesys-lightsabers", "color");
-    const effectData = dropped.getFlag("genesys-lightsabers", "effectData") || {};
+    const upgradeType = dropped.getFlag(MODULE_ID, "upgradeType");
+    const qualityData = dropped.getFlag(MODULE_ID, "qualityData");
+    const colorFlag = dropped.getFlag(MODULE_ID, "color");
+    const effectData = dropped.getFlag(MODULE_ID, "effectData") || {};
 
     if (!upgradeType || !qualityData) {
       ui.notifications.warn("This upgrade is missing genesys-lightsabers flags.");
@@ -404,7 +693,7 @@ Hooks.on("renderItemSheet", (app, html) => {
     );
 
     const oldUpgrades = foundry.utils.deepClone(
-      weapon.getFlag("genesys-lightsabers", "upgrades") || {}
+      weapon.getFlag(MODULE_ID, "upgrades") || {}
     );
 
     // Discard stale slots whose qualities were manually removed from the weapon.
@@ -435,9 +724,7 @@ Hooks.on("renderItemSheet", (app, html) => {
         : null
     };
 
-    const moduleManagedNames = new Set([
-      "blue crystal", "green crystal", "yellow crystal", "red crystal", "violet crystal", "cyan crystal", "silver crystal", "orange crystal", "viridian crystal"
-    ]);
+    const moduleManagedNames = new Set(crystalQualityNames);
 
     for (const slot of Object.values(oldUpgrades)) {
       collectManagedNamesFromSlot(slot, moduleManagedNames);
@@ -452,14 +739,14 @@ Hooks.on("renderItemSheet", (app, html) => {
       return !moduleManagedNames.has(qName);
     });
 
-    for (const slotKey of ["colorCrystal", "powerCrystal", "emitter", "lens", "energyCell"]) {
+    for (const slotKey of upgradeSlots) {
       const slot = upgrades[slotKey];
       if (slot?.qualityData) filtered.push(foundry.utils.deepClone(slot.qualityData));
     }
 
     const variant = getWeaponVariant(weapon);
     const fallbackBaseImg = baseImages[variant] ?? baseImages.single ?? weapon.img;
-    const baseImg = weapon.getFlag("genesys-lightsabers", "baseImg") ?? fallbackBaseImg;
+    const baseImg = weapon.getFlag(MODULE_ID, "baseImg") ?? fallbackBaseImg;
 
     let img = baseImg;
     const activeColor = String(upgrades.colorCrystal?.color ?? "").toLowerCase().trim() || null;
@@ -471,9 +758,9 @@ Hooks.on("renderItemSheet", (app, html) => {
     const derivedStats = deriveStatsFromBase(inferredBaseStats, upgrades);
 
     // Save slot state first so the update watcher sees the new color crystal immediately.
-    await weapon.setFlag("genesys-lightsabers", "baseImg", baseImg);
-    await weapon.setFlag("genesys-lightsabers", "upgrades", upgrades);
-    await weapon.setFlag("genesys-lightsabers", "baseStats", inferredBaseStats);
+    await weapon.setFlag(MODULE_ID, "baseImg", baseImg);
+    await replaceUpgradesFlag(weapon, upgrades);
+    await weapon.setFlag(MODULE_ID, "baseStats", inferredBaseStats);
 
     await weapon.update({
       "system.qualities": filtered,
@@ -483,10 +770,11 @@ Hooks.on("renderItemSheet", (app, html) => {
       img
     });
 
-    console.log("[genesys-lightsabers] applied upgrade", upgradeType, dropped.name, "to", weapon.name);
+    console.log(`[${MODULE_ID}] applied upgrade`, upgradeType, dropped.name, "to", weapon.name);
   });
 });
 
+// Keeps weapon qualities/stats/image in sync if a quality is manually removed from the sheet
 if (!globalThis.GLS_WEAPON_CRYSTAL_WATCHER) {
   globalThis.GLS_WEAPON_CRYSTAL_WATCHER = true;
 
@@ -494,108 +782,7 @@ if (!globalThis.GLS_WEAPON_CRYSTAL_WATCHER) {
     if (item.type !== "weapon") return;
     if (!foundry.utils.hasProperty(changed, "system.qualities")) return;
 
-    const upgrades = foundry.utils.deepClone(
-      item.getFlag("genesys-lightsabers", "upgrades") || {}
-    );
-
-    const currentNames = new Set(
-      (Array.isArray(item.system?.qualities) ? item.system.qualities : [])
-        .map((q) => String(q?.name ?? q?.label ?? "").toLowerCase().trim())
-        .filter(Boolean)
-    );
-
-    // Remove stale slots whose quality was manually deleted from the weapon.
-    let upgradesChanged = false;
-    for (const [slotKey, slotData] of Object.entries(upgrades)) {
-      const qName = String(slotData?.qualityData?.name ?? "").toLowerCase().trim();
-      if (qName && !currentNames.has(qName)) {
-        delete upgrades[slotKey];
-        upgradesChanged = true;
-      }
-    }
-
-    if (upgradesChanged) {
-      if (Object.keys(upgrades).length) {
-        await item.setFlag("genesys-lightsabers", "upgrades", upgrades);
-      } else {
-        await item.unsetFlag("genesys-lightsabers", "upgrades");
-      }
-    }
-
-    // Recompute image from remaining color crystal slot only.
-    const variant = getWeaponVariant(item);
-    const fallbackBaseImg = baseImages[variant] ?? baseImages.single ?? item.img;
-    const baseImg = item.getFlag("genesys-lightsabers", "baseImg") ?? fallbackBaseImg;
-
-    const activeColor = (
-      String(
-        upgrades.colorCrystal?.color
-        ?? parseColorFromText(upgrades.colorCrystal?.sourceGearName)
-        ?? parseColorFromText(upgrades.colorCrystal?.qualityData?.name)
-        ?? ""
-      ).toLowerCase().trim()
-      || null
-    );
-    const desiredImg = activeColor
-      ? (crystalImages[variant]?.[activeColor] ?? baseImg)
-      : baseImg;
-
-    const hasAnyUpgrades = Object.keys(upgrades).length > 0;
-    const derivedStats = hasAnyUpgrades
-      ? getDerivedWeaponStats(item, upgrades)
-      : getBaseWeaponStats(item);
-
-    const desiredBaseDamage = derivedStats.baseDamage;
-    const desiredCritical = derivedStats.critical;
-    const desiredRangedDefence = derivedStats.rangedDefence;
-
-    const currentBaseDamage = item.system?.baseDamage;
-    const currentCritical = item.system?.critical;
-    const currentRangedDefence = item.system?.rangedDefence;
-
-    const currentBaseDamageNumeric = asFiniteNumberOrNull(currentBaseDamage);
-    const desiredBaseDamageNumeric = asFiniteNumberOrNull(desiredBaseDamage);
-    const currentCriticalNumeric = asFiniteNumberOrNull(currentCritical);
-    const desiredCriticalNumeric = asFiniteNumberOrNull(desiredCritical);
-    const currentRangedDefenceNumeric = asFiniteNumberOrNull(currentRangedDefence);
-    const desiredRangedDefenceNumeric = asFiniteNumberOrNull(desiredRangedDefence);
-
-    const baseDamageChanged = (
-      currentBaseDamageNumeric !== null && desiredBaseDamageNumeric !== null
-        ? currentBaseDamageNumeric !== desiredBaseDamageNumeric
-        : currentBaseDamage !== desiredBaseDamage
-    );
-
-    const criticalChanged = (
-      currentCriticalNumeric !== null && desiredCriticalNumeric !== null
-        ? currentCriticalNumeric !== desiredCriticalNumeric
-        : currentCritical !== desiredCritical
-    );
-
-    const rangedDefenceChanged = (
-      currentRangedDefenceNumeric !== null && desiredRangedDefenceNumeric !== null
-        ? currentRangedDefenceNumeric !== desiredRangedDefenceNumeric
-        : currentRangedDefence !== desiredRangedDefence
-    );
-
-    const needsStatUpdate = baseDamageChanged || criticalChanged || rangedDefenceChanged;
-
-    if (item.img !== desiredImg || needsStatUpdate) {
-      await item.update({
-        img: desiredImg,
-        "system.baseDamage": desiredBaseDamage,
-        "system.critical": desiredCritical,
-        "system.rangedDefence": desiredRangedDefence
-      });
-    }
-
-    if (!activeColor) {
-      await item.unsetFlag("genesys-lightsabers", "baseImg");
-    }
-
-    if (!hasAnyUpgrades) {
-      await item.unsetFlag("genesys-lightsabers", "baseStats");
-    }
+    await refreshWeaponData(item);
   });
 }
 
@@ -608,74 +795,7 @@ function attachModuleApi() {
   }
 
   globalThis.GenesysLightsabersApi = moduleApi;
-  console.log("[genesys-lightsabers] API ready", Object.keys(moduleApi));
+  console.log(`[${MODULE_ID}] API ready`, Object.keys(moduleApi));
 }
 
 Hooks.once("ready", attachModuleApi);
-
-Hooks.once("ready", async () => {
-  for (const actor of game.actors ?? []) {
-    for (const weapon of actor.items.filter(i => i.type === "weapon")) {
-      await syncActorWeaponEffect(actor, weapon);
-    }
-  }
-});
-
-Hooks.on("createItem", async (item) => {
-  if (item?.type !== "weapon") return;
-
-  const actor = item.parent;
-  if (!actor || actor.documentName !== "Actor") return;
-  await syncActorWielderEffects(actor);
-});
-
-Hooks.on("deleteItem", async (item) => {
-  if (item?.type !== "weapon") return;
-
-  const actor = item.parent;
-  if (!actor || actor.documentName !== "Actor") return;
-  await syncActorWielderEffects(actor);
-});
-
-async function syncActorWeaponEffect(actor, weapon) {
-  if (!actor || !weapon) return;
-
-  const upgrades = weapon.getFlag(MODULE_ID, "upgrades") || {};
-  const wieldMods = collectWielderMods(upgrades);
-  const effectChanges = buildWielderEffectChanges(wieldMods);
-
-  const existingEffects = actor.effects.filter(e =>
-    e.getFlag(MODULE_ID, WIELDER_MOD_EFFECT_FLAG) &&
-    e.getFlag(MODULE_ID, WIELDER_MOD_EFFECT_SOURCE_FLAG) === weapon.id
-  );
-
-  const payload = getWielderEffectPayload(weapon, effectChanges);
-
-  const existing = existingEffects[0];
-
-  if (!effectChanges.length) {
-    if (existing) await existing.delete();
-    return;
-  }
-
-  if (!existing) {
-    await actor.createEmbeddedDocuments("ActiveEffect", [payload]);
-    return;
-  }
-
-  if (didWielderPayloadChange(existing, payload)) {
-    await actor.updateEmbeddedDocuments("ActiveEffect", [{
-      _id: existing.id,
-      ...payload
-    }]);
-  }
-}
-
-Hooks.on("updateItem", async (item, changed) => {
-  if (item.type !== "weapon") return;
-
-  const actor = item.parent;
-  if (!actor || actor.documentName !== "Actor") return;
-
-  await syncActorWeaponEffect(actor, item);
-});
