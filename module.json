@@ -21,6 +21,20 @@
     "type": "Item",
     "system": "genesys",
     "path": "packs/lightsaber-upgrades"
+    },
+    {
+    "name": "lightsabers",
+    "label": "Lightsabers",
+    "type": "Item",
+    "system": "genesys",
+    "path": "packs/lightsabers"
+    },
+    {
+    "name": "skills",
+    "label": "Skills",
+    "type": "Item",
+    "system": "genesys",
+    "path": "packs/skills"
     }
   ],
   "esmodules": [
