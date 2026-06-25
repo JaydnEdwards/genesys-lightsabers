@@ -4,15 +4,44 @@ const MODULE_ID = "genesys-lightsabers";
 const WIELDER_MOD_EFFECT_FLAG = "wielderModEffect";
 const WIELDER_MOD_EFFECT_SOURCE_FLAG = "wielderModSource";
 
-const upgradeSlots = ["colorCrystal", "powerCrystal", "emitter", "lens", "energyCell"];
+// Each KOTOR-style item category gets its own slot set and modifiable stat fields, matching
+// how the original games scoped upgrades per weapon/armor type rather than sharing one pool.
+// Blaster/vibrosword/armor slots are confirmed but not yet populated with actual upgrade
+// content (compendiums/JSON come later, once each category's stat effects are designed).
+const ITEM_CATEGORIES = {
+  lightsaber: {
+    itemType: "weapon",
+    slots: ["colorCrystal", "powerCrystal", "emitter", "lens", "energyCell"],
+    statFields: ["baseDamage", "critical", "rangedDefence"],
+    supportsBladeColor: true
+  },
+  blaster: {
+    itemType: "weapon",
+    slots: ["targeting", "powerPack", "firingChamber"],
+    statFields: ["baseDamage", "critical", "rangedDefence"],
+    supportsBladeColor: false
+  },
+  vibrosword: {
+    itemType: "weapon",
+    slots: ["edge", "energyCell", "grip"],
+    statFields: ["baseDamage", "critical", "rangedDefence"],
+    supportsBladeColor: false
+  },
+  armor: {
+    itemType: "armor",
+    slots: ["overlay", "underlay"],
+    statFields: ["defense", "soak"],
+    supportsBladeColor: false
+  }
+};
 
-const upgradeMatchers = [
-  { slot: "colorCrystal", test: (name) => /crystal/i.test(name) && /(blue|green|yellow|red|violet|cyan|silver|orange|viridian)/i.test(name) },
-  { slot: "powerCrystal", test: (name) => /power crystal/i.test(name) },
-  { slot: "emitter", test: (name) => /emitter/i.test(name) },
-  { slot: "lens", test: (name) => /lens/i.test(name) },
-  { slot: "energyCell", test: (name) => /energy cell/i.test(name) }
-];
+function getItemCategoryKey(item) {
+  return item?.getFlag(MODULE_ID, "category") ?? null;
+}
+
+function getCategoryConfig(item) {
+  return ITEM_CATEGORIES[getItemCategoryKey(item)] ?? null;
+}
 
 const crystalImages = {
   single: {
@@ -98,32 +127,31 @@ function asFiniteNumberOrNull(value) {
   return Number.isFinite(num) ? num : null;
 }
 
-function collectStatMods(upgrades) {
-  const totals = { baseDamage: 0, critical: 0, rangedDefence: 0 };
+function collectStatMods(upgrades, statFields) {
+  const totals = {};
+  for (const field of statFields) totals[field] = 0;
 
   for (const slotData of Object.values(upgrades || {})) {
     const mods = slotData?.effectData?.statMods;
     if (!mods || typeof mods !== "object") continue;
 
-    totals.baseDamage += toFiniteNumber(mods.baseDamage, 0);
-    totals.critical += toFiniteNumber(mods.critical, 0);
-    totals.rangedDefence += toFiniteNumber(mods.rangedDefence, 0);
+    for (const field of statFields) {
+      totals[field] += toFiniteNumber(mods[field], 0);
+    }
   }
 
   return totals;
 }
 
-function getBaseWeaponStats(weapon) {
-  const flagged = weapon.getFlag(MODULE_ID, "baseStats") || {};
-  const currentBaseDamage = weapon.system?.baseDamage;
-  const currentCritical = weapon.system?.critical;
-  const currentRangedDefence = weapon.system?.rangedDefence;
+function getBaseStats(item, statFields) {
+  const flagged = item.getFlag(MODULE_ID, "baseStats") || {};
+  const result = {};
 
-  return {
-    baseDamage: foundry.utils.hasProperty(flagged, "baseDamage") ? flagged.baseDamage : currentBaseDamage,
-    critical: foundry.utils.hasProperty(flagged, "critical") ? flagged.critical : currentCritical,
-    rangedDefence: foundry.utils.hasProperty(flagged, "rangedDefence") ? flagged.rangedDefence : currentRangedDefence
-  };
+  for (const field of statFields) {
+    result[field] = foundry.utils.hasProperty(flagged, field) ? flagged[field] : item.system?.[field];
+  }
+
+  return result;
 }
 
 function applyNumericMod(baseValue, modAmount) {
@@ -141,27 +169,20 @@ function inferBaseStatValue(currentValue, appliedModTotal) {
   return currentNumeric - toFiniteNumber(appliedModTotal, 0);
 }
 
-function deriveStatsFromBase(baseStats, upgrades) {
-  const modTotals = collectStatMods(upgrades);
+function deriveStatsFromBase(baseStats, upgrades, statFields) {
+  const modTotals = collectStatMods(upgrades, statFields);
+  const result = {};
 
-  return {
-    baseDamage: applyNumericMod(baseStats?.baseDamage, modTotals.baseDamage),
-    critical: applyNumericMod(baseStats?.critical, modTotals.critical),
-    rangedDefence: applyNumericMod(baseStats?.rangedDefence, modTotals.rangedDefence)
-  };
+  for (const field of statFields) {
+    result[field] = applyNumericMod(baseStats?.[field], modTotals[field]);
+  }
+
+  return result;
 }
 
-function getDerivedWeaponStats(weapon, upgrades) {
-  const baseStats = getBaseWeaponStats(weapon);
-  return deriveStatsFromBase(baseStats, upgrades);
-}
-
-function weaponHasCrystalQuality(weapon) {
-  const qualities = Array.isArray(weapon.system?.qualities) ? weapon.system.qualities : [];
-  return qualities.some((q) => {
-    const qName = String(q?.name ?? q?.label ?? "").toLowerCase();
-    return qName.includes(" crystal");
-  });
+function getDerivedStats(item, upgrades, statFields) {
+  const baseStats = getBaseStats(item, statFields);
+  return deriveStatsFromBase(baseStats, upgrades, statFields);
 }
 
 function getWeaponVariant(weapon) {
@@ -273,8 +294,7 @@ function shouldSyncWielderEffects(changed) {
   );
 
   return upgradesTouched
-    || foundry.utils.hasProperty(changed, "system.equipped")
-    || foundry.utils.hasProperty(changed, "system.carried")
+    || foundry.utils.hasProperty(changed, "system.state")
     || foundry.utils.hasProperty(changed, "img")
     || foundry.utils.hasProperty(changed, "name");
 }
@@ -315,16 +335,17 @@ async function replaceUpgradesFlag(item, upgrades) {
   }
 }
 
-// Clears stale upgrade slots (quality removed from the weapon sheet) and recalculates
+// Clears stale upgrade slots (quality removed from the item sheet) and recalculates
 // stats/image from whatever upgrades remain. Returns true if anything was actually changed,
-// so callers can stay silent when there was nothing to fix.
-async function refreshWeaponData(weapon) {
+// so callers can stay silent when there was nothing to fix. Works for any category — the
+// blade-color image logic is gated off for everything except lightsaber.
+async function refreshItemUpgradeData(item, categoryConfig) {
   let changed = false;
 
-  const upgrades = foundry.utils.deepClone(weapon.getFlag(MODULE_ID, "upgrades") || {});
+  const upgrades = foundry.utils.deepClone(item.getFlag(MODULE_ID, "upgrades") || {});
 
   const currentNames = new Set(
-    (Array.isArray(weapon.system?.qualities) ? weapon.system.qualities : [])
+    (Array.isArray(item.system?.qualities) ? item.system.qualities : [])
       .map((q) => String(q?.name ?? q?.label ?? "").toLowerCase().trim())
       .filter(Boolean)
   );
@@ -339,104 +360,78 @@ async function refreshWeaponData(weapon) {
   }
 
   if (upgradesChanged) {
-    await replaceUpgradesFlag(weapon, upgrades);
+    await replaceUpgradesFlag(item, upgrades);
     changed = true;
   }
-
-  const variant = getWeaponVariant(weapon);
-  const fallbackBaseImg = baseImages[variant] ?? baseImages.single ?? weapon.img;
-  const baseImg = weapon.getFlag(MODULE_ID, "baseImg") ?? fallbackBaseImg;
-
-  const activeColor = (
-    String(
-      upgrades.colorCrystal?.color
-      ?? parseColorFromText(upgrades.colorCrystal?.sourceGearName)
-      ?? parseColorFromText(upgrades.colorCrystal?.qualityData?.name)
-      ?? ""
-    ).toLowerCase().trim()
-    || null
-  );
-  const desiredImg = activeColor
-    ? (crystalImages[variant]?.[activeColor] ?? baseImg)
-    : baseImg;
 
   const hasAnyUpgrades = Object.keys(upgrades).length > 0;
+  const statFields = categoryConfig.statFields;
   const derivedStats = hasAnyUpgrades
-    ? getDerivedWeaponStats(weapon, upgrades)
-    : getBaseWeaponStats(weapon);
+    ? getDerivedStats(item, upgrades, statFields)
+    : getBaseStats(item, statFields);
 
-  const desiredBaseDamage = derivedStats.baseDamage;
-  const desiredCritical = derivedStats.critical;
-  const desiredRangedDefence = derivedStats.rangedDefence;
-
-  const currentBaseDamage = weapon.system?.baseDamage;
-  const currentCritical = weapon.system?.critical;
-  const currentRangedDefence = weapon.system?.rangedDefence;
-
-  const currentBaseDamageNumeric = asFiniteNumberOrNull(currentBaseDamage);
-  const desiredBaseDamageNumeric = asFiniteNumberOrNull(desiredBaseDamage);
-  const currentCriticalNumeric = asFiniteNumberOrNull(currentCritical);
-  const desiredCriticalNumeric = asFiniteNumberOrNull(desiredCritical);
-  const currentRangedDefenceNumeric = asFiniteNumberOrNull(currentRangedDefence);
-  const desiredRangedDefenceNumeric = asFiniteNumberOrNull(desiredRangedDefence);
-
-  const baseDamageChanged = (
-    currentBaseDamageNumeric !== null && desiredBaseDamageNumeric !== null
-      ? currentBaseDamageNumeric !== desiredBaseDamageNumeric
-      : currentBaseDamage !== desiredBaseDamage
-  );
-
-  const criticalChanged = (
-    currentCriticalNumeric !== null && desiredCriticalNumeric !== null
-      ? currentCriticalNumeric !== desiredCriticalNumeric
-      : currentCritical !== desiredCritical
-  );
-
-  const rangedDefenceChanged = (
-    currentRangedDefenceNumeric !== null && desiredRangedDefenceNumeric !== null
-      ? currentRangedDefenceNumeric !== desiredRangedDefenceNumeric
-      : currentRangedDefence !== desiredRangedDefence
-  );
-
-  const needsStatUpdate = baseDamageChanged || criticalChanged || rangedDefenceChanged;
-
-  if (weapon.img !== desiredImg || needsStatUpdate) {
-    await weapon.update({
-      img: desiredImg,
-      "system.baseDamage": desiredBaseDamage,
-      "system.critical": desiredCritical,
-      "system.rangedDefence": desiredRangedDefence
-    });
-    changed = true;
+  const updatePayload = {};
+  let needsStatUpdate = false;
+  for (const field of statFields) {
+    const current = item.system?.[field];
+    const desired = derivedStats[field];
+    const currentNumeric = asFiniteNumberOrNull(current);
+    const desiredNumeric = asFiniteNumberOrNull(desired);
+    const fieldChanged = (
+      currentNumeric !== null && desiredNumeric !== null
+        ? currentNumeric !== desiredNumeric
+        : current !== desired
+    );
+    if (fieldChanged) {
+      needsStatUpdate = true;
+      updatePayload[`system.${field}`] = desired;
+    }
   }
 
-  if (!activeColor) {
-    await weapon.unsetFlag(MODULE_ID, "baseImg");
+  let activeColor = null;
+  if (categoryConfig.supportsBladeColor) {
+    const variant = getWeaponVariant(item);
+    const fallbackBaseImg = baseImages[variant] ?? baseImages.single ?? item.img;
+    const baseImg = item.getFlag(MODULE_ID, "baseImg") ?? fallbackBaseImg;
+
+    activeColor = (
+      String(
+        upgrades.colorCrystal?.color
+        ?? parseColorFromText(upgrades.colorCrystal?.sourceGearName)
+        ?? parseColorFromText(upgrades.colorCrystal?.qualityData?.name)
+        ?? ""
+      ).toLowerCase().trim()
+      || null
+    );
+    const desiredImg = activeColor
+      ? (crystalImages[variant]?.[activeColor] ?? baseImg)
+      : baseImg;
+
+    if (item.img !== desiredImg) updatePayload.img = desiredImg;
+
+    if (!activeColor) {
+      await item.unsetFlag(MODULE_ID, "baseImg");
+    }
+  }
+
+  if (needsStatUpdate || updatePayload.img) {
+    await item.update(updatePayload);
+    changed = true;
   }
 
   if (!hasAnyUpgrades) {
-    await weapon.unsetFlag(MODULE_ID, "baseStats");
+    await item.unsetFlag(MODULE_ID, "baseStats");
   }
 
   return changed;
 }
 
-// Fixed isWeaponWielded function
-function isWeaponWielded(weapon) {
-  if (!weapon || weapon.type !== "weapon") return false;
-
-  // Check equipped status (primary method)
-  if (foundry.utils.hasProperty(weapon, "system.equipped")) {
-    return Boolean(weapon.system?.equipped);
-  }
-
-  // Check carried status (alternative method)
-  if (foundry.utils.hasProperty(weapon, "system.carried")) {
-    return Boolean(weapon.system?.carried);
-  }
-
-  // If neither property exists, assume wielded (backward compatibility)
-  return true;
+// The real "is this equipped" signal in this system — confirmed by checking the Genesys
+// system's own bundled source, where it sums armor soak/defense via the same field — is the
+// shared equipment-template "state" string, not separate equipped/carried booleans (which
+// don't actually exist here). Works identically for weapons and armor.
+function isItemActive(item) {
+  return Boolean(item?.system?.state === "equipped");
 }
 
 // Improved syncActorWielderEffects with better error handling
@@ -452,10 +447,10 @@ async function syncActorWielderEffects(actor) {
   console.log(`[${MODULE_ID}] Syncing wielder effects for actor: ${actor.name}`);
 
   try {
-    // Collect all wielded weapons and their desired effects
+    // Collect all wielded/worn items and their desired effects
     const desiredByWeapon = new Map();
     const weapons = actor.items.filter(item =>
-      item?.type === "weapon" && isWeaponWielded(item)
+      getCategoryConfig(item) && isItemActive(item)
     );
 
     for (const weapon of weapons) {
@@ -562,7 +557,7 @@ async function syncActorSkillMods(actor) {
   try {
     const desiredBySkillName = new Map();
     const weapons = actor.items.filter((item) =>
-      item?.type === "weapon" && isWeaponWielded(item)
+      getCategoryConfig(item) && isItemActive(item)
     );
 
     for (const weapon of weapons) {
@@ -629,15 +624,15 @@ async function syncActorSkillMods(actor) {
 
 // Improved event handlers with debouncing
 Hooks.on("createItem", async (item) => {
-  if (item?.type !== "weapon") return;
+  if (!getCategoryConfig(item)) return;
   const actor = item.parent;
-  if (actor?.documentName === "Actor" && isWeaponWielded(item)) {
+  if (actor?.documentName === "Actor" && isItemActive(item)) {
     queueSync(actor);
   }
 });
 
 Hooks.on("deleteItem", async (item) => {
-  if (item?.type !== "weapon") return;
+  if (!getCategoryConfig(item)) return;
   const actor = item.parent;
   if (actor?.documentName === "Actor") {
     queueSync(actor);
@@ -645,7 +640,7 @@ Hooks.on("deleteItem", async (item) => {
 });
 
 Hooks.on("updateItem", async (item, changed) => {
-  if (item.type !== "weapon") return;
+  if (!getCategoryConfig(item)) return;
 
   const actor = item.parent;
   if (!actor || actor.documentName !== "Actor") return;
@@ -660,7 +655,7 @@ Hooks.on("updateItem", async (item, changed) => {
 Hooks.on("updateActor", async (actor, changed) => {
   // Check if any owned items' wielded status changed
   const hasWieldChange = actor.items.some(item =>
-    item.type === "weapon" && shouldSyncWielderEffects(changed)
+    getCategoryConfig(item) && shouldSyncWielderEffects(changed)
   );
 
   if (hasWieldChange) {
@@ -711,18 +706,21 @@ async function reflagCompendiumItems() {
         const doc = await pack.getDocument(hit._id);
 
         const desiredUpgradeType = payload.upgradeType ?? null;
+        const desiredCategory = payload.category ?? null;
         const desiredQualityData = foundry.utils.deepClone(payload.qualityData ?? {});
         const desiredEffectData = foundry.utils.deepClone(payload.effectData ?? {});
         const hasColor = Object.prototype.hasOwnProperty.call(payload, "color");
         const desiredColor = hasColor ? payload.color : undefined;
 
         const currentUpgradeType = doc.getFlag(MODULE_ID, "upgradeType") ?? null;
+        const currentCategory = doc.getFlag(MODULE_ID, "category") ?? null;
         const currentQualityData = doc.getFlag(MODULE_ID, "qualityData") ?? {};
         const currentEffectData = doc.getFlag(MODULE_ID, "effectData") ?? {};
         const currentColor = doc.getFlag(MODULE_ID, "color");
 
         const needsUpdate = (
           currentUpgradeType !== desiredUpgradeType
+          || currentCategory !== desiredCategory
           || JSON.stringify(currentQualityData) !== JSON.stringify(desiredQualityData)
           || JSON.stringify(currentEffectData) !== JSON.stringify(desiredEffectData)
           || (hasColor ? currentColor !== desiredColor : currentColor !== undefined)
@@ -735,7 +733,10 @@ async function reflagCompendiumItems() {
         // or stale sub-keys from a previous run never actually go away.
         await doc.unsetFlag(MODULE_ID, "qualityData");
         await doc.unsetFlag(MODULE_ID, "effectData");
-        await doc.update({ [`flags.${MODULE_ID}.upgradeType`]: desiredUpgradeType });
+        await doc.update({
+          [`flags.${MODULE_ID}.upgradeType`]: desiredUpgradeType,
+          [`flags.${MODULE_ID}.category`]: desiredCategory
+        });
         await doc.setFlag(MODULE_ID, "qualityData", desiredQualityData);
         await doc.setFlag(MODULE_ID, "effectData", desiredEffectData);
 
@@ -758,15 +759,56 @@ async function reflagCompendiumItems() {
   return result;
 }
 
-// Full data-integrity pass on world load: reflags compendium items from upgrade-effects.json,
-// clears stale upgrade slots, recalculates weapon stats/images, and syncs wielder/skill effects
-// for every actor. GM-only so multiple connected clients don't redundantly race to write the
-// same documents, and silent unless it actually fixes something (no notification on a clean load).
+// One-time category-flag bootstrap for the module's own base item compendiums (e.g. the
+// "lightsabers" pack predates the category system). Idempotent — checks the flag before
+// writing, so it's a no-op after the first run. Add an entry here whenever a new base-item
+// pack for another category is created.
+const BASE_ITEM_PACK_CATEGORIES = {
+  [`${MODULE_ID}.lightsabers`]: "lightsaber"
+};
+
+async function migrateBaseItemCategories() {
+  let migrated = 0;
+
+  for (const [packId, categoryKey] of Object.entries(BASE_ITEM_PACK_CATEGORIES)) {
+    const pack = game.packs.get(packId);
+    if (!pack) continue;
+
+    const wasLocked = pack.locked;
+    if (wasLocked) await pack.configure({ locked: false });
+
+    try {
+      const index = await pack.getIndex();
+      for (const entry of index) {
+        const doc = await pack.getDocument(entry._id);
+        if (doc.getFlag(MODULE_ID, "category") === categoryKey) continue;
+        await doc.setFlag(MODULE_ID, "category", categoryKey);
+        migrated++;
+      }
+    } finally {
+      if (wasLocked) await pack.configure({ locked: true });
+    }
+  }
+
+  return migrated;
+}
+
+// Full data-integrity pass on world load: migrates base-item category flags, reflags
+// compendium items from upgrade-effects.json, clears stale upgrade slots, recalculates
+// stats/images, and syncs wielder/skill effects for every actor. GM-only so multiple connected
+// clients don't redundantly race to write the same documents, and silent unless it actually
+// fixes something (no notification on a clean load).
 Hooks.once("ready", async () => {
   if (!game.user.isGM) return;
 
   let weaponsFixed = 0;
   let errors = 0;
+
+  const baseItemsMigrated = await migrateBaseItemCategories().catch((error) => {
+    console.error(`[${MODULE_ID}] Base item category migration failed:`, error);
+    errors++;
+    return 0;
+  });
 
   const reflagResult = await reflagCompendiumItems().catch((error) => {
     console.error(`[${MODULE_ID}] Compendium reflag failed:`, error);
@@ -780,11 +822,14 @@ Hooks.once("ready", async () => {
   errors += reflagResult.failed.length;
 
   for (const actor of game.actors) {
-    for (const weapon of actor.items.filter((i) => i.type === "weapon")) {
+    for (const item of actor.items) {
+      const categoryConfig = getCategoryConfig(item);
+      if (!categoryConfig || item.type !== categoryConfig.itemType) continue;
+
       try {
-        if (await refreshWeaponData(weapon)) weaponsFixed++;
+        if (await refreshItemUpgradeData(item, categoryConfig)) weaponsFixed++;
       } catch (error) {
-        console.error(`[${MODULE_ID}] Error refreshing ${weapon.name} on ${actor.name}:`, error);
+        console.error(`[${MODULE_ID}] Error refreshing ${item.name} on ${actor.name}:`, error);
         errors++;
       }
     }
@@ -799,9 +844,9 @@ Hooks.once("ready", async () => {
   }
 
   const reflagged = reflagResult.updated.length;
-  if (weaponsFixed > 0 || reflagged > 0 || errors > 0) {
-    console.log(`[${MODULE_ID}] Startup refresh: ${weaponsFixed} weapon(s) fixed, ${reflagged} compendium item(s) reflagged${errors > 0 ? `, ${errors} error(s)` : ""}`);
-    ui.notifications.info(`Genesys Lightsabers: refreshed ${weaponsFixed} weapon(s), reflagged ${reflagged} upgrade(s) on startup.`);
+  if (weaponsFixed > 0 || reflagged > 0 || baseItemsMigrated > 0 || errors > 0) {
+    console.log(`[${MODULE_ID}] Startup refresh: ${weaponsFixed} item(s) fixed, ${reflagged} compendium item(s) reflagged, ${baseItemsMigrated} base item(s) migrated${errors > 0 ? `, ${errors} error(s)` : ""}`);
+    ui.notifications.info(`Genesys Lightsabers: refreshed ${weaponsFixed} item(s), reflagged ${reflagged} upgrade(s) on startup.`);
   }
 });
 
@@ -824,9 +869,11 @@ Hooks.on("closeModuleSettings", async () => {
 
 // Drag-and-drop: applying an upgrade (gear item) onto a lightsaber weapon sheet
 Hooks.on("renderItemSheet", (app, html) => {
-  const weapon = app.item;
-  if (!weapon) return;
-  if (weapon.type !== "weapon") return;
+  const item = app.item;
+  if (!item) return;
+
+  const categoryConfig = getCategoryConfig(item);
+  if (!categoryConfig || item.type !== categoryConfig.itemType) return;
 
   if (html[0].dataset.glCrystalDropBound === "1") return;
   html[0].dataset.glCrystalDropBound = "1";
@@ -839,6 +886,7 @@ Hooks.on("renderItemSheet", (app, html) => {
     if (!dropped || dropped.type !== "gear") return;
 
     const upgradeType = dropped.getFlag(MODULE_ID, "upgradeType");
+    const upgradeCategory = dropped.getFlag(MODULE_ID, "category");
     const qualityData = dropped.getFlag(MODULE_ID, "qualityData");
     const colorFlag = dropped.getFlag(MODULE_ID, "color");
     const effectData = dropped.getFlag(MODULE_ID, "effectData") || {};
@@ -848,8 +896,20 @@ Hooks.on("renderItemSheet", (app, html) => {
       return;
     }
 
-    const currentQualities = Array.isArray(weapon.system.qualities)
-      ? foundry.utils.deepClone(weapon.system.qualities)
+    if (upgradeCategory !== getItemCategoryKey(item)) {
+      ui.notifications.warn(`${dropped.name} cannot be installed on this item (wrong category).`);
+      return;
+    }
+
+    if (!categoryConfig.slots.includes(upgradeType)) {
+      ui.notifications.warn(`${dropped.name}'s slot "${upgradeType}" is not valid for this item.`);
+      return;
+    }
+
+    const statFields = categoryConfig.statFields;
+
+    const currentQualities = Array.isArray(item.system.qualities)
+      ? foundry.utils.deepClone(item.system.qualities)
       : [];
 
     const currentQualityNames = new Set(
@@ -859,10 +919,10 @@ Hooks.on("renderItemSheet", (app, html) => {
     );
 
     const oldUpgrades = foundry.utils.deepClone(
-      weapon.getFlag(MODULE_ID, "upgrades") || {}
+      item.getFlag(MODULE_ID, "upgrades") || {}
     );
 
-    // Discard stale slots whose qualities were manually removed from the weapon.
+    // Discard stale slots whose qualities were manually removed from the item.
     for (const [slotKey, slotData] of Object.entries(oldUpgrades)) {
       const qName = String(slotData?.qualityData?.name ?? "").toLowerCase().trim();
       if (qName && !currentQualityNames.has(qName)) {
@@ -872,12 +932,11 @@ Hooks.on("renderItemSheet", (app, html) => {
 
     const normalizedColorFlag = typeof colorFlag === "string" ? colorFlag.toLowerCase().trim() : null;
 
-    const existingModTotals = collectStatMods(oldUpgrades);
-    const inferredBaseStats = {
-      baseDamage: inferBaseStatValue(weapon.system?.baseDamage, existingModTotals.baseDamage),
-      critical: inferBaseStatValue(weapon.system?.critical, existingModTotals.critical),
-      rangedDefence: inferBaseStatValue(weapon.system?.rangedDefence, existingModTotals.rangedDefence)
-    };
+    const existingModTotals = collectStatMods(oldUpgrades, statFields);
+    const inferredBaseStats = {};
+    for (const field of statFields) {
+      inferredBaseStats[field] = inferBaseStatValue(item.system?.[field], existingModTotals[field]);
+    }
 
     const upgrades = foundry.utils.deepClone(oldUpgrades);
     upgrades[upgradeType] = {
@@ -890,7 +949,9 @@ Hooks.on("renderItemSheet", (app, html) => {
         : null
     };
 
-    const moduleManagedNames = new Set(crystalQualityNames);
+    const moduleManagedNames = categoryConfig.supportsBladeColor
+      ? new Set(crystalQualityNames)
+      : new Set();
 
     for (const slot of Object.values(oldUpgrades)) {
       collectManagedNamesFromSlot(slot, moduleManagedNames);
@@ -905,38 +966,41 @@ Hooks.on("renderItemSheet", (app, html) => {
       return !moduleManagedNames.has(qName);
     });
 
-    for (const slotKey of upgradeSlots) {
+    for (const slotKey of categoryConfig.slots) {
       const slot = upgrades[slotKey];
       if (slot?.qualityData) filtered.push(foundry.utils.deepClone(slot.qualityData));
     }
 
-    const variant = getWeaponVariant(weapon);
-    const fallbackBaseImg = baseImages[variant] ?? baseImages.single ?? weapon.img;
-    const baseImg = weapon.getFlag(MODULE_ID, "baseImg") ?? fallbackBaseImg;
+    const updatePayload = { "system.qualities": filtered };
 
-    let img = baseImg;
-    const activeColor = String(upgrades.colorCrystal?.color ?? "").toLowerCase().trim() || null;
-    if (activeColor) {
-      const crystalImg = crystalImages[variant]?.[activeColor] ?? null;
-      if (crystalImg) img = crystalImg;
+    if (categoryConfig.supportsBladeColor) {
+      const variant = getWeaponVariant(item);
+      const fallbackBaseImg = baseImages[variant] ?? baseImages.single ?? item.img;
+      const baseImg = item.getFlag(MODULE_ID, "baseImg") ?? fallbackBaseImg;
+
+      let img = baseImg;
+      const activeColor = String(upgrades.colorCrystal?.color ?? "").toLowerCase().trim() || null;
+      if (activeColor) {
+        const crystalImg = crystalImages[variant]?.[activeColor] ?? null;
+        if (crystalImg) img = crystalImg;
+      }
+
+      await item.setFlag(MODULE_ID, "baseImg", baseImg);
+      updatePayload.img = img;
     }
 
-    const derivedStats = deriveStatsFromBase(inferredBaseStats, upgrades);
+    const derivedStats = deriveStatsFromBase(inferredBaseStats, upgrades, statFields);
+    for (const field of statFields) {
+      updatePayload[`system.${field}`] = derivedStats[field];
+    }
 
-    // Save slot state first so the update watcher sees the new color crystal immediately.
-    await weapon.setFlag(MODULE_ID, "baseImg", baseImg);
-    await replaceUpgradesFlag(weapon, upgrades);
-    await weapon.setFlag(MODULE_ID, "baseStats", inferredBaseStats);
+    // Save slot state first so the update watcher sees the new upgrades immediately.
+    await replaceUpgradesFlag(item, upgrades);
+    await item.setFlag(MODULE_ID, "baseStats", inferredBaseStats);
 
-    await weapon.update({
-      "system.qualities": filtered,
-      "system.baseDamage": derivedStats.baseDamage,
-      "system.critical": derivedStats.critical,
-      "system.rangedDefence": derivedStats.rangedDefence,
-      img
-    });
+    await item.update(updatePayload);
 
-    console.log(`[${MODULE_ID}] applied upgrade`, upgradeType, dropped.name, "to", weapon.name);
+    console.log(`[${MODULE_ID}] applied upgrade`, upgradeType, dropped.name, "to", item.name);
   });
 });
 
@@ -945,10 +1009,11 @@ if (!globalThis.GLS_WEAPON_CRYSTAL_WATCHER) {
   globalThis.GLS_WEAPON_CRYSTAL_WATCHER = true;
 
   Hooks.on("updateItem", async (item, changed) => {
-    if (item.type !== "weapon") return;
+    const categoryConfig = getCategoryConfig(item);
+    if (!categoryConfig) return;
     if (!foundry.utils.hasProperty(changed, "system.qualities")) return;
 
-    await refreshWeaponData(item);
+    await refreshItemUpgradeData(item, categoryConfig);
   });
 }
 
