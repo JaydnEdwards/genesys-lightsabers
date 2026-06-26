@@ -1,0 +1,212 @@
+{
+  "Devaronian Edge": {
+    "category": "vibrosword",
+    "upgradeType": "edge",
+    "qualityData": {
+      "name": "Devaronian Edge",
+      "description": "",
+      "isRated": false
+    },
+    "effectData": {
+      "statMods": {},
+      "tags": ["edge"],
+      "rollHooks": []
+    }
+  },
+  "Ionite Edge": {
+    "category": "vibrosword",
+    "upgradeType": "edge",
+    "qualityData": {
+      "name": "Ionite Edge",
+      "description": "",
+      "isRated": false
+    },
+    "effectData": {
+      "statMods": {},
+      "tags": ["edge"],
+      "rollHooks": []
+    }
+  },
+  "Quadranium Edge": {
+    "category": "vibrosword",
+    "upgradeType": "edge",
+    "qualityData": {
+      "name": "Quadranium Edge",
+      "description": "",
+      "isRated": false
+    },
+    "effectData": {
+      "statMods": {},
+      "tags": ["edge"],
+      "rollHooks": []
+    }
+  },
+  "Mullinine Edge": {
+    "category": "vibrosword",
+    "upgradeType": "edge",
+    "qualityData": {
+      "name": "Mullinine Edge",
+      "description": "",
+      "isRated": false
+    },
+    "effectData": {
+      "statMods": {},
+      "tags": ["edge"],
+      "rollHooks": []
+    }
+  },
+  "Ostrine Edge": {
+    "category": "vibrosword",
+    "upgradeType": "edge",
+    "qualityData": {
+      "name": "Ostrine Edge",
+      "description": "",
+      "isRated": false
+    },
+    "effectData": {
+      "statMods": {},
+      "tags": ["edge"],
+      "rollHooks": []
+    }
+  },
+  "Neutronium Edge": {
+    "category": "vibrosword",
+    "upgradeType": "edge",
+    "qualityData": {
+      "name": "Neutronium Edge",
+      "description": "",
+      "isRated": false
+    },
+    "effectData": {
+      "statMods": {},
+      "tags": ["edge"],
+      "rollHooks": []
+    }
+  },
+  "Ion Cell": {
+    "category": "vibrosword",
+    "upgradeType": "energyCell",
+    "qualityData": {
+      "name": "Ion Cell",
+      "description": "",
+      "isRated": false
+    },
+    "effectData": {
+      "statMods": {},
+      "tags": ["energy-cell"],
+      "rollHooks": []
+    }
+  },
+  "Vibration Cell": {
+    "category": "vibrosword",
+    "upgradeType": "energyCell",
+    "qualityData": {
+      "name": "Vibration Cell",
+      "description": "",
+      "isRated": false
+    },
+    "effectData": {
+      "statMods": {},
+      "tags": ["energy-cell"],
+      "rollHooks": []
+    }
+  },
+  "Enhanced Energy Cell": {
+    "category": "vibrosword",
+    "upgradeType": "energyCell",
+    "qualityData": {
+      "name": "Enhanced Energy Cell",
+      "description": "",
+      "isRated": false
+    },
+    "effectData": {
+      "statMods": {},
+      "tags": ["energy-cell"],
+      "rollHooks": []
+    }
+  },
+  "Sonic Discharge Cell": {
+    "category": "vibrosword",
+    "upgradeType": "energyCell",
+    "qualityData": {
+      "name": "Sonic Discharge Cell",
+      "description": "",
+      "isRated": false
+    },
+    "effectData": {
+      "statMods": {},
+      "tags": ["energy-cell"],
+      "rollHooks": []
+    }
+  },
+  "Agrinium Grip": {
+    "category": "vibrosword",
+    "upgradeType": "grip",
+    "qualityData": {
+      "name": "Agrinium Grip",
+      "description": "",
+      "isRated": false
+    },
+    "effectData": {
+      "statMods": {},
+      "tags": ["grip"],
+      "rollHooks": []
+    }
+  },
+  "Contoured Grip": {
+    "category": "vibrosword",
+    "upgradeType": "grip",
+    "qualityData": {
+      "name": "Contoured Grip",
+      "description": "",
+      "isRated": false
+    },
+    "effectData": {
+      "statMods": {},
+      "tags": ["grip"],
+      "rollHooks": []
+    }
+  },
+  "Zabrak Grip": {
+    "category": "vibrosword",
+    "upgradeType": "grip",
+    "qualityData": {
+      "name": "Zabrak Grip",
+      "description": "",
+      "isRated": false
+    },
+    "effectData": {
+      "statMods": {},
+      "tags": ["grip"],
+      "rollHooks": []
+    }
+  },
+  "Nagai Grip": {
+    "category": "vibrosword",
+    "upgradeType": "grip",
+    "qualityData": {
+      "name": "Nagai Grip",
+      "description": "",
+      "isRated": false
+    },
+    "effectData": {
+      "statMods": {},
+      "tags": ["grip"],
+      "rollHooks": []
+    }
+  },
+  "Basket Hilt": {
+    "category": "vibrosword",
+    "upgradeType": "grip",
+    "qualityData": {
+      "name": "Basket Hilt",
+      "description": "",
+      "isRated": false
+    },
+    "effectData": {
+      "statMods": {},
+      "tags": ["grip"],
+      "rollHooks": []
+    }
+  }
+}

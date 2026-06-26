@@ -30,7 +30,7 @@ const ITEM_CATEGORIES = {
   armor: {
     itemType: "armor",
     slots: ["overlay", "underlay"],
-    statFields: ["defense", "soak"],
+    statFields: ["defense", "soak", "encumbrance"],
     supportsBladeColor: false
   }
 };
@@ -241,6 +241,87 @@ function collectSkillMods(upgrades) {
   return totals;
 }
 
+// Generic collector for any "named amount" effectData field (diceMods, targetDiceMods) —
+// same shape as collectSkillMods but reusable across multiple field names.
+function collectNamedMods(upgrades, fieldName) {
+  const totals = {};
+
+  for (const slotData of Object.values(upgrades || {})) {
+    const mods = slotData?.effectData?.[fieldName];
+    if (!mods || typeof mods !== "object") continue;
+
+    for (const [name, amount] of Object.entries(mods)) {
+      totals[name] = toFiniteNumber(totals[name], 0) + toFiniteNumber(amount, 0);
+    }
+  }
+
+  return totals;
+}
+
+// The Genesys system reads dice-pool bonuses directly off ActiveEffect changes with keys like
+// "genesys.pool.skill.self.<exact skill name>", mode CUSTOM, and a value string of concatenated
+// single-character glyphs (confirmed against the system's own bundled source — it manually
+// scans actor.effects for these rather than using Foundry's native effect-application
+// pipeline, so CUSTOM-mode changes here are inert to anything else and safe to mix into the
+// same effect as the ADD-mode wielderMods changes). Friendly names below map to those glyphs;
+// a fixed iteration order (not Object.entries insertion order) keeps the built string
+// deterministic so didWielderPayloadChange's array comparison doesn't see spurious "changes"
+// between syncs that didn't actually change anything.
+const DICE_POOL_GLYPHS = {
+  boost: "B",
+  setback: "S",
+  ability: "A",
+  proficiency: "P",
+  difficulty: "D",
+  challenge: "C"
+};
+const DICE_POOL_GLYPH_ORDER = ["boost", "setback", "ability", "proficiency", "difficulty", "challenge"];
+
+function buildPoolGlyphString(mods) {
+  const parts = [];
+
+  for (const dieType of DICE_POOL_GLYPH_ORDER) {
+    const count = toFiniteNumber(mods?.[dieType], 0);
+    if (count === 0) continue;
+
+    const glyph = DICE_POOL_GLYPHS[dieType];
+    const token = count > 0 ? glyph : `-${glyph}`;
+    parts.push(token.repeat(Math.abs(count)));
+  }
+
+  return parts.join("");
+}
+
+// One change per skill the weapon is used with — the system matches on the exact skill name
+// being rolled, so a weapon usable with multiple skills needs a separate change per skill.
+function buildDicePoolChanges(diceMods, skillNames) {
+  const glyphString = buildPoolGlyphString(diceMods);
+  if (!glyphString) return [];
+
+  const uniqueSkillNames = Array.from(new Set((skillNames || []).filter(Boolean))).sort();
+
+  return uniqueSkillNames.map((skillName) => ({
+    key: `genesys.pool.skill.self.${skillName}`,
+    mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM,
+    value: glyphString,
+    priority: 20
+  }));
+}
+
+// Defensive bonus: boosts an attacker's pool when this actor (wearing/wielding the item) is
+// the one being targeted. The key is a fixed literal string — no skill name involved.
+function buildTargetDicePoolChanges(targetDiceMods) {
+  const glyphString = buildPoolGlyphString(targetDiceMods);
+  if (!glyphString) return [];
+
+  return [{
+    key: "genesys.pool.check.target.",
+    mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM,
+    value: glyphString,
+    priority: 20
+  }];
+}
+
 function buildWielderEffectChanges(wielderMods) {
   return Object.entries(wielderMods)
     .sort(([leftPath], [rightPath]) => leftPath.localeCompare(rightPath))
@@ -434,6 +515,8 @@ function isItemActive(item) {
   return Boolean(item?.system?.state === "equipped");
 }
 
+const warnedMissingDiceSkills = new Set();
+
 // Improved syncActorWielderEffects with better error handling
 async function syncActorWielderEffects(actor) {
   if (!actor || actor.documentName !== "Actor") return;
@@ -453,13 +536,54 @@ async function syncActorWielderEffects(actor) {
       getCategoryConfig(item) && isItemActive(item)
     );
 
+    // Armor (and any other non-weapon category) has no system.skills of its own, so a
+    // "trigger on any attack roll" diceMods bonus from a worn item has no skill to target.
+    // Instead, target whichever skill(s) the actor's currently-wielded weapon(s) actually use —
+    // that's what "any attack roll" means in practice, and it follows whatever's equipped.
+    const wieldedWeaponSkillNames = new Set();
+    for (const item of weapons) {
+      if (getCategoryConfig(item)?.itemType !== "weapon") continue;
+      for (const skillName of (Array.isArray(item.system?.skills) ? item.system.skills : [])) {
+        wieldedWeaponSkillNames.add(skillName);
+      }
+    }
+
     for (const weapon of weapons) {
+      const categoryConfig = getCategoryConfig(weapon);
       const upgrades = weapon.getFlag(MODULE_ID, "upgrades") || {};
+
       const wieldMods = collectWielderMods(upgrades);
-      const effectChanges = buildWielderEffectChanges(wieldMods);
+      const wielderChanges = buildWielderEffectChanges(wieldMods);
+
+      const skillNames = categoryConfig.itemType === "weapon"
+        ? (Array.isArray(weapon.system?.skills) ? weapon.system.skills : [])
+        : Array.from(wieldedWeaponSkillNames);
+      const diceMods = collectNamedMods(upgrades, "diceMods");
+      const diceChanges = buildDicePoolChanges(diceMods, skillNames);
+
+      const targetDiceMods = collectNamedMods(upgrades, "targetDiceMods");
+      const targetDiceChanges = buildTargetDicePoolChanges(targetDiceMods);
+
+      const effectChanges = [...wielderChanges, ...diceChanges, ...targetDiceChanges];
 
       if (effectChanges.length > 0) {
         desiredByWeapon.set(weapon.id, getWielderEffectPayload(weapon, effectChanges));
+      }
+
+      // Catches the class of bug that motivated this check in the first place: a weapon's
+      // system.skills naming a skill that doesn't actually exist on the actor (e.g. a typo'd
+      // or mismatched skill name) would otherwise silently do nothing.
+      if (diceChanges.length > 0) {
+        const ownedSkillNames = new Set(
+          actor.items.filter((i) => i.type === "skill").map((i) => String(i.name ?? "").trim())
+        );
+        for (const skillName of skillNames) {
+          if (ownedSkillNames.has(skillName)) continue;
+          const warnKey = `${actor.id}:${weapon.id}:${skillName}`;
+          if (warnedMissingDiceSkills.has(warnKey)) continue;
+          warnedMissingDiceSkills.add(warnKey);
+          ui.notifications.warn(`${weapon.name}'s bonus dice target a "${skillName}" skill that ${actor.name} doesn't have.`);
+        }
       }
     }
 
@@ -663,28 +787,43 @@ Hooks.on("updateActor", async (actor, changed) => {
   }
 });
 
-// Pushes scripts/upgrades/upgrade-effects.json onto the matching compendium items' flags,
-// mirroring the manual reflag macro. Skips items that already match (diffed against current
-// flags) so a clean world doesn't rewrite all 50+ items on every load. Temporarily unlocks the
-// pack if needed and restores its original lock state afterward.
-async function reflagCompendiumItems() {
-  const PACK_ID = `${MODULE_ID}.lightsaber-upgrades`;
-  const EFFECTS_PATH = `modules/${MODULE_ID}/scripts/upgrades/upgrade-effects.json`;
+// Each upgrade category's source JSON and the compendium pack it gets reflagged onto. Add an
+// entry here whenever a new category's upgrade content/compendium is created.
+const UPGRADE_EFFECTS_SOURCES = [
+  {
+    effectsPath: `modules/${MODULE_ID}/scripts/upgrades/upgrade-effects.json`,
+    packId: `${MODULE_ID}.lightsaber-upgrades`
+  },
+  {
+    effectsPath: `modules/${MODULE_ID}/scripts/upgrades/armor-effects.json`,
+    packId: `${MODULE_ID}.armor-upgrades`
+  },
+  {
+    effectsPath: `modules/${MODULE_ID}/scripts/upgrades/vibrosword-effects.json`,
+    packId: `${MODULE_ID}.vibrosword-upgrades`
+  }
+];
+
+// Pushes an upgrade-effects JSON file onto the matching compendium items' flags, mirroring the
+// manual reflag macro. Skips items that already match (diffed against current flags) so a
+// clean world doesn't rewrite every item on every load. Temporarily unlocks the pack if needed
+// and restores its original lock state afterward.
+async function reflagCompendiumItems(effectsPath, packId) {
   const result = { updated: [], missing: [], failed: [] };
 
-  const pack = game.packs.get(PACK_ID);
+  const pack = game.packs.get(packId);
   if (!pack) {
-    console.warn(`[${MODULE_ID}] Compendium not found: ${PACK_ID}`);
+    console.warn(`[${MODULE_ID}] Compendium not found: ${packId}`);
     return result;
   }
 
   let effectsData;
   try {
-    const response = await fetch(EFFECTS_PATH, { cache: "no-store" });
+    const response = await fetch(effectsPath, { cache: "no-store" });
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     effectsData = await response.json();
   } catch (error) {
-    console.error(`[${MODULE_ID}] Failed to load ${EFFECTS_PATH}`, error);
+    console.error(`[${MODULE_ID}] Failed to load ${effectsPath}`, error);
     return result;
   }
 
@@ -764,7 +903,10 @@ async function reflagCompendiumItems() {
 // writing, so it's a no-op after the first run. Add an entry here whenever a new base-item
 // pack for another category is created.
 const BASE_ITEM_PACK_CATEGORIES = {
-  [`${MODULE_ID}.lightsabers`]: "lightsaber"
+  [`${MODULE_ID}.lightsabers`]: "lightsaber",
+  [`${MODULE_ID}.melee-weapons`]: "vibrosword",
+  [`${MODULE_ID}.ranged-weapons`]: "blaster",
+  [`${MODULE_ID}.armour`]: "armor"
 };
 
 async function migrateBaseItemCategories() {
@@ -793,6 +935,70 @@ async function migrateBaseItemCategories() {
   return migrated;
 }
 
+// The base lightsaber items were created with system.skills: ["Lightsaber"], but the actual
+// skill Item is named "Lightsabers" (plural) — the Genesys system requires an exact-match
+// skill name for both its own native attack-from-weapon flow and this module's dice-pool mods,
+// so this typo silently breaks both. Add an entry here for any future name corrections needed.
+const SKILL_NAME_FIXES = {
+  "Lightsaber": "Lightsabers"
+};
+
+function fixWeaponSkillNames(skills) {
+  if (!Array.isArray(skills)) return null;
+
+  let changed = false;
+  const fixed = skills.map((name) => {
+    if (Object.prototype.hasOwnProperty.call(SKILL_NAME_FIXES, name)) {
+      changed = true;
+      return SKILL_NAME_FIXES[name];
+    }
+    return name;
+  });
+
+  return changed ? fixed : null;
+}
+
+// Fixes system.skills both on the compendium source (BASE_ITEM_PACK_CATEGORIES packs) and on
+// any already-placed copies on actors — base items dropped onto a character sheet become
+// independent copies, so the compendium fix alone wouldn't reach those.
+async function migrateWeaponSkillNames() {
+  let migrated = 0;
+
+  for (const packId of Object.keys(BASE_ITEM_PACK_CATEGORIES)) {
+    const pack = game.packs.get(packId);
+    if (!pack) continue;
+
+    const wasLocked = pack.locked;
+    if (wasLocked) await pack.configure({ locked: false });
+
+    try {
+      const index = await pack.getIndex();
+      for (const entry of index) {
+        const doc = await pack.getDocument(entry._id);
+        const fixed = fixWeaponSkillNames(doc.system?.skills);
+        if (fixed) {
+          await doc.update({ "system.skills": fixed });
+          migrated++;
+        }
+      }
+    } finally {
+      if (wasLocked) await pack.configure({ locked: true });
+    }
+  }
+
+  for (const actor of game.actors) {
+    for (const item of actor.items) {
+      const fixed = fixWeaponSkillNames(item.system?.skills);
+      if (fixed) {
+        await item.update({ "system.skills": fixed });
+        migrated++;
+      }
+    }
+  }
+
+  return migrated;
+}
+
 // Full data-integrity pass on world load: migrates base-item category flags, reflags
 // compendium items from upgrade-effects.json, clears stale upgrade slots, recalculates
 // stats/images, and syncs wielder/skill effects for every actor. GM-only so multiple connected
@@ -810,16 +1016,28 @@ Hooks.once("ready", async () => {
     return 0;
   });
 
-  const reflagResult = await reflagCompendiumItems().catch((error) => {
-    console.error(`[${MODULE_ID}] Compendium reflag failed:`, error);
+  // Must run before the per-actor loop below so corrected skill names are in place before
+  // dice-pool-mod skill-name checks run in the same pass.
+  const skillNamesFixed = await migrateWeaponSkillNames().catch((error) => {
+    console.error(`[${MODULE_ID}] Weapon skill name migration failed:`, error);
     errors++;
-    return { updated: [], missing: [], failed: [] };
+    return 0;
   });
 
-  if (reflagResult.missing.length > 0) {
-    console.log(`[${MODULE_ID}] Reflag: items in upgrade-effects.json with no compendium match:`, reflagResult.missing);
+  let reflagged = 0;
+  for (const source of UPGRADE_EFFECTS_SOURCES) {
+    const reflagResult = await reflagCompendiumItems(source.effectsPath, source.packId).catch((error) => {
+      console.error(`[${MODULE_ID}] Compendium reflag failed for ${source.packId}:`, error);
+      errors++;
+      return { updated: [], missing: [], failed: [] };
+    });
+
+    if (reflagResult.missing.length > 0) {
+      console.log(`[${MODULE_ID}] Reflag: items in ${source.effectsPath} with no match in ${source.packId}:`, reflagResult.missing);
+    }
+    errors += reflagResult.failed.length;
+    reflagged += reflagResult.updated.length;
   }
-  errors += reflagResult.failed.length;
 
   for (const actor of game.actors) {
     for (const item of actor.items) {
@@ -843,9 +1061,8 @@ Hooks.once("ready", async () => {
     }
   }
 
-  const reflagged = reflagResult.updated.length;
-  if (weaponsFixed > 0 || reflagged > 0 || baseItemsMigrated > 0 || errors > 0) {
-    console.log(`[${MODULE_ID}] Startup refresh: ${weaponsFixed} item(s) fixed, ${reflagged} compendium item(s) reflagged, ${baseItemsMigrated} base item(s) migrated${errors > 0 ? `, ${errors} error(s)` : ""}`);
+  if (weaponsFixed > 0 || reflagged > 0 || baseItemsMigrated > 0 || skillNamesFixed > 0 || errors > 0) {
+    console.log(`[${MODULE_ID}] Startup refresh: ${weaponsFixed} item(s) fixed, ${reflagged} compendium item(s) reflagged, ${baseItemsMigrated} base item(s) migrated, ${skillNamesFixed} skill name(s) fixed${errors > 0 ? `, ${errors} error(s)` : ""}`);
     ui.notifications.info(`Genesys Lightsabers: refreshed ${weaponsFixed} item(s), reflagged ${reflagged} upgrade(s) on startup.`);
   }
 });
@@ -1030,3 +1247,20 @@ function attachModuleApi() {
 }
 
 Hooks.once("ready", attachModuleApi);
+
+// The Genesys system only auto-applies a matched dice-pool modification (the boost/setback
+// dice this module now grants) if the rolling player has their own client-scoped "Pool
+// Modifications: Auto-Apply" setting enabled — off by default, and not something a GM can turn
+// on for everyone. Without it, the bonus shows as a pre-populated-but-still-manual checkbox in
+// the roll dialog rather than applying silently. One-time per-user notice, not GM-gated.
+Hooks.once("ready", async () => {
+  if (game.user.getFlag(MODULE_ID, "seenAutoApplyPoolModsNotice")) return;
+  await game.user.setFlag(MODULE_ID, "seenAutoApplyPoolModsNotice", true);
+
+  ui.notifications.info(
+    "Genesys Lightsabers: equipped upgrades can now add Boost/Setback dice to your rolls. " +
+    "For these to apply automatically instead of showing as a manual checkbox, enable " +
+    "\"Pool Modifications: Auto-Apply\" in Settings → Configure Settings → System Settings.",
+    { permanent: true }
+  );
+});

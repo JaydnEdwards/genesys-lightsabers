@@ -35,6 +35,41 @@
     "type": "Item",
     "system": "genesys",
     "path": "packs/skills"
+    },
+    {
+    "name": "armour",
+    "label": "Armour",
+    "type": "Item",
+    "system": "genesys",
+    "path": "packs/armour"
+    },
+    {
+    "name": "melee-weapons",
+    "label": "Melee Weapons",
+    "type": "Item",
+    "system": "genesys",
+    "path": "packs/melee-weapons"
+    },
+    {
+    "name": "ranged-weapons",
+    "label": "Ranged Weapons",
+    "type": "Item",
+    "system": "genesys",
+    "path": "packs/ranged-weapons"
+    },
+    {
+    "name": "armor-upgrades",
+    "label": "Armor Upgrades",
+    "type": "Item",
+    "system": "genesys",
+    "path": "packs/armor-upgrades"
+    },
+    {
+    "name": "vibrosword-upgrades",
+    "label": "Vibrosword Upgrades",
+    "type": "Item",
+    "system": "genesys",
+    "path": "packs/vibrosword-upgrades"
     }
   ],
   "esmodules": [

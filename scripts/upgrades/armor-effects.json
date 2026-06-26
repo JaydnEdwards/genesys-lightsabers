@@ -1,0 +1,243 @@
+{
+  "Armorply Plating": {
+    "category": "armor",
+    "upgradeType": "overlay",
+    "qualityData": {
+      "name": "Armorply Plating",
+      "description": "Adds +1 Soak and +1 to Stealth checks.",
+      "isRated": false
+    },
+    "effectData": {
+      "statMods": {},
+      "skillMods": {
+        "Stealth": 1,
+        "Coordination": 1
+      },
+      "wielderMods": {
+        "system.characteristics.agility": 1
+      },
+      "tags": ["overlay"],
+      "rollHooks": []
+    }
+  },
+  "Bonded Plates": {
+    "category": "armor",
+    "upgradeType": "overlay",
+    "qualityData": {
+      "name": "Bonded Plates",
+      "description": "Adds +1 Soak and Defense.",
+      "isRated": false
+    },
+    "effectData": {
+      "statMods": {
+        "soak": 1,
+        "defense": 1
+      },
+      "tags": ["overlay"],
+      "rollHooks": []
+    }
+  },
+  "Heavy Bonded Plates": {
+    "category": "armor",
+    "upgradeType": "overlay",
+    "qualityData": {
+      "name": "Heavy Bonded Plates",
+      "description": "Adds +2 Defense and +1 Soak at the cost of agility. Add 1 setback to your attack pool.",
+      "isRated": false
+    },
+    "effectData": {
+      "statMods": {
+        "defense": 2,
+        "soak": 1
+      },
+      "wielderMods": {
+        "system.characteristics.agility": -1
+      },
+      "diceMods": {
+        "setback": 1
+      },
+      "tags": ["overlay"],
+      "rollHooks": []
+    }
+  },
+  "Ballistic Shielding": {
+    "category": "armor",
+    "upgradeType": "overlay",
+    "qualityData": {
+      "name": "Ballistic Shielding",
+      "description": "Adds +1 Soak and +1 Melee Defense.",
+      "isRated": false
+    },
+    "effectData": {
+      "statMods": {
+        "soak": 1
+      },
+      "wielderMods": {
+        "system.defense.melee": 1
+      },
+      "tags": ["overlay"],
+      "rollHooks": []
+    }
+  },
+  "Energy Shielding": {
+    "category": "armor",
+    "upgradeType": "overlay",
+    "qualityData": {
+      "name": "Energy Shielding",
+      "description": "Take half damage from energy-based attacks.",
+      "isRated": false
+    },
+    "effectData": {
+      "statMods": {},
+      "tags": ["overlay"],
+      "rollHooks": []
+    }
+  },
+  "Heat Shielding": {
+    "category": "armor",
+    "upgradeType": "overlay",
+    "qualityData": {
+      "name": "Heat Shielding",
+      "description": "Take half damage from heat-based attacks.",
+      "isRated": false
+    },
+    "effectData": {
+      "statMods": {},
+      "tags": ["overlay"],
+      "rollHooks": []
+    }
+  },
+  "Ablative Plating": {
+    "category": "armor",
+    "upgradeType": "overlay",
+    "qualityData": {
+      "name": "Ablative Plating",
+      "description": "Adds +2 Soak. Reduces Agility by 1. Take half damage from energy-based attacks.",
+      "isRated": false
+    },
+    "effectData": {
+      "statMods": {
+        "soak": 2
+      },
+      "wielderMods": {
+        "system.characteristics.agility": -1
+      },
+      "tags": ["overlay"],
+      "rollHooks": []
+    }
+  },
+  "Sound Dampening Overlay": {
+    "category": "armor",
+    "upgradeType": "overlay",
+    "qualityData": {
+      "name": "Sound Dampening Overlay",
+      "description": "Take half damage from sonic-based attacks.",
+      "isRated": false
+    },
+    "effectData": {
+      "statMods": {},
+      "skillMods": {
+        "Stealth": 1
+      },
+      "tags": ["overlay"],
+      "rollHooks": []
+    }
+  },
+  "Strengthening Underlay": {
+    "category": "armor",
+    "upgradeType": "underlay",
+    "qualityData": {
+      "name": "Strengthening Underlay",
+      "description": "Add +1 Brawn.",
+      "isRated": false
+    },
+    "effectData": {
+      "statMods": {},
+      "wielderMods": {
+        "system.characteristics.brawn": 1
+      },
+      "tags": ["underlay"],
+      "rollHooks": []
+    }
+  },
+  "Armorweave Underlay": {
+    "category": "armor",
+    "upgradeType": "underlay",
+    "qualityData": {
+      "name": "Armorweave Underlay",
+      "description": "Take half damage from energy-based attacks.",
+      "isRated": false
+    },
+    "effectData": {
+      "statMods": {},
+      "wielderMods": {},
+      "tags": ["underlay"],
+      "rollHooks": []
+    }
+  },
+  "Durasteel Underlay": {
+    "category": "armor",
+    "upgradeType": "underlay",
+    "qualityData": {
+      "name": "Durasteel Underlay",
+      "description": "Adds +2 Physical Defence.",
+      "isRated": false
+    },
+    "effectData": {
+      "statMods": {},
+      "wielderMods": {
+        "system.defense.physical": 2
+      },
+      "tags": ["underlay"],
+      "rollHooks": []
+    }
+  },
+  "Environment Underlay": {
+    "category": "armor",
+    "upgradeType": "underlay",
+    "qualityData": {
+      "name": "Environment Underlay",
+      "description": "Take half damage from cold and heat-based attacks.",
+      "isRated": false
+    },
+    "effectData": {
+      "statMods": {},
+      "wielderMods": {},
+      "tags": ["underlay"],
+      "rollHooks": []
+    }
+  },
+  "Biorestorative Underlay": {
+    "category": "armor",
+    "upgradeType": "underlay",
+    "qualityData": {
+      "name": "Biorestorative Underlay",
+      "description": "Heal 1 wound at the start of each of your turns.",
+      "isRated": false
+    },
+    "effectData": {
+      "statMods": {},
+      "tags": ["underlay"],
+      "rollHooks": []
+    }
+  },
+  "Flexible Underlay": {
+    "category": "armor",
+    "upgradeType": "underlay",
+    "qualityData": {
+      "name": "Flexible Underlay",
+      "description": "Reduces this armor's Encumbrance by 1. Increase Agility by 1.",
+      "isRated": false
+    },
+    "effectData": {
+      "statMods": {
+        "encumbrance": -1
+      },
+      "wielderMods": {
+        "system.characteristics.agility": 1
+      },
+      "tags": ["underlay"],
+      "rollHooks": []
+    }
+  }
+}
