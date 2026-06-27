@@ -4,11 +4,13 @@
     "upgradeType": "edge",
     "qualityData": {
       "name": "Devaronian Edge",
-      "description": "",
+      "description": "+1 base damage and add Vicious 1 to the weapon.",
       "isRated": false
     },
     "effectData": {
-      "statMods": {},
+      "statMods": {
+        "baseDamage": 1
+      },
       "tags": ["edge"],
       "rollHooks": []
     }
@@ -18,11 +20,13 @@
     "upgradeType": "edge",
     "qualityData": {
       "name": "Ionite Edge",
-      "description": "",
+      "description": "+1 base damage, +1 extra against droids.",
       "isRated": false
     },
     "effectData": {
-      "statMods": {},
+      "statMods": {
+        "baseDamage": 1
+      },
       "tags": ["edge"],
       "rollHooks": []
     }
@@ -32,11 +36,13 @@
     "upgradeType": "edge",
     "qualityData": {
       "name": "Quadranium Edge",
-      "description": "",
+      "description": "+5 base damage",
       "isRated": false
     },
     "effectData": {
-      "statMods": {},
+      "statMods": {
+        "baseDamage": 5
+      },
       "tags": ["edge"],
       "rollHooks": []
     }
@@ -46,11 +52,14 @@
     "upgradeType": "edge",
     "qualityData": {
       "name": "Mullinine Edge",
-      "description": "",
+      "description": "+2 base damage, and -1 advatage required to inflict a critical hit.",
       "isRated": false
     },
     "effectData": {
-      "statMods": {},
+      "statMods": {
+        "baseDamage": 2,
+        "critical": -1
+      },
       "tags": ["edge"],
       "rollHooks": []
     }
@@ -60,11 +69,13 @@
     "upgradeType": "edge",
     "qualityData": {
       "name": "Ostrine Edge",
-      "description": "",
+      "description": "+6 damage",
       "isRated": false
     },
     "effectData": {
-      "statMods": {},
+      "statMods": {
+        "baseDamage": 6
+      },
       "tags": ["edge"],
       "rollHooks": []
     }
@@ -74,11 +85,13 @@
     "upgradeType": "edge",
     "qualityData": {
       "name": "Neutronium Edge",
-      "description": "",
+      "description": "+3 base damage, add Vicious 1 to the weapon.",
       "isRated": false
     },
     "effectData": {
-      "statMods": {},
+      "statMods": {
+        "baseDamage": 3
+      },
       "tags": ["edge"],
       "rollHooks": []
     }

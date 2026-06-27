@@ -792,15 +792,15 @@ Hooks.on("updateActor", async (actor, changed) => {
 const UPGRADE_EFFECTS_SOURCES = [
   {
     effectsPath: `modules/${MODULE_ID}/scripts/upgrades/upgrade-effects.json`,
-    packId: `${MODULE_ID}.lightsaber-upgrades`
+    packId: `${MODULE_ID}.upgrades`
   },
   {
     effectsPath: `modules/${MODULE_ID}/scripts/upgrades/armor-effects.json`,
-    packId: `${MODULE_ID}.armor-upgrades`
+    packId: `${MODULE_ID}.upgrades`
   },
   {
     effectsPath: `modules/${MODULE_ID}/scripts/upgrades/vibrosword-effects.json`,
-    packId: `${MODULE_ID}.vibrosword-upgrades`
+    packId: `${MODULE_ID}.upgrades`
   }
 ];
 
@@ -898,42 +898,10 @@ async function reflagCompendiumItems(effectsPath, packId) {
   return result;
 }
 
-// One-time category-flag bootstrap for the module's own base item compendiums (e.g. the
-// "lightsabers" pack predates the category system). Idempotent — checks the flag before
-// writing, so it's a no-op after the first run. Add an entry here whenever a new base-item
-// pack for another category is created.
-const BASE_ITEM_PACK_CATEGORIES = {
-  [`${MODULE_ID}.lightsabers`]: "lightsaber",
-  [`${MODULE_ID}.melee-weapons`]: "vibrosword",
-  [`${MODULE_ID}.ranged-weapons`]: "blaster",
-  [`${MODULE_ID}.armour`]: "armor"
-};
-
-async function migrateBaseItemCategories() {
-  let migrated = 0;
-
-  for (const [packId, categoryKey] of Object.entries(BASE_ITEM_PACK_CATEGORIES)) {
-    const pack = game.packs.get(packId);
-    if (!pack) continue;
-
-    const wasLocked = pack.locked;
-    if (wasLocked) await pack.configure({ locked: false });
-
-    try {
-      const index = await pack.getIndex();
-      for (const entry of index) {
-        const doc = await pack.getDocument(entry._id);
-        if (doc.getFlag(MODULE_ID, "category") === categoryKey) continue;
-        await doc.setFlag(MODULE_ID, "category", categoryKey);
-        migrated++;
-      }
-    } finally {
-      if (wasLocked) await pack.configure({ locked: true });
-    }
-  }
-
-  return migrated;
-}
+// All base weapon/armor items now live in one "equipment" compendium, organized into folders
+// by category rather than separate packs. Category is set explicitly per item at creation time
+// (see the item-creation console scripts), since pack location no longer implies category.
+const EQUIPMENT_PACK_ID = `${MODULE_ID}.equipment`;
 
 // The base lightsaber items were created with system.skills: ["Lightsaber"], but the actual
 // skill Item is named "Lightsabers" (plural) — the Genesys system requires an exact-match
@@ -958,16 +926,14 @@ function fixWeaponSkillNames(skills) {
   return changed ? fixed : null;
 }
 
-// Fixes system.skills both on the compendium source (BASE_ITEM_PACK_CATEGORIES packs) and on
-// any already-placed copies on actors — base items dropped onto a character sheet become
+// Fixes system.skills both on the compendium source (the "equipment" pack) and on any
+// already-placed copies on actors — base items dropped onto a character sheet become
 // independent copies, so the compendium fix alone wouldn't reach those.
 async function migrateWeaponSkillNames() {
   let migrated = 0;
 
-  for (const packId of Object.keys(BASE_ITEM_PACK_CATEGORIES)) {
-    const pack = game.packs.get(packId);
-    if (!pack) continue;
-
+  const pack = game.packs.get(EQUIPMENT_PACK_ID);
+  if (pack) {
     const wasLocked = pack.locked;
     if (wasLocked) await pack.configure({ locked: false });
 
@@ -999,22 +965,16 @@ async function migrateWeaponSkillNames() {
   return migrated;
 }
 
-// Full data-integrity pass on world load: migrates base-item category flags, reflags
-// compendium items from upgrade-effects.json, clears stale upgrade slots, recalculates
-// stats/images, and syncs wielder/skill effects for every actor. GM-only so multiple connected
-// clients don't redundantly race to write the same documents, and silent unless it actually
-// fixes something (no notification on a clean load).
+// Full data-integrity pass on world load: fixes weapon skill names, reflags compendium items
+// from upgrade-effects.json, clears stale upgrade slots, recalculates stats/images, and syncs
+// wielder/skill effects for every actor. GM-only so multiple connected clients don't redundantly
+// race to write the same documents, and silent unless it actually fixes something (no
+// notification on a clean load).
 Hooks.once("ready", async () => {
   if (!game.user.isGM) return;
 
   let weaponsFixed = 0;
   let errors = 0;
-
-  const baseItemsMigrated = await migrateBaseItemCategories().catch((error) => {
-    console.error(`[${MODULE_ID}] Base item category migration failed:`, error);
-    errors++;
-    return 0;
-  });
 
   // Must run before the per-actor loop below so corrected skill names are in place before
   // dice-pool-mod skill-name checks run in the same pass.
@@ -1061,8 +1021,8 @@ Hooks.once("ready", async () => {
     }
   }
 
-  if (weaponsFixed > 0 || reflagged > 0 || baseItemsMigrated > 0 || skillNamesFixed > 0 || errors > 0) {
-    console.log(`[${MODULE_ID}] Startup refresh: ${weaponsFixed} item(s) fixed, ${reflagged} compendium item(s) reflagged, ${baseItemsMigrated} base item(s) migrated, ${skillNamesFixed} skill name(s) fixed${errors > 0 ? `, ${errors} error(s)` : ""}`);
+  if (weaponsFixed > 0 || reflagged > 0 || skillNamesFixed > 0 || errors > 0) {
+    console.log(`[${MODULE_ID}] Startup refresh: ${weaponsFixed} item(s) fixed, ${reflagged} compendium item(s) reflagged, ${skillNamesFixed} skill name(s) fixed${errors > 0 ? `, ${errors} error(s)` : ""}`);
     ui.notifications.info(`Genesys Lightsabers: refreshed ${weaponsFixed} item(s), reflagged ${reflagged} upgrade(s) on startup.`);
   }
 });

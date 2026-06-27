@@ -16,18 +16,18 @@
   },
   "packs": [
     {
-    "name": "lightsaber-upgrades",
-    "label": "Lightsaber Upgrades",
+    "name": "equipment",
+    "label": "Equipment",
     "type": "Item",
     "system": "genesys",
-    "path": "packs/lightsaber-upgrades"
+    "path": "packs/equipment"
     },
     {
-    "name": "lightsabers",
-    "label": "Lightsabers",
+    "name": "upgrades",
+    "label": "Upgrades",
     "type": "Item",
     "system": "genesys",
-    "path": "packs/lightsabers"
+    "path": "packs/upgrades"
     },
     {
     "name": "skills",
@@ -35,41 +35,6 @@
     "type": "Item",
     "system": "genesys",
     "path": "packs/skills"
-    },
-    {
-    "name": "armour",
-    "label": "Armour",
-    "type": "Item",
-    "system": "genesys",
-    "path": "packs/armour"
-    },
-    {
-    "name": "melee-weapons",
-    "label": "Melee Weapons",
-    "type": "Item",
-    "system": "genesys",
-    "path": "packs/melee-weapons"
-    },
-    {
-    "name": "ranged-weapons",
-    "label": "Ranged Weapons",
-    "type": "Item",
-    "system": "genesys",
-    "path": "packs/ranged-weapons"
-    },
-    {
-    "name": "armor-upgrades",
-    "label": "Armor Upgrades",
-    "type": "Item",
-    "system": "genesys",
-    "path": "packs/armor-upgrades"
-    },
-    {
-    "name": "vibrosword-upgrades",
-    "label": "Vibrosword Upgrades",
-    "type": "Item",
-    "system": "genesys",
-    "path": "packs/vibrosword-upgrades"
     }
   ],
   "esmodules": [
