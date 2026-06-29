@@ -801,6 +801,10 @@ const UPGRADE_EFFECTS_SOURCES = [
   {
     effectsPath: `modules/${MODULE_ID}/scripts/upgrades/vibrosword-effects.json`,
     packId: `${MODULE_ID}.upgrades`
+  },
+  {
+    effectsPath: `modules/${MODULE_ID}/scripts/upgrades/blaster-effects.json`,
+    packId: `${MODULE_ID}.upgrades`
   }
 ];
 

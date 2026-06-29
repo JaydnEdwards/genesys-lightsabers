@@ -1,0 +1,199 @@
+{
+  "Pinpoint Scope": {
+    "category": "blaster",
+    "upgradeType": "targeting",
+    "qualityData": {
+      "name": "Pinpoint Scope",
+      "description": "-1 crit, deals 1 strain per hit.",
+      "isRated": false
+    },
+    "effectData": {
+      "statMods": {
+        "critical": -1
+      },
+      "tags": ["targeting"],
+      "rollHooks": []
+    }
+  },
+  "Accuracy Scope": {
+    "category": "blaster",
+    "upgradeType": "targeting",
+    "qualityData": {
+      "name": "Accuracy Scope",
+      "description": "Add 1 Boost die to attack rolls.",
+      "isRated": false
+    },
+    "effectData": {
+      "statMods": {},
+      "diceMods": {
+        "boost": 1
+      },
+      "tags": ["targeting"],
+      "rollHooks": []
+    }
+  },
+  "Targeting Scope": {
+    "category": "blaster",
+    "upgradeType": "targeting",
+    "qualityData": {
+      "name": "Targeting Scope",
+      "description": "+1 base damage. Add Disorient 2 (active).",
+      "isRated": false
+    },
+    "effectData": {
+      "statMods": {
+        "baseDamage": 1
+      },
+      "tags": ["targeting"],
+      "rollHooks": []
+    }
+  },
+  "Crippling Scope": {
+    "category": "blaster",
+    "upgradeType": "targeting",
+    "qualityData": {
+      "name": "Crippling Scope",
+      "description": "+1 Base damage. +1 Strain per hit.",
+      "isRated": false
+    },
+    "effectData": {
+      "statMods": {},
+      "tags": ["targeting"],
+      "rollHooks": []
+    }
+  },
+  "Ion Charger": {
+    "category": "blaster",
+    "upgradeType": "powerPack",
+    "qualityData": {
+      "name": "Ion Charger",
+      "description": "+2 base damage. +2 damage vs droids. Add Vicious 1.",
+      "isRated": false
+    },
+    "effectData": {
+      "statMods": {
+        "baseDamage": 2
+      },
+      "tags": ["power-pack"],
+      "rollHooks": []
+    }
+  },
+  "Power Pulsator": {
+    "category": "blaster",
+    "upgradeType": "powerPack",
+    "qualityData": {
+      "name": "Power Pulsator",
+      "description": "+3 base damage. Add Vicious 2.",
+      "isRated": false
+    },
+    "effectData": {
+      "statMods": {
+        "baseDamage": 3
+      },
+      "tags": ["power-pack"],
+      "rollHooks": []
+    }
+  },
+  "Rylith Power Cell": {
+    "category": "blaster",
+    "upgradeType": "powerPack",
+    "qualityData": {
+      "name": "Rylith Power Cell",
+      "description": "+2 base damage.",
+      "isRated": false
+    },
+    "effectData": {
+      "statMods": {
+        "baseDamage": 2
+      },
+      "tags": ["power-pack"],
+      "rollHooks": []
+    }
+  },
+  "Broadening Chamber": {
+    "category": "blaster",
+    "upgradeType": "firingChamber",
+    "qualityData": {
+      "name": "Broadening Chamber",
+      "description": "Add a Boost die to your attacks. Add Vicious 1.",
+      "isRated": false
+    },
+    "effectData": {
+      "statMods": {},
+      "diceMods": {
+        "boost": 1
+      },
+      "tags": ["firing-chamber"],
+      "rollHooks": []
+    }
+  },
+  "Amplifying Chamber": {
+    "category": "blaster",
+    "upgradeType": "firingChamber",
+    "qualityData": {
+      "name": "Amplifying Chamber",
+      "description": "+2 base damage.",
+      "isRated": false
+    },
+    "effectData": {
+      "statMods": {
+        "baseDamage": 2
+      },
+      "tags": ["firing-chamber"],
+      "rollHooks": []
+    }
+  },
+  "Precision Chamber": {
+    "category": "blaster",
+    "upgradeType": "firingChamber",
+    "qualityData": {
+      "name": "Precision Chamber",
+      "description": "Add 1 Boost die and Vicious 1.",
+      "isRated": false
+    },
+    "effectData": {
+      "statMods": {},
+      "diceMods": {
+        "boost": 1
+      },
+      "tags": ["firing-chamber"],
+      "rollHooks": []
+    }
+  },
+  "Beam Splitter": {
+    "category": "blaster",
+    "upgradeType": "firingChamber",
+    "qualityData": {
+      "name": "Beam Splitter",
+      "description": "+3 base damage.",
+      "isRated": false
+    },
+    "effectData": {
+      "statMods": {
+        "baseDamage": 3
+      },
+      "tags": ["firing-chamber"],
+      "rollHooks": []
+    }
+  },
+  "Mandalorian Chamber": {
+    "category": "blaster",
+    "upgradeType": "firingChamber",
+    "qualityData": {
+      "name": "Mandalorian Chamber",
+      "description": "Add a Boost die to your attacks, +4 damage, -2 defense.",
+      "isRated": false
+    },
+    "effectData": {
+      "statMods": {
+        "baseDamage": 4,
+        "defense": -2
+      },
+      "diceMods": {
+        "boost": 1
+      },
+      "tags": ["firing-chamber"],
+      "rollHooks": []
+    }
+  }
+}

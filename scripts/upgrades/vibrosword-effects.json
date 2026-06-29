@@ -101,11 +101,13 @@
     "upgradeType": "energyCell",
     "qualityData": {
       "name": "Ion Cell",
-      "description": "",
+      "description": "+1 base damage, +3 against droids, add Vicious 1.",
       "isRated": false
     },
     "effectData": {
-      "statMods": {},
+      "statMods": {
+        "baseDamage": 1
+      },
       "tags": ["energy-cell"],
       "rollHooks": []
     }
@@ -115,11 +117,16 @@
     "upgradeType": "energyCell",
     "qualityData": {
       "name": "Vibration Cell",
-      "description": "",
+      "description": "+4 base damage, add a Setback to attack rolls.",
       "isRated": false
     },
     "effectData": {
-      "statMods": {},
+      "statMods": {
+        "baseDamage": 4
+      },
+      "diceMods": {
+        "setback": 1
+      },
       "tags": ["energy-cell"],
       "rollHooks": []
     }
@@ -129,11 +136,13 @@
     "upgradeType": "energyCell",
     "qualityData": {
       "name": "Enhanced Energy Cell",
-      "description": "",
+      "description": "+2 base damage.",
       "isRated": false
     },
     "effectData": {
-      "statMods": {},
+      "statMods": {
+        "baseDamage": 2
+      },
       "tags": ["energy-cell"],
       "rollHooks": []
     }
@@ -143,11 +152,13 @@
     "upgradeType": "energyCell",
     "qualityData": {
       "name": "Sonic Discharge Cell",
-      "description": "",
+      "description": "+4 base damage, add Vicious 2 to the weapon.",
       "isRated": false
     },
     "effectData": {
-      "statMods": {},
+      "statMods": {
+        "baseDamage": 4
+      },
       "tags": ["energy-cell"],
       "rollHooks": []
     }
@@ -157,11 +168,13 @@
     "upgradeType": "grip",
     "qualityData": {
       "name": "Agrinium Grip",
-      "description": "",
+      "description": "+2 base damage.",
       "isRated": false
     },
     "effectData": {
-      "statMods": {},
+      "statMods": {
+        "baseDamage": 2
+      },
       "tags": ["grip"],
       "rollHooks": []
     }
@@ -171,11 +184,16 @@
     "upgradeType": "grip",
     "qualityData": {
       "name": "Contoured Grip",
-      "description": "",
+      "description": "-1 base damage, add +1 Boost to attack rolls.",
       "isRated": false
     },
     "effectData": {
-      "statMods": {},
+      "statMods": {
+        "baseDamage": -1
+      },
+      "diceMods": {
+        "boost": 1
+      },
       "tags": ["grip"],
       "rollHooks": []
     }
@@ -190,6 +208,13 @@
     },
     "effectData": {
       "statMods": {},
+      "wielderMods": {
+        "system.defense.melee": -1,
+        "system.defense.ranged": -1
+      },
+      "diceMods": {
+        "boost": 2
+      },
       "tags": ["grip"],
       "rollHooks": []
     }
@@ -199,11 +224,17 @@
     "upgradeType": "grip",
     "qualityData": {
       "name": "Nagai Grip",
-      "description": "",
+      "description": "+1 melee defense, add +1 Boost to attack rolls.",
       "isRated": false
     },
     "effectData": {
       "statMods": {},
+      "wielderMods": {
+        "system.defense.melee": 1
+      },
+      "diceMods": {
+        "boost": 1
+      },
       "tags": ["grip"],
       "rollHooks": []
     }
@@ -213,11 +244,17 @@
     "upgradeType": "grip",
     "qualityData": {
       "name": "Basket Hilt",
-      "description": "",
+      "description": "+2 to melee defence, +1 Setback to attack rolls.",
       "isRated": false
     },
     "effectData": {
       "statMods": {},
+      "wielderMods": {
+        "system.defense.melee": 2
+      },
+      "diceMods": {
+        "setback": 1
+      },
       "tags": ["grip"],
       "rollHooks": []
     }
