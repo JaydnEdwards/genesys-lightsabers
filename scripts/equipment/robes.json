@@ -1,0 +1,431 @@
+{
+  "Guardian Padawan Robe": {
+    "type": "armor",
+    "folder": "Padawan",
+    "system": {
+      "soak": 1,
+      "defense": 0,
+      "qualities": [],
+      "rarity": 1,
+      "encumbrance": 1,
+      "price": 50,
+      "description": "Members of the Jedi Order typically wear plain or unassuming garments. Tailored for those who walk the Guardian's path, favoring strength and martial discipline."
+    },
+    "flags": {
+      "category": "armor",
+      "innateEffectData": {
+        "wielderMods": {
+          "system.characteristics.brawn": 1
+        }
+      }
+    }
+  },
+  "Dark Guardian Padawan Robe": {
+    "type": "armor",
+    "folder": "Padawan",
+    "system": {
+      "soak": 1,
+      "defense": 0,
+      "qualities": [],
+      "rarity": 1,
+      "encumbrance": 1,
+      "price": 75,
+      "description": "These are simple robes, kept modest not by a desire to appear humble, but to offer the greatest freedom of movement during battle. Tailored for those who walk the Guardian's path, favoring strength and martial discipline."
+    },
+    "flags": {
+      "category": "armor",
+      "innateEffectData": {
+        "wielderMods": {
+          "system.characteristics.brawn": 1
+        }
+      }
+    }
+  },
+  "Sentinel Padawan Robe": {
+    "type": "armor",
+    "folder": "Padawan",
+    "system": {
+      "soak": 1,
+      "defense": 0,
+      "qualities": [],
+      "rarity": 1,
+      "encumbrance": 1,
+      "price": 50,
+      "description": "Members of the Jedi Order typically wear plain or unassuming garments. Tailored for those who walk the Sentinel's path, favoring cunning and adaptability."
+    },
+    "flags": {
+      "category": "armor",
+      "innateEffectData": {
+        "wielderMods": {
+          "system.characteristics.cunning": 1
+        }
+      }
+    }
+  },
+  "Dark Sentinel Padawan Robe": {
+    "type": "armor",
+    "folder": "Padawan",
+    "system": {
+      "soak": 1,
+      "defense": 0,
+      "qualities": [],
+      "rarity": 1,
+      "encumbrance": 1,
+      "price": 75,
+      "description": "These are simple robes, kept modest not by a desire to appear humble, but to offer the greatest freedom of movement during battle. Tailored for those who walk the Sentinel's path, favoring cunning and adaptability."
+    },
+    "flags": {
+      "category": "armor",
+      "innateEffectData": {
+        "wielderMods": {
+          "system.characteristics.cunning": 1
+        }
+      }
+    }
+  },
+  "Consular Padawan Robe": {
+    "type": "armor",
+    "folder": "Padawan",
+    "system": {
+      "soak": 1,
+      "defense": 0,
+      "qualities": [],
+      "rarity": 1,
+      "encumbrance": 1,
+      "price": 50,
+      "description": "Members of the Jedi Order typically wear plain or unassuming garments. Tailored for those who walk the Consular's path, favoring wisdom and Force-attunement."
+    },
+    "flags": {
+      "category": "armor",
+      "innateEffectData": {
+        "wielderMods": {
+          "system.characteristics.willpower": 1
+        }
+      }
+    }
+  },
+  "Dark Consular Padawan Robe": {
+    "type": "armor",
+    "folder": "Padawan",
+    "system": {
+      "soak": 1,
+      "defense": 0,
+      "qualities": [],
+      "rarity": 1,
+      "encumbrance": 1,
+      "price": 75,
+      "description": "These are simple robes, kept modest not by a desire to appear humble, but to offer the greatest freedom of movement during battle. Tailored for those who walk the Consular's path, favoring wisdom and Force-attunement."
+    },
+    "flags": {
+      "category": "armor",
+      "innateEffectData": {
+        "wielderMods": {
+          "system.characteristics.willpower": 1
+        }
+      }
+    }
+  },
+  "Guardian Jedi Knight Robe": {
+    "type": "armor",
+    "folder": "Knight",
+    "system": {
+      "soak": 2,
+      "defense": 0,
+      "qualities": [],
+      "rarity": 4,
+      "encumbrance": 1,
+      "price": 2200,
+      "description": "Members of the Order typically wear plain or unassuming garments, but this variant offers the additional protection needed by Jedi influencing important events. Tailored for those who walk the Guardian's path, favoring strength and martial discipline."
+    },
+    "flags": {
+      "category": "armor",
+      "innateEffectData": {
+        "wielderMods": {
+          "system.characteristics.brawn": 1
+        },
+        "skillMods": {
+          "Lightsabers": 1
+        }
+      }
+    }
+  },
+  "Dark Guardian Jedi Knight Robe": {
+    "type": "armor",
+    "folder": "Knight",
+    "system": {
+      "soak": 2,
+      "defense": 0,
+      "qualities": [],
+      "rarity": 4,
+      "encumbrance": 1,
+      "price": 2200,
+      "description": "Designed for those who relish personal combat, and know that power comes to those who take it, these robes offer good protection with no hindrance to movement. Tailored for those who walk the Guardian's path, favoring strength and martial discipline."
+    },
+    "flags": {
+      "category": "armor",
+      "innateEffectData": {
+        "wielderMods": {
+          "system.characteristics.brawn": 1
+        },
+        "skillMods": {
+          "Lightsabers": 1
+        }
+      }
+    }
+  },
+  "Sentinel Jedi Knight Robe": {
+    "type": "armor",
+    "folder": "Knight",
+    "system": {
+      "soak": 2,
+      "defense": 0,
+      "qualities": [],
+      "rarity": 4,
+      "encumbrance": 1,
+      "price": 2200,
+      "description": "Members of the Order typically wear plain or unassuming garments, but this variant offers the additional protection needed by Jedi influencing important events. Tailored for those who walk the Sentinel's path, favoring cunning and adaptability."
+    },
+    "flags": {
+      "category": "armor",
+      "innateEffectData": {
+        "wielderMods": {
+          "system.characteristics.cunning": 1
+        },
+        "skillMods": {
+          "Perception": 1
+        }
+      }
+    }
+  },
+  "Dark Sentinel Jedi Knight Robe": {
+    "type": "armor",
+    "folder": "Knight",
+    "system": {
+      "soak": 2,
+      "defense": 0,
+      "qualities": [],
+      "rarity": 4,
+      "encumbrance": 1,
+      "price": 2200,
+      "description": "Designed for those who relish personal combat, and know that power comes to those who take it, these robes offer good protection with no hindrance to movement. Tailored for those who walk the Sentinel's path, favoring cunning and adaptability."
+    },
+    "flags": {
+      "category": "armor",
+      "innateEffectData": {
+        "wielderMods": {
+          "system.characteristics.cunning": 1
+        },
+        "skillMods": {
+          "Perception": 1
+        }
+      }
+    }
+  },
+  "Consular Jedi Knight Robe": {
+    "type": "armor",
+    "folder": "Knight",
+    "system": {
+      "soak": 2,
+      "defense": 0,
+      "qualities": [],
+      "rarity": 4,
+      "encumbrance": 1,
+      "price": 2200,
+      "description": "Members of the Order typically wear plain or unassuming garments, but this variant offers the additional protection needed by Jedi influencing important events. Tailored for those who walk the Consular's path, favoring wisdom and Force-attunement."
+    },
+    "flags": {
+      "category": "armor",
+      "innateEffectData": {
+        "wielderMods": {
+          "system.characteristics.willpower": 1
+        },
+        "skillMods": {
+          "Force": 1
+        }
+      }
+    }
+  },
+  "Dark Consular Jedi Knight Robe": {
+    "type": "armor",
+    "folder": "Knight",
+    "system": {
+      "soak": 2,
+      "defense": 0,
+      "qualities": [],
+      "rarity": 4,
+      "encumbrance": 1,
+      "price": 2200,
+      "description": "Designed for those who relish personal combat, and know that power comes to those who take it, these robes offer good protection with no hindrance to movement. Tailored for those who walk the Consular's path, favoring wisdom and Force-attunement."
+    },
+    "flags": {
+      "category": "armor",
+      "innateEffectData": {
+        "wielderMods": {
+          "system.characteristics.willpower": 1
+        },
+        "skillMods": {
+          "Force": 1
+        }
+      }
+    }
+  },
+  "Guardian Jedi Master Robe": {
+    "type": "armor",
+    "folder": "Master",
+    "system": {
+      "soak": 3,
+      "defense": 0,
+      "qualities": [],
+      "rarity": 7,
+      "encumbrance": 1,
+      "price": 6100,
+      "description": "Members of the Order typically wear plain or unassuming garments, but Jedi Masters also know the importance of adequate protection when great challenges must be surmounted. Tailored for those who walk the Guardian's path, favoring strength and martial discipline."
+    },
+    "flags": {
+      "category": "armor",
+      "innateEffectData": {
+        "wielderMods": {
+          "system.characteristics.brawn": 2
+        },
+        "skillMods": {
+          "Lightsabers": 2
+        },
+        "targetDiceMods": {
+          "setback": 1
+        }
+      }
+    }
+  },
+  "Dark Guardian Jedi Master Robe": {
+    "type": "armor",
+    "folder": "Master",
+    "system": {
+      "soak": 3,
+      "defense": 0,
+      "qualities": [],
+      "rarity": 7,
+      "encumbrance": 1,
+      "price": 6100,
+      "description": "These robes offer superior protection while still allowing full freedom of movement. They are the robes of the true masters, those whose will and authority go unopposed. Tailored for those who walk the Guardian's path, favoring strength and martial discipline."
+    },
+    "flags": {
+      "category": "armor",
+      "innateEffectData": {
+        "wielderMods": {
+          "system.characteristics.brawn": 2
+        },
+        "skillMods": {
+          "Lightsabers": 2
+        },
+        "diceMods": {
+          "boost": 1
+        }
+      }
+    }
+  },
+  "Sentinel Jedi Master Robe": {
+    "type": "armor",
+    "folder": "Master",
+    "system": {
+      "soak": 3,
+      "defense": 0,
+      "qualities": [],
+      "rarity": 7,
+      "encumbrance": 1,
+      "price": 6100,
+      "description": "Members of the Order typically wear plain or unassuming garments, but Jedi Masters also know the importance of adequate protection when great challenges must be surmounted. Tailored for those who walk the Sentinel's path, favoring cunning and adaptability."
+    },
+    "flags": {
+      "category": "armor",
+      "innateEffectData": {
+        "wielderMods": {
+          "system.characteristics.cunning": 2,
+          "system.defense.melee": 1
+        },
+        "skillMods": {
+          "Perception": 2,
+          "Force": 1
+        }
+      }
+    }
+  },
+  "Dark Sentinel Jedi Master Robe": {
+    "type": "armor",
+    "folder": "Master",
+    "system": {
+      "soak": 3,
+      "defense": 0,
+      "qualities": [],
+      "rarity": 7,
+      "encumbrance": 1,
+      "price": 6100,
+      "description": "These robes offer superior protection while still allowing full freedom of movement. They are the robes of the true masters, those whose will and authority go unopposed. Tailored for those who walk the Sentinel's path, favoring cunning and adaptability."
+    },
+    "flags": {
+      "category": "armor",
+      "innateEffectData": {
+        "wielderMods": {
+          "system.characteristics.cunning": 2
+        },
+        "skillMods": {
+          "Perception": 2,
+          "Force": 1
+        },
+        "diceMods": {
+          "boost": 1
+        }
+      }
+    }
+  },
+  "Consular Jedi Master Robe": {
+    "type": "armor",
+    "folder": "Master",
+    "system": {
+      "soak": 3,
+      "defense": 0,
+      "qualities": [],
+      "rarity": 7,
+      "encumbrance": 1,
+      "price": 6100,
+      "description": "Members of the Order typically wear plain or unassuming garments, but Jedi Masters also know the importance of adequate protection when great challenges must be surmounted. Tailored for those who walk the Consular's path, favoring wisdom and Force-attunement."
+    },
+    "flags": {
+      "category": "armor",
+      "innateEffectData": {
+        "wielderMods": {
+          "system.characteristics.willpower": 2,
+          "system.characteristics.presence": 1,
+          "system.strain.max": 2
+        },
+        "skillMods": {
+          "Force": 2
+        }
+      }
+    }
+  },
+  "Dark Consular Jedi Master Robe": {
+    "type": "armor",
+    "folder": "Master",
+    "system": {
+      "soak": 3,
+      "defense": 0,
+      "qualities": [],
+      "rarity": 7,
+      "encumbrance": 1,
+      "price": 6100,
+      "description": "These robes offer superior protection while still allowing full freedom of movement. They are the robes of the true masters, those whose will and authority go unopposed. Tailored for those who walk the Consular's path, favoring wisdom and Force-attunement."
+    },
+    "flags": {
+      "category": "armor",
+      "innateEffectData": {
+        "wielderMods": {
+          "system.characteristics.willpower": 2,
+          "system.characteristics.presence": 1
+        },
+        "skillMods": {
+          "Force": 3
+        }
+      }
+    }
+  }
+}

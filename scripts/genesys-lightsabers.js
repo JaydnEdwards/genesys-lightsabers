@@ -552,16 +552,25 @@ async function syncActorWielderEffects(actor) {
       const categoryConfig = getCategoryConfig(weapon);
       const upgrades = weapon.getFlag(MODULE_ID, "upgrades") || {};
 
-      const wieldMods = collectWielderMods(upgrades);
+      // Some base items (e.g. specialization robes) grant their own bonuses without requiring
+      // an upgrade in a slot — same effectData shape upgrades use (wielderMods/diceMods/
+      // targetDiceMods/skillMods), just stored directly on the item. Modeled as a synthetic
+      // slot merged in before the existing collect* helpers run, so none of them need changes.
+      const innateEffectData = weapon.getFlag(MODULE_ID, "innateEffectData");
+      const upgradesForMods = innateEffectData
+        ? { ...upgrades, __innate: { effectData: innateEffectData } }
+        : upgrades;
+
+      const wieldMods = collectWielderMods(upgradesForMods);
       const wielderChanges = buildWielderEffectChanges(wieldMods);
 
       const skillNames = categoryConfig.itemType === "weapon"
         ? (Array.isArray(weapon.system?.skills) ? weapon.system.skills : [])
         : Array.from(wieldedWeaponSkillNames);
-      const diceMods = collectNamedMods(upgrades, "diceMods");
+      const diceMods = collectNamedMods(upgradesForMods, "diceMods");
       const diceChanges = buildDicePoolChanges(diceMods, skillNames);
 
-      const targetDiceMods = collectNamedMods(upgrades, "targetDiceMods");
+      const targetDiceMods = collectNamedMods(upgradesForMods, "targetDiceMods");
       const targetDiceChanges = buildTargetDicePoolChanges(targetDiceMods);
 
       const effectChanges = [...wielderChanges, ...diceChanges, ...targetDiceChanges];
@@ -686,7 +695,15 @@ async function syncActorSkillMods(actor) {
 
     for (const weapon of weapons) {
       const upgrades = weapon.getFlag(MODULE_ID, "upgrades") || {};
-      const skillMods = collectSkillMods(upgrades);
+
+      // Same innate-effectData merge used in syncActorWielderEffects, so a base item's own
+      // built-in skillMods (e.g. a specialization robe) apply without needing a slotted upgrade.
+      const innateEffectData = weapon.getFlag(MODULE_ID, "innateEffectData");
+      const upgradesForMods = innateEffectData
+        ? { ...upgrades, __innate: { effectData: innateEffectData } }
+        : upgrades;
+
+      const skillMods = collectSkillMods(upgradesForMods);
 
       for (const [skillName, amount] of Object.entries(skillMods)) {
         if (toFiniteNumber(amount, 0) === 0) continue;
@@ -969,6 +986,139 @@ async function migrateWeaponSkillNames() {
   return migrated;
 }
 
+// Source JSON files describing full base equipment items (system data + flags) that should
+// exist in a compendium, created or updated to match on world load. Unlike
+// UPGRADE_EFFECTS_SOURCES/reflagCompendiumItems, this creates the item itself if missing rather
+// than only reflagging an existing one — equipment items aren't preceded by a hand-placed
+// document the way upgrades are.
+const EQUIPMENT_DATA_SOURCES = [
+  {
+    dataPath: `modules/${MODULE_ID}/scripts/equipment/robes.json`,
+    packId: EQUIPMENT_PACK_ID
+  }
+];
+
+// Creates or updates compendium items from a name-keyed JSON file of full item data (type,
+// system, flags). Diffed against current values so a clean world doesn't rewrite everything on
+// every load. Only the system/flag keys present in the source are compared/written — fields not
+// listed there (e.g. img) are left alone.
+async function syncEquipmentItems(dataPath, packId) {
+  const result = { created: [], updated: [], failed: [] };
+
+  const pack = game.packs.get(packId);
+  if (!pack) {
+    console.warn(`[${MODULE_ID}] Compendium not found: ${packId}`);
+    return result;
+  }
+
+  let itemsData;
+  try {
+    const response = await fetch(dataPath, { cache: "no-store" });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    itemsData = await response.json();
+  } catch (error) {
+    console.error(`[${MODULE_ID}] Failed to load ${dataPath}`, error);
+    return result;
+  }
+
+  const wasLocked = pack.locked;
+  if (wasLocked) await pack.configure({ locked: false });
+
+  try {
+    const index = await pack.getIndex({ fields: ["name"] });
+    const byName = new Map(index.map((e) => [String(e.name).toLowerCase().trim(), e]));
+
+    // Resolved by name rather than hardcoding folder IDs in the source JSON, since folder IDs
+    // are pack/world-specific and would break if a folder is ever deleted and recreated.
+    // Existing items are never moved by this sync (see the update branch below) — this only
+    // determines where brand-new items land, so manual filing is always respected afterward.
+    const foldersByName = new Map();
+    for (const folder of pack.folders ?? []) {
+      foldersByName.set(String(folder.name).toLowerCase().trim(), folder.id);
+    }
+
+    for (const [itemName, payload] of Object.entries(itemsData)) {
+      try {
+        const desiredSystem = foundry.utils.deepClone(payload.system ?? {});
+        const desiredCategory = payload.flags?.category ?? null;
+        const desiredInnateEffectData = foundry.utils.deepClone(payload.flags?.innateEffectData ?? null);
+
+        const hit = byName.get(String(itemName).toLowerCase().trim());
+
+        if (!hit) {
+          const desiredFolderName = payload.folder ?? null;
+          const folderId = desiredFolderName
+            ? foldersByName.get(String(desiredFolderName).toLowerCase().trim())
+            : undefined;
+          if (desiredFolderName && !folderId) {
+            console.warn(`[${MODULE_ID}] Folder "${desiredFolderName}" not found in ${packId}; creating "${itemName}" at pack root.`);
+          }
+
+          await pack.documentClass.create(
+            {
+              name: itemName,
+              type: payload.type,
+              ...(folderId ? { folder: folderId } : {}),
+              system: desiredSystem,
+              flags: {
+                [MODULE_ID]: {
+                  category: desiredCategory,
+                  ...(desiredInnateEffectData ? { innateEffectData: desiredInnateEffectData } : {})
+                }
+              }
+            },
+            { pack: packId }
+          );
+          result.created.push(itemName);
+          continue;
+        }
+
+        const doc = await pack.getDocument(hit._id);
+
+        const currentSystemSubset = {};
+        for (const key of Object.keys(desiredSystem)) {
+          currentSystemSubset[key] = foundry.utils.getProperty(doc, `system.${key}`) ?? null;
+        }
+        const currentCategory = doc.getFlag(MODULE_ID, "category") ?? null;
+        const currentInnateEffectData = doc.getFlag(MODULE_ID, "innateEffectData") ?? null;
+
+        const needsUpdate = (
+          JSON.stringify(currentSystemSubset) !== JSON.stringify(desiredSystem)
+          || currentCategory !== desiredCategory
+          || JSON.stringify(currentInnateEffectData) !== JSON.stringify(desiredInnateEffectData)
+        );
+
+        if (!needsUpdate) continue;
+
+        const systemUpdate = {};
+        for (const [key, value] of Object.entries(desiredSystem)) {
+          systemUpdate[`system.${key}`] = value;
+        }
+        await doc.update(systemUpdate);
+        await doc.update({ [`flags.${MODULE_ID}.category`]: desiredCategory });
+
+        // Deep-merge bug strikes again for nested flag objects — unset before rewriting.
+        // Also clears the older "innateWielderMods" flag name from items created before this
+        // was generalized into the unified innateEffectData shape — harmless no-op otherwise.
+        await doc.unsetFlag(MODULE_ID, "innateEffectData");
+        await doc.unsetFlag(MODULE_ID, "innateWielderMods");
+        if (desiredInnateEffectData) {
+          await doc.setFlag(MODULE_ID, "innateEffectData", desiredInnateEffectData);
+        }
+
+        result.updated.push(itemName);
+      } catch (error) {
+        console.error(`[${MODULE_ID}] Equipment sync failed for`, itemName, error);
+        result.failed.push(itemName);
+      }
+    }
+  } finally {
+    if (wasLocked) await pack.configure({ locked: true });
+  }
+
+  return result;
+}
+
 // Full data-integrity pass on world load: fixes weapon skill names, reflags compendium items
 // from upgrade-effects.json, clears stale upgrade slots, recalculates stats/images, and syncs
 // wielder/skill effects for every actor. GM-only so multiple connected clients don't redundantly
@@ -1003,6 +1153,18 @@ Hooks.once("ready", async () => {
     reflagged += reflagResult.updated.length;
   }
 
+  let equipmentSynced = 0;
+  for (const source of EQUIPMENT_DATA_SOURCES) {
+    const syncResult = await syncEquipmentItems(source.dataPath, source.packId).catch((error) => {
+      console.error(`[${MODULE_ID}] Equipment sync failed for ${source.packId}:`, error);
+      errors++;
+      return { created: [], updated: [], failed: [] };
+    });
+
+    errors += syncResult.failed.length;
+    equipmentSynced += syncResult.created.length + syncResult.updated.length;
+  }
+
   for (const actor of game.actors) {
     for (const item of actor.items) {
       const categoryConfig = getCategoryConfig(item);
@@ -1025,9 +1187,9 @@ Hooks.once("ready", async () => {
     }
   }
 
-  if (weaponsFixed > 0 || reflagged > 0 || skillNamesFixed > 0 || errors > 0) {
-    console.log(`[${MODULE_ID}] Startup refresh: ${weaponsFixed} item(s) fixed, ${reflagged} compendium item(s) reflagged, ${skillNamesFixed} skill name(s) fixed${errors > 0 ? `, ${errors} error(s)` : ""}`);
-    ui.notifications.info(`Genesys Lightsabers: refreshed ${weaponsFixed} item(s), reflagged ${reflagged} upgrade(s) on startup.`);
+  if (weaponsFixed > 0 || reflagged > 0 || equipmentSynced > 0 || skillNamesFixed > 0 || errors > 0) {
+    console.log(`[${MODULE_ID}] Startup refresh: ${weaponsFixed} item(s) fixed, ${reflagged} compendium item(s) reflagged, ${equipmentSynced} equipment item(s) synced, ${skillNamesFixed} skill name(s) fixed${errors > 0 ? `, ${errors} error(s)` : ""}`);
+    ui.notifications.info(`Genesys Lightsabers: refreshed ${weaponsFixed} item(s), reflagged ${reflagged} upgrade(s), synced ${equipmentSynced} equipment item(s) on startup.`);
   }
 });
 
