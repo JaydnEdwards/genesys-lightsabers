@@ -1,0 +1,194 @@
+{
+  "Coordinated Assault": {
+    "type": "talent",
+    "folder": "Tier 2",
+    "system": {
+      "tier": 2,
+      "activation": {
+        "type": "active",
+        "detail": "Maneuver"
+      },
+      "ranked": "yes",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Once per turn, you may use this talent to have a number of allies engaged with you, equal to your ranks in the Leadership skill, add one Advantage to all combat checks they make until the end of your next turn. The range of this talent increases by one band per rank of Coordinated Assault beyond the first.",
+      "source": "Genesys Core Rulebook"
+    }
+  },
+  "Counteroffer": {
+    "type": "talent",
+    "folder": "Tier 2",
+    "system": {
+      "tier": 2,
+      "activation": {
+        "type": "active",
+        "detail": "Action"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Once per session, choose one non-nemesis adversary within medium range and make an opposed Negotiation versus Discipline check. If successful, the target becomes staggered until the end of their next turn. At the GM's discretion, you may spend a Triumph on this check to have the adversary become an ally until the end of the encounter, though the duration may be shortened or extended depending on how appealing your offer is and whether you follow through on it.",
+      "source": "Genesys Core Rulebook"
+    }
+  },
+  "Daring Aviator": {
+    "type": "talent",
+    "folder": "Tier 2",
+    "system": {
+      "tier": 2,
+      "activation": {
+        "type": "active",
+        "detail": "Incidental"
+      },
+      "ranked": "yes",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Before making a Driving or Piloting check, you may add a number of Threat to the results to use this talent and add an equal number of Success. The number may not exceed your ranks in Daring Aviator.",
+      "source": "Genesys Core Rulebook"
+    }
+  },
+  "Defensive Stance": {
+    "type": "talent",
+    "folder": "Tier 2",
+    "system": {
+      "tier": 2,
+      "activation": {
+        "type": "active",
+        "detail": "Maneuver"
+      },
+      "ranked": "yes",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Once per round, you may suffer a number of strain no greater than your ranks in Defensive Stance to use this talent. Until the end of your next turn, upgrade the difficulty of all melee combat checks targeting you a number of times equal to the strain suffered.",
+      "source": "Genesys Core Rulebook"
+    }
+  },
+  "Defensive Sysops (Improved)": {
+    "type": "talent",
+    "folder": "Tier 2",
+    "system": {
+      "tier": 2,
+      "activation": {
+        "type": "active",
+        "detail": "Incidental"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Requires the Defensive Sysops talent to benefit from this talent. Before adding two Setback from Defensive Sysops to a check, you may use this talent to add one Failure and one Threat to the results instead.",
+      "source": "Genesys Core Rulebook"
+    }
+  },
+  "Dual Wielder": {
+    "type": "talent",
+    "folder": "Tier 2",
+    "system": {
+      "tier": 2,
+      "activation": {
+        "type": "active",
+        "detail": "Maneuver"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Once per round, you may use this talent to decrease the difficulty of the next combined combat check (Two-Weapon Combat) you make during the same turn by one.",
+      "source": "Genesys Core Rulebook"
+    }
+  },
+  "Heightened Awareness": {
+    "type": "talent",
+    "folder": "Tier 2",
+    "system": {
+      "tier": 2,
+      "activation": {
+        "type": "passive",
+        "detail": ""
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Allies within short range of you add one Boost to their Perception and Vigilance checks. Allies engaged with you add two Boost instead.",
+      "source": "Genesys Core Rulebook"
+    }
+  },
+  "Inspiring Rhetoric": {
+    "type": "talent",
+    "folder": "Tier 2",
+    "system": {
+      "tier": 2,
+      "activation": {
+        "type": "active",
+        "detail": "Action"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Make an Average (2 Difficulty) Leadership check. For each Success the check generates, one ally within short range heals one strain. For each Advantage, one ally benefiting from Inspiring Rhetoric heals one additional strain.",
+      "source": "Genesys Core Rulebook"
+    }
+  },
+  "Inventor": {
+    "type": "talent",
+    "folder": "Tier 2",
+    "system": {
+      "tier": 2,
+      "activation": {
+        "type": "active",
+        "detail": "Incidental"
+      },
+      "ranked": "yes",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "When making a check to construct new items or modify existing ones, add a number of Boost to the check equal to your ranks of Inventor. You may also attempt to reconstruct devices you have heard described but have not seen and have no plans or schematics for.",
+      "source": "Genesys Core Rulebook"
+    }
+  },
+  "Lucky Strike": {
+    "type": "talent",
+    "folder": "Tier 2",
+    "system": {
+      "tier": 2,
+      "activation": {
+        "type": "active",
+        "detail": "Incidental"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "When purchased, choose one characteristic. After a successful combat check, you may spend one Story Point to use this talent and add damage equal to your ranks in that characteristic to one hit of the combat check.",
+      "source": "Genesys Core Rulebook"
+    }
+  },
+  "Scathing Tirade": {
+    "type": "talent",
+    "folder": "Tier 2",
+    "system": {
+      "tier": 2,
+      "activation": {
+        "type": "active",
+        "detail": "Action"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Make an Average (2 Difficulty) Coercion check. For each Success the check generates, one enemy within short range suffers 1 strain. For each Advantage, one enemy affected by Scathing Tirade suffers 1 additional strain.",
+      "source": "Genesys Core Rulebook"
+    }
+  },
+  "Side Step": {
+    "type": "talent",
+    "folder": "Tier 2",
+    "system": {
+      "tier": 2,
+      "activation": {
+        "type": "active",
+        "detail": "Maneuver"
+      },
+      "ranked": "yes",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Once per round, you may suffer a number of strain no greater than your ranks in Side Step to use this talent. Until the end of your next turn, upgrade the difficulty of all ranged combat checks targeting you a number of times equal to the strain suffered.",
+      "source": "Genesys Core Rulebook"
+    }
+  }
+}

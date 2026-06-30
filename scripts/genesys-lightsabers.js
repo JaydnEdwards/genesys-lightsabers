@@ -1152,6 +1152,22 @@ const TALENT_DATA_SOURCES = [
   {
     dataPath: `modules/${MODULE_ID}/scripts/talents/tier1-talents.json`,
     packId: TALENT_PACK_ID
+  },
+  {
+    dataPath: `modules/${MODULE_ID}/scripts/talents/tier2-talents.json`,
+    packId: TALENT_PACK_ID
+  },
+  {
+    dataPath: `modules/${MODULE_ID}/scripts/talents/tier3-talents.json`,
+    packId: TALENT_PACK_ID
+  },
+  {
+    dataPath: `modules/${MODULE_ID}/scripts/talents/tier4-talents.json`,
+    packId: TALENT_PACK_ID
+  },
+  {
+    dataPath: `modules/${MODULE_ID}/scripts/talents/tier5-talents.json`,
+    packId: TALENT_PACK_ID
   }
 ];
 

@@ -1,0 +1,242 @@
+{
+  "Animal Companion": {
+    "type": "talent",
+    "folder": "Tier 3",
+    "system": {
+      "tier": 3,
+      "activation": {
+        "type": "passive",
+        "detail": ""
+      },
+      "ranked": "yes",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Create a bond with a single animal approved by your GM, silhouette 0 (no larger than a mid-sized dog). The bond lasts as long as you choose, subject to your GM's discretion in cases of abusive treatment or other extenuating circumstances. While bonded, the animal follows you and you dictate its general behavior; once per round in structured encounters you may spend one maneuver to direct it through one action and one maneuver, provided it is within hearing and visual range (generally medium range). Each additional rank increases the allowed silhouette of the companion by one. In futuristic settings this talent may represent a robot or drone instead of an animal.",
+      "source": "Genesys Core Rulebook"
+    }
+  },
+  "Barrel Roll": {
+    "type": "talent",
+    "folder": "Tier 3",
+    "system": {
+      "tier": 3,
+      "activation": {
+        "type": "active",
+        "detail": "Incidental, Out of Turn"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Usable only while piloting a starfighter or aircraft of silhouette 3 or less. When your vehicle suffers a hit from a ranged combat check, after damage is calculated but before armor is applied, your vehicle may suffer 3 system strain to use this talent and reduce the damage suffered by a number equal to your ranks in Piloting.",
+      "source": "Genesys Core Rulebook"
+    }
+  },
+  "Distinctive Style": {
+    "type": "talent",
+    "folder": "Tier 3",
+    "system": {
+      "tier": 3,
+      "activation": {
+        "type": "active",
+        "detail": "Incidental"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "When making a Computers check to hack a system or break into a secured network, before rolling, add two Success and two Threat to the results. If using the optional hacking rules and your check generates two Threat, your GM should spend it on the \"I Know You!\" option.",
+      "source": "Genesys Core Rulebook"
+    }
+  },
+  "Dodge": {
+    "type": "talent",
+    "folder": "Tier 3",
+    "system": {
+      "tier": 3,
+      "activation": {
+        "type": "active",
+        "detail": "Incidental, Out of Turn"
+      },
+      "ranked": "yes",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "When targeted by a combat check (ranged or melee), you may suffer a number of strain no greater than your ranks in Dodge to use this talent. Upgrade the difficulty of the combat check targeting you a number of times equal to the strain suffered.",
+      "source": "Genesys Core Rulebook"
+    }
+  },
+  "Eagle Eyes": {
+    "type": "talent",
+    "folder": "Tier 3",
+    "system": {
+      "tier": 3,
+      "activation": {
+        "type": "active",
+        "detail": "Incidental"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Once per encounter before making a ranged combat check, increase your weapon's range by one band (to a maximum of extreme) for the duration of that check.",
+      "source": "Genesys Core Rulebook"
+    }
+  },
+  "Field Commander": {
+    "type": "talent",
+    "folder": "Tier 3",
+    "system": {
+      "tier": 3,
+      "activation": {
+        "type": "active",
+        "detail": "Action"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Make an Average (2 Difficulty) Leadership check. If successful, a number of allies equal to your Presence may immediately suffer 1 strain to perform one maneuver out of turn. You arbitrate the order if there is any dispute over which allies act first.",
+      "source": "Genesys Core Rulebook"
+    }
+  },
+  "Forgot to Count?": {
+    "type": "talent",
+    "folder": "Tier 3",
+    "system": {
+      "tier": 3,
+      "activation": {
+        "type": "active",
+        "detail": "Incidental, Out of Turn"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "When an opponent makes a ranged combat check, spend two Threat from that check to use this talent and cause their weapon to run out of ammo, as long as the weapon can normally run out of ammunition.",
+      "source": "Genesys Core Rulebook"
+    }
+  },
+  "Full Throttle": {
+    "type": "talent",
+    "folder": "Tier 3",
+    "system": {
+      "tier": 3,
+      "activation": {
+        "type": "active",
+        "detail": "Action"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "While driving or flying, make a Hard (3 Difficulty) Piloting or Driving check. If successful, the vehicle's top speed increases by one (to a maximum of 5) for a number of rounds equal to your Cunning. Requires the optional vehicle rules; without them, this talent simply makes the vehicle go much faster than normal, with specifics left to the GM.",
+      "source": "Genesys Core Rulebook"
+    }
+  },
+  "Grenadier": {
+    "type": "talent",
+    "folder": "Tier 3",
+    "system": {
+      "tier": 3,
+      "activation": {
+        "type": "active",
+        "detail": "Incidental"
+      },
+      "ranked": "yes",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "When making a ranged combat check with a weapon that has the Blast quality, you may spend one Story Point to use this talent and trigger the weapon's Blast quality instead of spending an Advantage (even if the attack misses). You also treat grenades as having a range of medium.",
+      "source": "Genesys Core Rulebook"
+    }
+  },
+  "Inspiring Rhetoric (Improved)": {
+    "type": "talent",
+    "folder": "Tier 3",
+    "system": {
+      "tier": 3,
+      "activation": {
+        "type": "passive",
+        "detail": ""
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Requires the Inspiring Rhetoric talent to benefit from this talent. Allies affected by your Inspiring Rhetoric add one Boost to all skill checks they make for a number of rounds equal to your ranks in Leadership.",
+      "source": "Genesys Core Rulebook"
+    }
+  },
+  "Painkiller Specialization": {
+    "type": "talent",
+    "folder": "Tier 3",
+    "system": {
+      "tier": 3,
+      "activation": {
+        "type": "passive",
+        "detail": ""
+      },
+      "ranked": "yes",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "When you use painkillers (or their setting equivalent), the target heals one additional wound per rank of Painkiller Specialization. The sixth painkiller and beyond each day still has no effect.",
+      "source": "Genesys Core Rulebook"
+    }
+  },
+  "Scathing Tirade (Improved)": {
+    "type": "talent",
+    "folder": "Tier 3",
+    "system": {
+      "tier": 3,
+      "activation": {
+        "type": "passive",
+        "detail": ""
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Requires the Scathing Tirade talent to benefit from this talent. Enemies affected by your Scathing Tirade add one Setback to all skill checks they make for a number of rounds equal to your ranks in Coercion.",
+      "source": "Genesys Core Rulebook"
+    }
+  },
+  "Heroic Will": {
+    "type": "talent",
+    "folder": "Tier 3",
+    "system": {
+      "tier": 3,
+      "activation": {
+        "type": "active",
+        "detail": "Incidental, Out of Turn"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "When purchased, choose two characteristics. You may spend a Story Point to use this talent and have your character ignore the effects of all Critical Injuries on any skill checks using those two characteristics until the end of the current encounter. Your character still suffers the Critical Injuries; they just ignore the effects.",
+      "source": "Genesys Core Rulebook"
+    }
+  },
+  "Natural": {
+    "type": "talent",
+    "folder": "Tier 3",
+    "system": {
+      "tier": 3,
+      "activation": {
+        "type": "active",
+        "detail": "Incidental"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "When purchased, choose two skills. Once per session, reroll one skill check that uses one of those two skills.",
+      "source": "Genesys Core Rulebook"
+    }
+  },
+  "Parry (Improved)": {
+    "type": "talent",
+    "folder": "Tier 3",
+    "system": {
+      "tier": 3,
+      "activation": {
+        "type": "active",
+        "detail": "Incidental, Out of Turn"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Requires the Parry talent to benefit from this talent. When you suffer a hit from a melee combat check and use Parry to reduce the damage from that hit, after the attack is resolved you may spend a Despair or three Threat from the attacker's check to use this talent. Your character then automatically hits the attacker once with a Brawl or Melee weapon they are wielding, dealing the weapon's base damage plus any damage from applicable talents or abilities. Cannot be used if the original attack incapacitates your character.",
+      "source": "Genesys Core Rulebook"
+    }
+  }
+}

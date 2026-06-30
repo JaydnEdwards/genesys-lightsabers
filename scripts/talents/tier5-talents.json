@@ -1,0 +1,82 @@
+{
+  "Dedication": {
+    "type": "talent",
+    "folder": "Tier 5",
+    "system": {
+      "tier": 5,
+      "activation": {
+        "type": "passive",
+        "detail": ""
+      },
+      "ranked": "yes",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Each rank of Dedication increases one of your characteristics by one, to a maximum of 5. You cannot increase the same characteristic with Dedication more than once.",
+      "source": "Genesys Core Rulebook"
+    }
+  },
+  "Indomitable": {
+    "type": "talent",
+    "folder": "Tier 5",
+    "system": {
+      "tier": 5,
+      "activation": {
+        "type": "active",
+        "detail": "Incidental, Out of Turn"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Once per encounter, when you would be incapacitated due to exceeding your wound or strain threshold, you may spend a Story Point to use this talent. You are then not incapacitated until the end of your next turn; if you reduce your strain or wounds below their threshold before then, you are not incapacitated at all.",
+      "source": "Genesys Core Rulebook"
+    }
+  },
+  "Master": {
+    "type": "talent",
+    "folder": "Tier 5",
+    "system": {
+      "tier": 5,
+      "activation": {
+        "type": "active",
+        "detail": "Incidental"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "When purchased, choose one skill. Once per round, you may suffer 2 strain to use this talent and reduce the difficulty of your next check using that skill by two, to a minimum of Easy (1 Difficulty).",
+      "source": "Genesys Core Rulebook"
+    }
+  },
+  "Overcharge (Improved)": {
+    "type": "talent",
+    "folder": "Tier 5",
+    "system": {
+      "tier": 5,
+      "activation": {
+        "type": "passive",
+        "detail": ""
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Requires the Overcharge talent to benefit from this talent. When using the Overcharge talent, you may spend two Advantage or one Triumph from the Mechanics check to immediately take one additional action. This talent can only be used once per check.",
+      "source": "Genesys Core Rulebook"
+    }
+  },
+  "Ruinous Repartee": {
+    "type": "talent",
+    "folder": "Tier 5",
+    "system": {
+      "tier": 5,
+      "activation": {
+        "type": "active",
+        "detail": "Action"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Once per encounter, make an opposed Charm or Coercion versus Discipline check targeting one character within medium range (or earshot). If successful, the target suffers strain equal to twice your Presence, plus one additional strain per Success. You heal strain equal to the strain inflicted. If the target is incapacitated by this talent, the narrative outcome is up to your GM and the nature of your barbs.",
+      "source": "Genesys Core Rulebook"
+    }
+  }
+}

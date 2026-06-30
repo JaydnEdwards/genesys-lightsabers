@@ -27,7 +27,7 @@
       "ranked": "no",
       "scalesWithRank": "no",
       "rank": 1,
-      "description": "Once per encounter, add two automatic Advantage to another character's social skill check.",
+      "description": "Once per encounter, add two automatic Threat to another character's social skill check.",
       "source": "Genesys Core Rulebook"
     }
   },
@@ -258,7 +258,7 @@
       "ranked": "yes",
       "scalesWithRank": "no",
       "rank": 1,
-      "description": "When making a social skill check in polite company, suffer strain (up to your ranks in Proper Upbringing) to add an equal number of Success to the check.",
+      "description": "When making a social skill check in polite company, suffer strain (up to your ranks in Proper Upbringing) to add an equal number of Advantage to the check.",
       "source": "Genesys Core Rulebook"
     }
   },
@@ -393,7 +393,7 @@
       "ranked": "no",
       "scalesWithRank": "no",
       "rank": 1,
-      "description": "Other characters add one Setback to any checks made to find or identify you in a crowd.",
+      "description": "Other characters add one Failure to any checks made to find or identify you in a crowd.",
       "source": "Genesys Core Rulebook"
     }
   }
