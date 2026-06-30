@@ -42,6 +42,20 @@
     "type": "Item",
     "system": "genesys",
     "path": "packs/talents"
+    },
+    {
+    "name": "archetypes",
+    "label": "Archetypes",
+    "type": "Item",
+    "system": "genesys",
+    "path": "packs/archetypes"
+    },
+    {
+    "name": "careers",
+    "label": "Careers",
+    "type": "Item",
+    "system": "genesys",
+    "path": "packs/careers"
     }
   ],
   "esmodules": [
