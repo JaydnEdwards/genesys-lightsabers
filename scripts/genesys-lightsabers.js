@@ -804,6 +804,70 @@ async function syncActorTalentEffects(actor) {
   }
 }
 
+// --- Skill Tree module integration (theripper93's premium "Skill Tree") -------------------
+// Skill-tree points are a deliberately separate currency from Genesys XP (granted manually by
+// the GM at session end, e.g. "10 XP and 1 skill point"), not derived/translated from it — so
+// no onUnlockScript or cross-module XP syncing is needed. The only thing worth automating is
+// setting each node's point cost to match its tier (5 XP per tier == 1 skill point per tier, by
+// the GM's own conversion rate), so nodes don't need their cost hand-set.
+const SKILL_TREE_MODULE_ID = "skill-tree";
+
+// True if any actor has spent at least one point on this node already. Checked before changing
+// a node's point cost — skill-tree tracks points-spent per actor as {uuid, points} entries under
+// the actor's own "skills" flag, keyed by the node's uuid. Raising/lowering an already-spent
+// node's cost could desync it (the module compares points spent against the new max to decide
+// whether the linked item should still be granted), so those are left untouched and logged.
+function hasAnyActorSpentPoints(pageUuid) {
+  return game.actors.some((actor) => {
+    const skills = actor.getFlag(SKILL_TREE_MODULE_ID, "skills");
+    if (!Array.isArray(skills)) return false;
+    return skills.some((s) => s.uuid === pageUuid && toFiniteNumber(s.points, 0) > 0);
+  });
+}
+
+// Sets each skill-tree node's point cost to match its tier *within this tree* — its row, not
+// the linked talent's own intrinsic system.tier. Matches how official Genesys specialization
+// trees actually work: the same talent can appear at different tiers across different trees,
+// and its cost is set by where it's placed in the tree it's currently in, not a fixed property
+// of the talent itself. Diffed so a clean world doesn't rewrite every node every reload.
+async function syncSkillTreeNodeCosts() {
+  const result = { updated: 0, skipped: 0, errors: 0 };
+  if (!game.modules.get(SKILL_TREE_MODULE_ID)?.active) return result;
+
+  const trees = game.journal.filter((j) => j.getFlag(SKILL_TREE_MODULE_ID, "isSkillTree"));
+
+  for (const tree of trees) {
+    for (const page of tree.pages) {
+      try {
+        const itemUuids = page.getFlag(SKILL_TREE_MODULE_ID, "itemUuids") ?? [];
+        if (itemUuids.length === 0) continue;
+
+        // row is 0-indexed (row 0 == Tier 1), confirmed against this tree's own existing nodes.
+        const row = toFiniteNumber(page.getFlag(SKILL_TREE_MODULE_ID, "row"), 0);
+        const cost = row + 1;
+
+        const currentCost = page.getFlag(SKILL_TREE_MODULE_ID, "points") ?? 1;
+        if (currentCost === cost) continue;
+
+        if (hasAnyActorSpentPoints(page.uuid)) {
+          console.warn(`[${MODULE_ID}] Skipped re-costing skill tree node "${page.name}" (${page.uuid}) — at least one actor has already spent points on it. Current cost ${currentCost}, computed cost ${cost}. Reconcile manually if this is intentional.`);
+          result.skipped++;
+          continue;
+        }
+
+        await page.setFlag(SKILL_TREE_MODULE_ID, "points", cost);
+        result.updated++;
+      } catch (error) {
+        console.error(`[${MODULE_ID}] Skill tree node sync failed for "${page.name}":`, error);
+        result.errors++;
+      }
+    }
+  }
+
+  return result;
+}
+// --- End Skill Tree module integration -----------------------------------------------------
+
 const SKILL_MOD_AMOUNT_FLAG = "skillModAmount";
 const warnedMissingSkills = new Set();
 
@@ -1362,6 +1426,16 @@ Hooks.once("ready", async () => {
     itemsSynced += syncResult.created.length + syncResult.updated.length;
   }
 
+  const skillTreeResult = await syncSkillTreeNodeCosts().catch((error) => {
+    console.error(`[${MODULE_ID}] Skill tree node cost sync failed:`, error);
+    errors++;
+    return { updated: 0, skipped: 0, errors: 0 };
+  });
+  errors += skillTreeResult.errors;
+  if (skillTreeResult.skipped > 0) {
+    console.log(`[${MODULE_ID}] Skill tree: ${skillTreeResult.skipped} node(s) skipped re-costing (already in active play).`);
+  }
+
   for (const actor of game.actors) {
     for (const item of actor.items) {
       const categoryConfig = getCategoryConfig(item);
@@ -1385,8 +1459,8 @@ Hooks.once("ready", async () => {
     }
   }
 
-  if (weaponsFixed > 0 || reflagged > 0 || itemsSynced > 0 || skillNamesFixed > 0 || errors > 0) {
-    console.log(`[${MODULE_ID}] Startup refresh: ${weaponsFixed} item(s) fixed, ${reflagged} compendium item(s) reflagged, ${itemsSynced} item(s) synced, ${skillNamesFixed} skill name(s) fixed${errors > 0 ? `, ${errors} error(s)` : ""}`);
+  if (weaponsFixed > 0 || reflagged > 0 || itemsSynced > 0 || skillNamesFixed > 0 || skillTreeResult.updated > 0 || errors > 0) {
+    console.log(`[${MODULE_ID}] Startup refresh: ${weaponsFixed} item(s) fixed, ${reflagged} compendium item(s) reflagged, ${itemsSynced} item(s) synced, ${skillNamesFixed} skill name(s) fixed, ${skillTreeResult.updated} skill tree node cost(s) synced${errors > 0 ? `, ${errors} error(s)` : ""}`);
     ui.notifications.info(`Genesys Lightsabers: refreshed ${weaponsFixed} item(s), reflagged ${reflagged} upgrade(s), synced ${itemsSynced} item(s) on startup.`);
   }
 });
