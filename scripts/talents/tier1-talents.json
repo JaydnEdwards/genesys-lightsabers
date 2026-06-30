@@ -1,0 +1,400 @@
+{
+  "Bought Info": {
+    "type": "talent",
+    "folder": "Tier 1",
+    "system": {
+      "tier": 1,
+      "activation": {
+        "type": "active",
+        "detail": "Action"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "When making any Knowledge skill check, you can instead spend currency equal to fifty times the difficulty of the check to automatically succeed with one uncancelled Success (instead of rolling). At the GM's discretion, you may not be able to use this if the information is particularly sensitive, difficult to find, or buying it doesn't make narrative sense.",
+      "source": "Genesys Core Rulebook"
+    }
+  },
+  "Clever Retort": {
+    "type": "talent",
+    "folder": "Tier 1",
+    "system": {
+      "tier": 1,
+      "activation": {
+        "type": "active",
+        "detail": "Incidental, Out of Turn"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Once per encounter, add two automatic Advantage to another character's social skill check.",
+      "source": "Genesys Core Rulebook"
+    }
+  },
+  "Defensive Sysops": {
+    "type": "talent",
+    "folder": "Tier 1",
+    "system": {
+      "tier": 1,
+      "activation": {
+        "type": "passive",
+        "detail": ""
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "When defending a computer system against intrusion (or when someone attempts to hack a computer you own or programmed), add two Setback to the opponent's checks. If you have access to the system when the intrusion takes place, you are automatically aware of it.",
+      "source": "Genesys Core Rulebook"
+    }
+  },
+  "Desperate Recovery": {
+    "type": "talent",
+    "folder": "Tier 1",
+    "system": {
+      "tier": 1,
+      "activation": {
+        "type": "passive",
+        "detail": ""
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Before recovering strain at the end of an encounter, if your strain is more than half your strain threshold, recover two additional strain.",
+      "source": "Genesys Core Rulebook"
+    }
+  },
+  "Duelist": {
+    "type": "talent",
+    "folder": "Tier 1",
+    "system": {
+      "tier": 1,
+      "activation": {
+        "type": "passive",
+        "detail": ""
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Add one Boost to melee combat checks while engaged with a single opponent. Add one Setback to melee combat checks while engaged with three or more opponents.",
+      "source": "Genesys Core Rulebook"
+    }
+  },
+  "Durable": {
+    "type": "talent",
+    "folder": "Tier 1",
+    "system": {
+      "tier": 1,
+      "activation": {
+        "type": "passive",
+        "detail": ""
+      },
+      "ranked": "yes",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Reduce any Critical Injury result you suffer by 10 per rank of Durable, to a minimum of 01.",
+      "source": "Genesys Core Rulebook"
+    }
+  },
+  "Forager": {
+    "type": "talent",
+    "folder": "Tier 1",
+    "system": {
+      "tier": 1,
+      "activation": {
+        "type": "passive",
+        "detail": ""
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Remove up to two Setback from any skill checks made to find food, water, or shelter. Checks to forage or search an area take half the normal time.",
+      "source": "Genesys Core Rulebook"
+    }
+  },
+  "Grit": {
+    "type": "talent",
+    "folder": "Tier 1",
+    "system": {
+      "tier": 1,
+      "activation": {
+        "type": "passive",
+        "detail": ""
+      },
+      "ranked": "yes",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Each rank of Grit increases your strain threshold by one.",
+      "source": "Genesys Core Rulebook"
+    },
+    "flags": {
+      "innateEffectData": {
+        "wielderMods": {
+          "system.strain.max": 1
+        }
+      }
+    }
+  },
+  "Hamstring Shot": {
+    "type": "talent",
+    "folder": "Tier 1",
+    "system": {
+      "tier": 1,
+      "activation": {
+        "type": "active",
+        "detail": "Action"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Once per round, perform a ranged combat check against a non-vehicle target within range. If successful, halve the damage inflicted (before soak) and immobilize the target until the end of its next turn.",
+      "source": "Genesys Core Rulebook"
+    }
+  },
+  "Jump Up": {
+    "type": "talent",
+    "folder": "Tier 1",
+    "system": {
+      "tier": 1,
+      "activation": {
+        "type": "active",
+        "detail": "Incidental"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Once per round on your turn, stand from a prone or seated position as an incidental.",
+      "source": "Genesys Core Rulebook"
+    }
+  },
+  "Knack for It": {
+    "type": "talent",
+    "folder": "Tier 1",
+    "system": {
+      "tier": 1,
+      "activation": {
+        "type": "passive",
+        "detail": ""
+      },
+      "ranked": "yes",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "When purchased, select one skill (not a combat or magic skill); remove two Setback from checks using it. Each additional purchase selects two more skills, which also gain the same benefit.",
+      "source": "Genesys Core Rulebook"
+    }
+  },
+  "Know Somebody": {
+    "type": "talent",
+    "folder": "Tier 1",
+    "system": {
+      "tier": 1,
+      "activation": {
+        "type": "active",
+        "detail": "Incidental"
+      },
+      "ranked": "yes",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Once per session, when purchasing a legally available item, reduce its rarity by one per rank of Know Somebody.",
+      "source": "Genesys Core Rulebook"
+    }
+  },
+  "Let's Ride": {
+    "type": "talent",
+    "folder": "Tier 1",
+    "system": {
+      "tier": 1,
+      "activation": {
+        "type": "active",
+        "detail": "Incidental"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Once per round on your turn, mount or dismount a vehicle or animal, or move between positions in a vehicle (e.g. cockpit to gun turret), as an incidental. If you suffer a short-range fall from a vehicle or animal, you take no damage and land on your feet.",
+      "source": "Genesys Core Rulebook"
+    }
+  },
+  "One with Nature": {
+    "type": "talent",
+    "folder": "Tier 1",
+    "system": {
+      "tier": 1,
+      "activation": {
+        "type": "active",
+        "detail": "Incidental"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "In the wilderness, make a Simple Survival check instead of Discipline or Cool to recover strain at the end of an encounter.",
+      "source": "Genesys Core Rulebook"
+    }
+  },
+  "Parry": {
+    "type": "talent",
+    "folder": "Tier 1",
+    "system": {
+      "tier": 1,
+      "activation": {
+        "type": "active",
+        "detail": "Incidental, Out of Turn"
+      },
+      "ranked": "yes",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "When you suffer a hit from a melee combat check, after damage is calculated but before soak is applied, you may suffer 3 strain to use this talent and reduce the damage of that hit by two plus your ranks in Parry. Usable once per hit; requires wielding a melee weapon.",
+      "source": "Genesys Core Rulebook"
+    }
+  },
+  "Proper Upbringing": {
+    "type": "talent",
+    "folder": "Tier 1",
+    "system": {
+      "tier": 1,
+      "activation": {
+        "type": "active",
+        "detail": "Incidental"
+      },
+      "ranked": "yes",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "When making a social skill check in polite company, suffer strain (up to your ranks in Proper Upbringing) to add an equal number of Success to the check.",
+      "source": "Genesys Core Rulebook"
+    }
+  },
+  "Quick Draw": {
+    "type": "talent",
+    "folder": "Tier 1",
+    "system": {
+      "tier": 1,
+      "activation": {
+        "type": "active",
+        "detail": "Incidental"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Once per round on your turn, draw or holster an easily accessible weapon or item as an incidental. Also reduces a weapon's Prepare rating by one, to a minimum of one.",
+      "source": "Genesys Core Rulebook"
+    }
+  },
+  "Quick Strike": {
+    "type": "talent",
+    "folder": "Tier 1",
+    "system": {
+      "tier": 1,
+      "activation": {
+        "type": "passive",
+        "detail": ""
+      },
+      "ranked": "yes",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Add one Boost per rank of Quick Strike to combat checks against targets that haven't yet taken their turn in the current encounter.",
+      "source": "Genesys Core Rulebook"
+    }
+  },
+  "Rapid Reaction": {
+    "type": "talent",
+    "folder": "Tier 1",
+    "system": {
+      "tier": 1,
+      "activation": {
+        "type": "active",
+        "detail": "Incidental, Out of Turn"
+      },
+      "ranked": "yes",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Suffer strain (up to your ranks in Rapid Reaction) to add an equal number of Success to a Vigilance or Cool check made to determine Initiative order.",
+      "source": "Genesys Core Rulebook"
+    }
+  },
+  "Second Wind": {
+    "type": "talent",
+    "folder": "Tier 1",
+    "system": {
+      "tier": 1,
+      "activation": {
+        "type": "active",
+        "detail": "Incidental"
+      },
+      "ranked": "yes",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Once per encounter, heal an amount of strain equal to your ranks in Second Wind.",
+      "source": "Genesys Core Rulebook"
+    }
+  },
+  "Surgeon": {
+    "type": "talent",
+    "folder": "Tier 1",
+    "system": {
+      "tier": 1,
+      "activation": {
+        "type": "passive",
+        "detail": ""
+      },
+      "ranked": "yes",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "When making a Medicine check to heal wounds, the target heals one additional wound per rank of Surgeon.",
+      "source": "Genesys Core Rulebook"
+    }
+  },
+  "Swift": {
+    "type": "talent",
+    "folder": "Tier 1",
+    "system": {
+      "tier": 1,
+      "activation": {
+        "type": "passive",
+        "detail": ""
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "You do not suffer penalties for moving through difficult terrain; you move through it at normal speed without spending additional maneuvers.",
+      "source": "Genesys Core Rulebook"
+    }
+  },
+  "Toughened": {
+    "type": "talent",
+    "folder": "Tier 1",
+    "system": {
+      "tier": 1,
+      "activation": {
+        "type": "passive",
+        "detail": ""
+      },
+      "ranked": "yes",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Each rank of Toughened increases your wound threshold by two.",
+      "source": "Genesys Core Rulebook"
+    },
+    "flags": {
+      "innateEffectData": {
+        "wielderMods": {
+          "system.wounds.max": 2
+        }
+      }
+    }
+  },
+  "Unremarkable": {
+    "type": "talent",
+    "folder": "Tier 1",
+    "system": {
+      "tier": 1,
+      "activation": {
+        "type": "passive",
+        "detail": ""
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Other characters add one Setback to any checks made to find or identify you in a crowd.",
+      "source": "Genesys Core Rulebook"
+    }
+  }
+}

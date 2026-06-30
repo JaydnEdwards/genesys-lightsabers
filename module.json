@@ -35,6 +35,13 @@
     "type": "Item",
     "system": "genesys",
     "path": "packs/skills"
+    },
+    {
+    "name": "talents",
+    "label": "Talents",
+    "type": "Item",
+    "system": "genesys",
+    "path": "packs/talents"
     }
   ],
   "esmodules": [

@@ -3,6 +3,12 @@ console.log("Hello from the Genesys Lightsabers module! [build 1.0.4]");
 const MODULE_ID = "genesys-lightsabers";
 const WIELDER_MOD_EFFECT_FLAG = "wielderModEffect";
 const WIELDER_MOD_EFFECT_SOURCE_FLAG = "wielderModSource";
+// Separate flag pair for talent-sourced effects, kept distinct from WIELDER_MOD_EFFECT_FLAG even
+// though they're built the same way — syncActorWielderEffects's stale-effect cleanup only knows
+// about weapon/armor source ids, so a talent-sourced effect sharing that flag would get deleted
+// and recreated every sync cycle instead of being left alone when unchanged.
+const TALENT_MOD_EFFECT_FLAG = "talentModEffect";
+const TALENT_MOD_EFFECT_SOURCE_FLAG = "talentModSource";
 
 // Each KOTOR-style item category gets its own slot set and modifiable stat fields, matching
 // how the original games scoped upgrades per weapon/armor type rather than sharing one pool.
@@ -221,6 +227,22 @@ function collectWielderMods(upgrades) {
   return totals;
 }
 
+// Foundry's document create/update pipeline auto-expands any dotted key it finds in the data —
+// {"system.strain.max": 1} silently becomes {system: {strain: {max: 1}}} once stored. collectWielderMods
+// already tolerates this by walking and rebuilding the path itself, but a multiplier (e.g. a
+// talent's per-rank scaling) needs to be applied to the actual numeric leaves first, wherever
+// they ended up nested. Recurses regardless of whether the structure is flat or expanded.
+function scaleNumericLeaves(obj, factor) {
+  if (typeof obj === "number") return obj * factor;
+  if (!obj || typeof obj !== "object") return obj;
+
+  const result = {};
+  for (const [key, value] of Object.entries(obj)) {
+    result[key] = scaleNumericLeaves(value, factor);
+  }
+  return result;
+}
+
 // Skill ranks live on separate owned Item documents (type "skill"), not on actor.system, so
 // they can't be targeted by an ActiveEffect change key the way characteristics can. Bonuses
 // are tracked here by skill name and applied via direct mutation in syncActorSkillMods.
@@ -351,6 +373,23 @@ function getWielderEffectPayload(weapon, changes) {
   };
 }
 
+function getTalentEffectPayload(talent, changes) {
+  return {
+    name: `${talent.name}`,
+    icon: talent.img,
+    origin: talent.uuid,
+    disabled: false,
+    transfer: false,
+    changes,
+    flags: {
+      [MODULE_ID]: {
+        [TALENT_MOD_EFFECT_FLAG]: true,
+        [TALENT_MOD_EFFECT_SOURCE_FLAG]: talent.id
+      }
+    }
+  };
+}
+
 function didWielderPayloadChange(effect, nextPayload) {
   if (!effect) return true;
 
@@ -398,6 +437,7 @@ function queueSync(actor) {
       try {
         await syncActorWielderEffects(queuedActor);
         await syncActorSkillMods(queuedActor);
+        await syncActorTalentEffects(queuedActor);
       } catch (error) {
         console.error(`[${MODULE_ID}] Error syncing effects for ${queuedActor.name}:`, error);
       }
@@ -676,6 +716,94 @@ async function syncActorWielderEffects(actor) {
   }
 }
 
+// Talents have no "equipped" concept — owning one is enough for its effect to apply, unlike
+// weapons/armor where syncActorWielderEffects exists specifically to gate on equip state. The
+// remaining wrinkle: Foundry's ADD-mode effects don't auto-scale by an item's rank the way
+// Genesys's own dice-pool (CUSTOM-mode) mechanism does, so a "ranked" talent's wielderMods are
+// written in the source JSON as a per-rank amount and scaled by the talent's current
+// system.rank here before building the effect. Uses its own TALENT_MOD_EFFECT_FLAG pair rather
+// than reusing WIELDER_MOD_EFFECT_FLAG so this sync's stale-effect cleanup never collides with
+// syncActorWielderEffects's (which only knows about weapon/armor source ids).
+async function syncActorTalentEffects(actor) {
+  if (!actor || actor.documentName !== "Actor") return;
+  if (!actor.isOwner && !game.user.isGM) return;
+
+  try {
+    const desiredByTalent = new Map();
+    const talents = actor.items.filter((item) => item.type === "talent");
+
+    for (const talent of talents) {
+      const innateEffectData = talent.getFlag(MODULE_ID, "innateEffectData");
+      if (!innateEffectData?.wielderMods) continue;
+
+      const rank = toFiniteNumber(talent.system?.rank, 1);
+      const scaledWielderMods = scaleNumericLeaves(innateEffectData.wielderMods, rank);
+
+      // Reuses collectWielderMods (rather than reading scaledWielderMods directly) so the
+      // Foundry dot-expansion quirk noted above is handled the same proven way as everywhere
+      // else wielderMods is consumed.
+      const wieldMods = collectWielderMods({ __innate: { effectData: { wielderMods: scaledWielderMods } } });
+      const wielderChanges = buildWielderEffectChanges(wieldMods);
+      if (wielderChanges.length > 0) {
+        desiredByTalent.set(talent.id, getTalentEffectPayload(talent, wielderChanges));
+      }
+    }
+
+    const existingEffects = actor.effects.filter((effect) =>
+      effect.getFlag(MODULE_ID, TALENT_MOD_EFFECT_FLAG)
+    );
+
+    const toDelete = [];
+    const existingByTalent = new Map();
+
+    for (const effect of existingEffects) {
+      const sourceTalentId = effect.getFlag(MODULE_ID, TALENT_MOD_EFFECT_SOURCE_FLAG);
+
+      if (!sourceTalentId || !desiredByTalent.has(sourceTalentId) || existingByTalent.has(sourceTalentId)) {
+        toDelete.push(effect.id);
+        continue;
+      }
+
+      existingByTalent.set(sourceTalentId, effect);
+    }
+
+    if (toDelete.length > 0) {
+      await actor.deleteEmbeddedDocuments("ActiveEffect", toDelete);
+    }
+
+    const toCreate = [];
+    const toUpdate = [];
+
+    for (const [talentId, payload] of desiredByTalent.entries()) {
+      const existing = existingByTalent.get(talentId);
+
+      if (!existing) {
+        toCreate.push(payload);
+      } else if (didWielderPayloadChange(existing, payload)) {
+        toUpdate.push({
+          _id: existing.id,
+          name: payload.name,
+          icon: payload.icon,
+          origin: payload.origin,
+          disabled: payload.disabled,
+          transfer: payload.transfer,
+          changes: payload.changes,
+          flags: payload.flags
+        });
+      }
+    }
+
+    if (toCreate.length > 0) {
+      await actor.createEmbeddedDocuments("ActiveEffect", toCreate);
+    }
+    if (toUpdate.length > 0) {
+      await actor.updateEmbeddedDocuments("ActiveEffect", toUpdate);
+    }
+  } catch (error) {
+    console.error(`[${MODULE_ID}] Error syncing talent effects for ${actor.name}:`, error);
+  }
+}
+
 const SKILL_MOD_AMOUNT_FLAG = "skillModAmount";
 const warnedMissingSkills = new Set();
 
@@ -765,26 +893,46 @@ async function syncActorSkillMods(actor) {
 
 // Improved event handlers with debouncing
 Hooks.on("createItem", async (item) => {
-  if (!getCategoryConfig(item)) return;
   const actor = item.parent;
-  if (actor?.documentName === "Actor" && isItemActive(item)) {
+  if (actor?.documentName !== "Actor") return;
+
+  if (item.type === "talent") {
+    queueSync(actor);
+    return;
+  }
+
+  if (getCategoryConfig(item) && isItemActive(item)) {
     queueSync(actor);
   }
 });
 
 Hooks.on("deleteItem", async (item) => {
-  if (!getCategoryConfig(item)) return;
   const actor = item.parent;
-  if (actor?.documentName === "Actor") {
+  if (actor?.documentName !== "Actor") return;
+
+  if (item.type === "talent" || getCategoryConfig(item)) {
     queueSync(actor);
   }
 });
 
 Hooks.on("updateItem", async (item, changed) => {
-  if (!getCategoryConfig(item)) return;
-
   const actor = item.parent;
   if (!actor || actor.documentName !== "Actor") return;
+
+  // Talents have no equip state to watch — only rank (and name/img, for the effect's display)
+  // ever need a re-sync.
+  if (item.type === "talent") {
+    if (
+      foundry.utils.hasProperty(changed, "system.rank")
+      || foundry.utils.hasProperty(changed, "img")
+      || foundry.utils.hasProperty(changed, "name")
+    ) {
+      queueSync(actor);
+    }
+    return;
+  }
+
+  if (!getCategoryConfig(item)) return;
 
   // Only sync if relevant properties changed
   if (shouldSyncWielderEffects(changed)) {
@@ -986,11 +1134,12 @@ async function migrateWeaponSkillNames() {
   return migrated;
 }
 
-// Source JSON files describing full base equipment items (system data + flags) that should
-// exist in a compendium, created or updated to match on world load. Unlike
+// Source JSON files describing full Item documents (system data + flags) that should exist in a
+// compendium, created or updated to match on world load. Unlike
 // UPGRADE_EFFECTS_SOURCES/reflagCompendiumItems, this creates the item itself if missing rather
-// than only reflagging an existing one — equipment items aren't preceded by a hand-placed
-// document the way upgrades are.
+// than only reflagging an existing one — these items aren't preceded by a hand-placed document
+// the way upgrades are. Not equipment-specific despite the original name on the sync function —
+// also used for talents, which have neither a category flag nor innateEffectData.
 const EQUIPMENT_DATA_SOURCES = [
   {
     dataPath: `modules/${MODULE_ID}/scripts/equipment/robes.json`,
@@ -998,10 +1147,19 @@ const EQUIPMENT_DATA_SOURCES = [
   }
 ];
 
+const TALENT_PACK_ID = `${MODULE_ID}.talents`;
+const TALENT_DATA_SOURCES = [
+  {
+    dataPath: `modules/${MODULE_ID}/scripts/talents/tier1-talents.json`,
+    packId: TALENT_PACK_ID
+  }
+];
+
 // Creates or updates compendium items from a name-keyed JSON file of full item data (type,
 // system, flags). Diffed against current values so a clean world doesn't rewrite everything on
 // every load. Only the system/flag keys present in the source are compared/written — fields not
-// listed there (e.g. img) are left alone.
+// listed there (e.g. img) are left alone. flags.category/flags.innateEffectData are optional
+// (talents have neither; only equipment uses them).
 async function syncEquipmentItems(dataPath, packId) {
   const result = { created: [], updated: [], failed: [] };
 
@@ -1029,7 +1187,8 @@ async function syncEquipmentItems(dataPath, packId) {
     const byName = new Map(index.map((e) => [String(e.name).toLowerCase().trim(), e]));
 
     // Resolved by name rather than hardcoding folder IDs in the source JSON, since folder IDs
-    // are pack/world-specific and would break if a folder is ever deleted and recreated.
+    // are pack/world-specific and would break if a folder is ever deleted and recreated. Missing
+    // folders are created on demand (see below) — useful for a brand-new pack with none yet.
     // Existing items are never moved by this sync (see the update branch below) — this only
     // determines where brand-new items land, so manual filing is always respected afterward.
     const foldersByName = new Map();
@@ -1047,11 +1206,20 @@ async function syncEquipmentItems(dataPath, packId) {
 
         if (!hit) {
           const desiredFolderName = payload.folder ?? null;
-          const folderId = desiredFolderName
+          let folderId = desiredFolderName
             ? foldersByName.get(String(desiredFolderName).toLowerCase().trim())
             : undefined;
+
+          // First time this folder name is needed in this pack (e.g. a brand-new pack with no
+          // folders yet) — create it once and cache it so later items in the same pass reuse it
+          // instead of creating duplicates.
           if (desiredFolderName && !folderId) {
-            console.warn(`[${MODULE_ID}] Folder "${desiredFolderName}" not found in ${packId}; creating "${itemName}" at pack root.`);
+            const newFolder = await Folder.create(
+              { name: desiredFolderName, type: "Item" },
+              { pack: packId }
+            );
+            folderId = newFolder.id;
+            foldersByName.set(String(desiredFolderName).toLowerCase().trim(), folderId);
           }
 
           await pack.documentClass.create(
@@ -1062,7 +1230,7 @@ async function syncEquipmentItems(dataPath, packId) {
               system: desiredSystem,
               flags: {
                 [MODULE_ID]: {
-                  category: desiredCategory,
+                  ...(desiredCategory !== null ? { category: desiredCategory } : {}),
                   ...(desiredInnateEffectData ? { innateEffectData: desiredInnateEffectData } : {})
                 }
               }
@@ -1095,7 +1263,9 @@ async function syncEquipmentItems(dataPath, packId) {
           systemUpdate[`system.${key}`] = value;
         }
         await doc.update(systemUpdate);
-        await doc.update({ [`flags.${MODULE_ID}.category`]: desiredCategory });
+        if (desiredCategory !== null) {
+          await doc.update({ [`flags.${MODULE_ID}.category`]: desiredCategory });
+        }
 
         // Deep-merge bug strikes again for nested flag objects — unset before rewriting.
         // Also clears the older "innateWielderMods" flag name from items created before this
@@ -1153,7 +1323,7 @@ Hooks.once("ready", async () => {
     reflagged += reflagResult.updated.length;
   }
 
-  let equipmentSynced = 0;
+  let itemsSynced = 0;
   for (const source of EQUIPMENT_DATA_SOURCES) {
     const syncResult = await syncEquipmentItems(source.dataPath, source.packId).catch((error) => {
       console.error(`[${MODULE_ID}] Equipment sync failed for ${source.packId}:`, error);
@@ -1162,7 +1332,18 @@ Hooks.once("ready", async () => {
     });
 
     errors += syncResult.failed.length;
-    equipmentSynced += syncResult.created.length + syncResult.updated.length;
+    itemsSynced += syncResult.created.length + syncResult.updated.length;
+  }
+
+  for (const source of TALENT_DATA_SOURCES) {
+    const syncResult = await syncEquipmentItems(source.dataPath, source.packId).catch((error) => {
+      console.error(`[${MODULE_ID}] Talent sync failed for ${source.packId}:`, error);
+      errors++;
+      return { created: [], updated: [], failed: [] };
+    });
+
+    errors += syncResult.failed.length;
+    itemsSynced += syncResult.created.length + syncResult.updated.length;
   }
 
   for (const actor of game.actors) {
@@ -1181,15 +1362,16 @@ Hooks.once("ready", async () => {
     try {
       await syncActorWielderEffects(actor);
       await syncActorSkillMods(actor);
+      await syncActorTalentEffects(actor);
     } catch (error) {
       console.error(`[${MODULE_ID}] Error syncing wielder effects for ${actor.name}:`, error);
       errors++;
     }
   }
 
-  if (weaponsFixed > 0 || reflagged > 0 || equipmentSynced > 0 || skillNamesFixed > 0 || errors > 0) {
-    console.log(`[${MODULE_ID}] Startup refresh: ${weaponsFixed} item(s) fixed, ${reflagged} compendium item(s) reflagged, ${equipmentSynced} equipment item(s) synced, ${skillNamesFixed} skill name(s) fixed${errors > 0 ? `, ${errors} error(s)` : ""}`);
-    ui.notifications.info(`Genesys Lightsabers: refreshed ${weaponsFixed} item(s), reflagged ${reflagged} upgrade(s), synced ${equipmentSynced} equipment item(s) on startup.`);
+  if (weaponsFixed > 0 || reflagged > 0 || itemsSynced > 0 || skillNamesFixed > 0 || errors > 0) {
+    console.log(`[${MODULE_ID}] Startup refresh: ${weaponsFixed} item(s) fixed, ${reflagged} compendium item(s) reflagged, ${itemsSynced} item(s) synced, ${skillNamesFixed} skill name(s) fixed${errors > 0 ? `, ${errors} error(s)` : ""}`);
+    ui.notifications.info(`Genesys Lightsabers: refreshed ${weaponsFixed} item(s), reflagged ${reflagged} upgrade(s), synced ${itemsSynced} item(s) on startup.`);
   }
 });
 
@@ -1200,7 +1382,7 @@ Hooks.on("closeModuleSettings", async () => {
     for (const actor of game.actors) {
       if (actor.isOwner || game.user.isGM) {
         const effects = actor.effects.filter(e =>
-          e.getFlag(MODULE_ID, WIELDER_MOD_EFFECT_FLAG)
+          e.getFlag(MODULE_ID, WIELDER_MOD_EFFECT_FLAG) || e.getFlag(MODULE_ID, TALENT_MOD_EFFECT_FLAG)
         );
         if (effects.length > 0) {
           await actor.deleteEmbeddedDocuments("ActiveEffect", effects.map(e => e.id));
