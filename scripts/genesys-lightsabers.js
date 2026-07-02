@@ -1453,6 +1453,7 @@ Hooks.once("ready", async () => {
       await syncActorWielderEffects(actor);
       await syncActorSkillMods(actor);
       await syncActorTalentEffects(actor);
+      await syncActorAlignmentEffect(actor);
     } catch (error) {
       console.error(`[${MODULE_ID}] Error syncing wielder effects for ${actor.name}:`, error);
       errors++;
@@ -1464,6 +1465,121 @@ Hooks.once("ready", async () => {
     ui.notifications.info(`Genesys Lightsabers: refreshed ${weaponsFixed} item(s), reflagged ${reflagged} upgrade(s), synced ${itemsSynced} item(s) on startup.`);
   }
 });
+
+// --- Alignment tracking -----------------------------------------------------------------------
+// Alignment is stored as a module flag (integer, -100 to +100) on the actor.
+// +100 = full Light Side, -100 = full Dark Side, 0 = Neutral. Used descriptively in Force
+// talent text to indicate when Boost or Setback applies — no passive dice effects are applied
+// automatically, keeping Force neutral talents unaffected.
+
+function getAlignmentLabel(value) {
+  if (value >= 76) return "Strong Light Side";
+  if (value >= 26) return "Light Side";
+  if (value >= -25) return "Neutral";
+  if (value >= -75) return "Dark Side";
+  return "Strong Dark Side";
+}
+
+// Shared dialog for updating an actor's alignment. Accepts an absolute value (e.g. 50) or a
+// signed delta (e.g. +10, -15), clamped to -100/+100. No macro needed — triggered from the
+// sheet header button registered by both hooks below.
+async function openAlignmentDialog(actor) {
+  const current = toFiniteNumber(actor.getFlag(MODULE_ID, "alignment"), 0);
+  const label = getAlignmentLabel(current);
+
+  const raw = await Dialog.prompt({
+    title: `Alignment — ${actor.name}`,
+    content: `
+      <div style="margin-bottom:8px">
+        <strong>Current:</strong> ${current >= 0 ? "+" : ""}${current} (${label})
+      </div>
+      <label>New value</label>
+      <input type="text" name="alignment" style="width:100%;margin-top:4px" autofocus>
+    `,
+    callback: (html) => html.find("[name=alignment]").val().trim(),
+    rejectClose: false
+  });
+
+  if (!raw) return;
+
+  let newAlignment;
+  if (raw.startsWith("+") || (raw.startsWith("-") && raw.length > 1 && !isNaN(raw.slice(1)))) {
+    const delta = Number(raw);
+    if (isNaN(delta)) { ui.notifications.warn("Invalid alignment value."); return; }
+    newAlignment = Math.max(-100, Math.min(100, current + delta));
+  } else {
+    const absolute = Number(raw);
+    if (isNaN(absolute)) { ui.notifications.warn("Invalid alignment value."); return; }
+    newAlignment = Math.max(-100, Math.min(100, absolute));
+  }
+
+  await actor.setFlag(MODULE_ID, "alignment", newAlignment);
+  ui.notifications.info(`${actor.name}: ${newAlignment >= 0 ? "+" : ""}${newAlignment} (${getAlignmentLabel(newAlignment)})`);
+}
+
+// Genesys uses the old ActorSheet class, which fires getActorSheetHeaderButtons.
+Hooks.on("getActorSheetHeaderButtons", (app, buttons) => {
+  if (!app.object?.isOwner) return;
+  buttons.unshift({ label: "Alignment", class: "alignment-tracker", icon: "fas fa-yin-yang", onclick: () => openAlignmentDialog(app.object) });
+});
+
+// Also register for ApplicationV2-based sheets (future-proofing).
+Hooks.on("getHeaderControlsActorSheetV2", (app, controls) => {
+  if (!app.document?.isOwner) return;
+  controls.push({ label: "Alignment", icon: "fas fa-yin-yang", onClick: () => openAlignmentDialog(app.document) });
+});
+
+// Creates or updates a passive ActiveEffect on the actor whose name reflects the current
+// alignment — e.g. "Alignment: Light Side (+45)". No changes array so it has no mechanical
+// effect; it exists purely as a visible label on the character sheet's effects list, matching
+// the look of any other passive ability entry. Identified by the isAlignmentEffect flag so
+// the sync can find and update rather than creating duplicates.
+const ALIGNMENT_EFFECT_FLAG = "isAlignmentEffect";
+
+const ALIGNMENT_ICONS = {
+  light:   `modules/${MODULE_ID}/assets/skills/lightsidev.png`,
+  dark:    `modules/${MODULE_ID}/assets/skills/darksidev.png`,
+  neutral: `modules/${MODULE_ID}/assets/skills/dark_vs_light.png`
+};
+
+async function syncActorAlignmentEffect(actor) {
+  if (!actor || actor.documentName !== "Actor") return;
+  if (!actor.isOwner && !game.user.isGM) return;
+
+  const alignment = toFiniteNumber(actor.getFlag(MODULE_ID, "alignment"), 0);
+  const label = getAlignmentLabel(alignment);
+  const signed = alignment >= 0 ? `+${alignment}` : `${alignment}`;
+  const desiredName = `Alignment: ${label} (${signed})`;
+  const desiredIcon = alignment < -25 ? ALIGNMENT_ICONS.dark
+    : alignment > 25 ? ALIGNMENT_ICONS.light
+    : ALIGNMENT_ICONS.neutral;
+
+  const existing = actor.effects.find((e) => e.getFlag(MODULE_ID, ALIGNMENT_EFFECT_FLAG));
+
+  if (existing) {
+    if (existing.name !== desiredName || existing.icon !== desiredIcon) {
+      await existing.update({ name: desiredName, icon: desiredIcon });
+    }
+  } else {
+    await actor.createEmbeddedDocuments("ActiveEffect", [{
+      name: desiredName,
+      icon: desiredIcon,
+      disabled: false,
+      transfer: false,
+      changes: [],
+      flags: { [MODULE_ID]: { [ALIGNMENT_EFFECT_FLAG]: true } }
+    }]);
+  }
+}
+
+// Re-sync the alignment effect whenever the alignment flag is updated directly.
+Hooks.on("updateActor", async (actor, changed) => {
+  if (!foundry.utils.hasProperty(changed, `flags.${MODULE_ID}.alignment`)) return;
+  await syncActorAlignmentEffect(actor).catch((e) =>
+    console.error(`[${MODULE_ID}] Error syncing alignment effect for ${actor.name}:`, e)
+  );
+});
+// --- End Alignment tracking -------------------------------------------------------------------
 
 // Optional: Add a cleanup hook when module is disabled
 Hooks.on("closeModuleSettings", async () => {

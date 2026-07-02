@@ -56,6 +56,12 @@
     "type": "Item",
     "system": "genesys",
     "path": "packs/careers"
+    },
+    {
+    "name": "macros",
+    "label": "Macros",
+    "type": "Macro",
+    "path": "packs/macros"
     }
   ],
   "esmodules": [
