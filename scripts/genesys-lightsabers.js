@@ -1232,6 +1232,10 @@ const TALENT_DATA_SOURCES = [
   {
     dataPath: `modules/${MODULE_ID}/scripts/talents/tier5-talents.json`,
     packId: TALENT_PACK_ID
+  },
+  {
+    dataPath: `modules/${MODULE_ID}/scripts/talents/jedi-talents.json`,
+    packId: TALENT_PACK_ID
   }
 ];
 

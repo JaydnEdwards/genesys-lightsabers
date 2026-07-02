@@ -1,0 +1,801 @@
+{
+  "Force Push": {
+    "type": "talent",
+    "folder": "Jedi Talents",
+    "system": {
+      "tier": 1,
+      "activation": {
+        "type": "active",
+        "detail": "Action"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Unleash a telekinetic blast at a target, knocking them prone and dealing damage. Can be sustained or widened at higher tiers.",
+      "source": "Star Wars: Knights of the Old Republic"
+    }
+  },
+  "Force Whirlwind": {
+    "type": "talent",
+    "folder": "Jedi Talents",
+    "system": {
+      "tier": 2,
+      "activation": {
+        "type": "active",
+        "detail": "Action"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Trap a target in a telekinetic vortex, holding them immobile and dealing repeated damage over several seconds.",
+      "source": "Star Wars: Knights of the Old Republic"
+    }
+  },
+  "Force Wave": {
+    "type": "talent",
+    "folder": "Jedi Talents",
+    "system": {
+      "tier": 3,
+      "activation": {
+        "type": "active",
+        "detail": "Action"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Release a devastating explosion of telekinetic force, hurling all nearby enemies away and dealing heavy damage across a wide area.",
+      "source": "Star Wars: Knights of the Old Republic"
+    }
+  },
+  "Affect Mind": {
+    "type": "talent",
+    "folder": "Jedi Talents",
+    "system": {
+      "tier": 1,
+      "activation": {
+        "type": "active",
+        "detail": "Action"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Subtly influence a weak-minded individual through the Force, opening unique dialogue options and allowing you to pass through areas unopposed. Does not affect droids.",
+      "source": "Star Wars: Knights of the Old Republic"
+    }
+  },
+  "Dominate Mind": {
+    "type": "talent",
+    "folder": "Jedi Talents",
+    "system": {
+      "tier": 2,
+      "activation": {
+        "type": "active",
+        "detail": "Action"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Command the minds of even strong-willed beings, leaving very few individuals able to resist your influence. Does not affect droids.",
+      "source": "Star Wars: Knights of the Old Republic"
+    }
+  },
+  "Throw Lightsaber": {
+    "type": "talent",
+    "folder": "Jedi Talents",
+    "system": {
+      "tier": 1,
+      "activation": {
+        "type": "active",
+        "detail": "Action"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Hurl your lightsaber at a distant target dealing energy damage. The attack strikes unerringly and the saber returns to your hand.",
+      "source": "Star Wars: Knights of the Old Republic"
+    }
+  },
+  "Advanced Throw Lightsaber": {
+    "type": "talent",
+    "folder": "Jedi Talents",
+    "system": {
+      "tier": 2,
+      "activation": {
+        "type": "active",
+        "detail": "Action"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Hurl your lightsaber in a sweeping arc, striking up to three targets in sequence before returning to your hand.",
+      "source": "Star Wars: Knights of the Old Republic"
+    }
+  },
+  "Burst of Speed": {
+    "type": "talent",
+    "folder": "Jedi Talents",
+    "system": {
+      "tier": 1,
+      "activation": {
+        "type": "active",
+        "detail": "Maneuver"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Channel the Force through your body, dramatically increasing movement speed and reaction time. Armor-restricted.",
+      "source": "Star Wars: Knights of the Old Republic"
+    }
+  },
+  "Knight Speed": {
+    "type": "talent",
+    "folder": "Jedi Talents",
+    "system": {
+      "tier": 2,
+      "activation": {
+        "type": "active",
+        "detail": "Maneuver"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "An enhanced Burst of Speed that also grants an additional attack each round from heightened reflexes. Armor-restricted.",
+      "source": "Star Wars: Knights of the Old Republic"
+    }
+  },
+  "Force Suppression": {
+    "type": "talent",
+    "folder": "Jedi Talents",
+    "system": {
+      "tier": 1,
+      "activation": {
+        "type": "active",
+        "detail": "Action"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Cancel active Force powers on a target, stripping protective buffs and leaving them vulnerable. Armor-restricted.",
+      "source": "Star Wars: Knights of the Old Republic"
+    }
+  },
+  "Force Breach": {
+    "type": "talent",
+    "folder": "Jedi Talents",
+    "system": {
+      "tier": 2,
+      "activation": {
+        "type": "active",
+        "detail": "Action"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "A more potent Force Suppression capable of dismantling even the strongest Force protections. Armor-restricted.",
+      "source": "Star Wars: Knights of the Old Republic"
+    }
+  },
+  "Stun": {
+    "type": "talent",
+    "folder": "Jedi Talents",
+    "system": {
+      "tier": 1,
+      "activation": {
+        "type": "active",
+        "detail": "Action"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Freeze an enemy in place with the Force. Add Difficulty dice equal to the target's Resilience rank; failure reduces the effect to slowing. Does not affect droids. Light Side power — add a Setback if Dark Side aligned.",
+      "source": "Star Wars: Knights of the Old Republic"
+    }
+  },
+  "Stasis": {
+    "type": "talent",
+    "folder": "Jedi Talents",
+    "system": {
+      "tier": 2,
+      "activation": {
+        "type": "active",
+        "detail": "Action"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Paralyze an enemy completely. Add Difficulty dice equal to the target's Resilience rank; failure still leaves the target slowed. Does not affect droids. Light Side power — add a Setback if Dark Side aligned.",
+      "source": "Star Wars: Knights of the Old Republic"
+    }
+  },
+  "Stasis Field": {
+    "type": "talent",
+    "folder": "Jedi Talents",
+    "system": {
+      "tier": 3,
+      "activation": {
+        "type": "active",
+        "detail": "Action"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Project a paralyzing Force wave that immobilizes all enemies in a wide area. Armor-restricted. Light Side power — add a Setback if Dark Side aligned.",
+      "source": "Star Wars: Knights of the Old Republic"
+    }
+  },
+  "Cure": {
+    "type": "talent",
+    "folder": "Jedi Talents",
+    "system": {
+      "tier": 1,
+      "activation": {
+        "type": "active",
+        "detail": "Action"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Channel the Force to heal wounds for all nearby allies. Does not affect droids. Light Side power — add a Setback if Dark Side aligned.",
+      "source": "Star Wars: Knights of the Old Republic"
+    }
+  },
+  "Heal": {
+    "type": "talent",
+    "folder": "Jedi Talents",
+    "system": {
+      "tier": 2,
+      "activation": {
+        "type": "active",
+        "detail": "Action"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "A more powerful restoration that heals greater wounds and purges poison from all nearby allies. Light Side power — add a Setback if Dark Side aligned.",
+      "source": "Star Wars: Knights of the Old Republic"
+    }
+  },
+  "Force Valor": {
+    "type": "talent",
+    "folder": "Jedi Talents",
+    "system": {
+      "tier": 1,
+      "activation": {
+        "type": "active",
+        "detail": "Action"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Suffuse all nearby allies with the Force, temporarily increasing their physical attributes and saving throws. Armor-restricted. Light Side power — add a Setback if Dark Side aligned.",
+      "source": "Star Wars: Knights of the Old Republic"
+    }
+  },
+  "Knight Valor": {
+    "type": "talent",
+    "folder": "Jedi Talents",
+    "system": {
+      "tier": 2,
+      "activation": {
+        "type": "active",
+        "detail": "Action"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Enhanced Force Valor providing greater bonuses and conferring immunity to poison. Armor-restricted. Light Side power — add a Setback if Dark Side aligned.",
+      "source": "Star Wars: Knights of the Old Republic"
+    }
+  },
+  "Master Valor": {
+    "type": "talent",
+    "folder": "Jedi Talents",
+    "system": {
+      "tier": 3,
+      "activation": {
+        "type": "active",
+        "detail": "Action"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "The most powerful application of Force Valor, granting exceptional attribute and saving throw bonuses across the entire party. Armor-restricted. Light Side power — add a Setback if Dark Side aligned.",
+      "source": "Star Wars: Knights of the Old Republic"
+    }
+  },
+  "Protective Aura": {
+    "type": "talent",
+    "folder": "Jedi Talents",
+    "system": {
+      "tier": 1,
+      "activation": {
+        "type": "passive",
+        "detail": ""
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Surround yourself with a Force barrier that improves your defense and makes it harder for enemies to target you with Force powers. Armor-restricted. Light Side power — add a Setback if Dark Side aligned.",
+      "source": "Custom"
+    },
+    "flags": {
+      "innateEffectData": {
+        "wielderMods": {
+          "system.defense.melee": 1,
+          "system.defense.ranged": 1
+        },
+        "targetDiceMods": {
+          "setback": 1
+        }
+      }
+    }
+  },
+  "Force Shield": {
+    "type": "talent",
+    "folder": "Jedi Talents",
+    "system": {
+      "tier": 2,
+      "activation": {
+        "type": "passive",
+        "detail": ""
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "A stronger Force barrier offering enhanced defense and Force protection. Armor-restricted. Light Side power — add a Setback if Dark Side aligned.",
+      "source": "Custom"
+    },
+    "flags": {
+      "innateEffectData": {
+        "wielderMods": {
+          "system.defense.melee": 2,
+          "system.defense.ranged": 2
+        },
+        "targetDiceMods": {
+          "setback": 1
+        }
+      }
+    }
+  },
+  "Force Armor": {
+    "type": "talent",
+    "folder": "Jedi Talents",
+    "system": {
+      "tier": 3,
+      "activation": {
+        "type": "passive",
+        "detail": ""
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "The most powerful Force defense, creating near-impenetrable barriers against both physical attacks and Force powers. Armor-restricted. Light Side power — add a Setback if Dark Side aligned.",
+      "source": "Custom"
+    },
+    "flags": {
+      "innateEffectData": {
+        "wielderMods": {
+          "system.defense.melee": 3,
+          "system.defense.ranged": 3
+        },
+        "targetDiceMods": {
+          "setback": 2
+        }
+      }
+    }
+  },
+  "Battle Precognition": {
+    "type": "talent",
+    "folder": "Jedi Talents",
+    "system": {
+      "tier": 1,
+      "activation": {
+        "type": "passive",
+        "detail": ""
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Sense the flows of combat through the Force, adding your Willpower modifier to your Defense rating. Armor-restricted. Light Side power — add a Setback if Dark Side aligned.",
+      "source": "Star Wars: Knights of the Old Republic II"
+    }
+  },
+  "Force Barrier": {
+    "type": "talent",
+    "folder": "Jedi Talents",
+    "system": {
+      "tier": 1,
+      "activation": {
+        "type": "active",
+        "detail": "Maneuver"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Erect a Force shield that absorbs the first points of physical damage from slashing, bludgeoning, and piercing attacks. Armor-restricted. Light Side power — add a Setback if Dark Side aligned.",
+      "source": "Star Wars: Knights of the Old Republic II"
+    }
+  },
+  "Wound": {
+    "type": "talent",
+    "folder": "Jedi Talents",
+    "system": {
+      "tier": 1,
+      "activation": {
+        "type": "active",
+        "detail": "Action"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Trigger painful spasms in a target's body, dealing sustained damage over several seconds. Add Difficulty dice equal to the target's Resilience rank; failure negates the power. Dark Side power — add a Setback if Light Side aligned.",
+      "source": "Star Wars: Knights of the Old Republic"
+    }
+  },
+  "Choke": {
+    "type": "talent",
+    "folder": "Jedi Talents",
+    "system": {
+      "tier": 2,
+      "activation": {
+        "type": "active",
+        "detail": "Action"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Seize a target's throat telekinetically, dealing ongoing damage and inflicting temporary penalties to physical attributes. Add Difficulty dice equal to the target's Resilience rank; failure negates the power. Dark Side power — add a Setback if Light Side aligned.",
+      "source": "Star Wars: Knights of the Old Republic"
+    }
+  },
+  "Kill": {
+    "type": "talent",
+    "folder": "Jedi Talents",
+    "system": {
+      "tier": 3,
+      "activation": {
+        "type": "active",
+        "detail": "Action"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Choke the life from an enemy in moments, dealing damage equal to a significant fraction of their total health. A Resilience check reduces the damage. Dark Side power — add a Setback if Light Side aligned.",
+      "source": "Star Wars: Knights of the Old Republic"
+    }
+  },
+  "Shock": {
+    "type": "talent",
+    "folder": "Jedi Talents",
+    "system": {
+      "tier": 1,
+      "activation": {
+        "type": "active",
+        "detail": "Action"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Unleash a bolt of Force lightning at a single target, dealing electrical damage. Add Difficulty dice equal to the target's Resilience rank; failure halves the damage. Dark Side power — add a Setback if Light Side aligned.",
+      "source": "Star Wars: Knights of the Old Republic"
+    }
+  },
+  "Force Lightning": {
+    "type": "talent",
+    "folder": "Jedi Talents",
+    "system": {
+      "tier": 2,
+      "activation": {
+        "type": "active",
+        "detail": "Action"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Project a cone of electrical Force energy that strikes multiple enemies in front of you. Add Difficulty dice equal to the target's Resilience rank; failure halves the damage. Dark Side power — add a Setback if Light Side aligned.",
+      "source": "Star Wars: Knights of the Old Republic"
+    }
+  },
+  "Force Storm": {
+    "type": "talent",
+    "folder": "Jedi Talents",
+    "system": {
+      "tier": 3,
+      "activation": {
+        "type": "active",
+        "detail": "Action"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Summon a catastrophic storm of Force lightning that strikes all nearby enemies with massive electrical damage. Armor-restricted. Dark Side power — add a Setback if Light Side aligned.",
+      "source": "Star Wars: Knights of the Old Republic"
+    }
+  },
+  "Slow": {
+    "type": "talent",
+    "folder": "Jedi Talents",
+    "system": {
+      "tier": 1,
+      "activation": {
+        "type": "active",
+        "detail": "Action"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Cloud a target's mind, reducing their defense, accuracy, and movement speed for an extended duration. Add Difficulty dice equal to the target's Resilience rank; failure negates the effect. Dark Side power — add a Setback if Light Side aligned.",
+      "source": "Star Wars: Knights of the Old Republic"
+    }
+  },
+  "Affliction": {
+    "type": "talent",
+    "folder": "Jedi Talents",
+    "system": {
+      "tier": 2,
+      "activation": {
+        "type": "active",
+        "detail": "Action"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Inflict a Force-induced poison that causes the target's attributes to gradually degrade. Dark Side power — add a Setback if Light Side aligned.",
+      "source": "Star Wars: Knights of the Old Republic"
+    }
+  },
+  "Drain Life": {
+    "type": "talent",
+    "folder": "Jedi Talents",
+    "system": {
+      "tier": 1,
+      "activation": {
+        "type": "active",
+        "detail": "Action"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Siphon the life force from an enemy to heal yourself, dealing damage proportional to your power. Add Difficulty dice equal to the target's Resilience rank; failure halves the damage. Armor-restricted. Dark Side power — add a Setback if Light Side aligned.",
+      "source": "Star Wars: Knights of the Old Republic"
+    }
+  },
+  "Death Field": {
+    "type": "talent",
+    "folder": "Jedi Talents",
+    "system": {
+      "tier": 2,
+      "activation": {
+        "type": "active",
+        "detail": "Action"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Drain the life force from all nearby enemies simultaneously, healing yourself for the total damage dealt. Armor-restricted. Dark Side power — add a Setback if Light Side aligned.",
+      "source": "Star Wars: Knights of the Old Republic"
+    }
+  },
+  "Fear": {
+    "type": "talent",
+    "folder": "Jedi Talents",
+    "system": {
+      "tier": 1,
+      "activation": {
+        "type": "active",
+        "detail": "Action"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Flood an enemy's mind with terror, causing them to cower helplessly. Add Difficulty dice equal to the target's Resilience rank; failure negates the effect. Does not affect droids. Dark Side power — add a Setback if Light Side aligned.",
+      "source": "Star Wars: Knights of the Old Republic"
+    }
+  },
+  "Horror": {
+    "type": "talent",
+    "folder": "Jedi Talents",
+    "system": {
+      "tier": 2,
+      "activation": {
+        "type": "active",
+        "detail": "Action"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Project an overwhelming wave of terror that paralyzes all enemies near the target. Add Difficulty dice equal to the target's Resilience rank; failure negates the effect. Dark Side power — add a Setback if Light Side aligned.",
+      "source": "Star Wars: Knights of the Old Republic"
+    }
+  },
+  "Insanity": {
+    "type": "talent",
+    "folder": "Jedi Talents",
+    "system": {
+      "tier": 3,
+      "activation": {
+        "type": "active",
+        "detail": "Action"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Drive all nearby enemies into complete mental collapse. Add Difficulty dice equal to the target's Resilience rank; failure negates the effect. Dark Side power — add a Setback if Light Side aligned.",
+      "source": "Star Wars: Knights of the Old Republic"
+    }
+  },
+  "Force Scream": {
+    "type": "talent",
+    "folder": "Jedi Talents",
+    "system": {
+      "tier": 1,
+      "activation": {
+        "type": "active",
+        "detail": "Action"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Release a Force-amplified scream dealing sonic damage and reducing the attributes of all enemies in a forward arc. Armor-restricted. Dark Side power — add a Setback if Light Side aligned.",
+      "source": "Star Wars: Knights of the Old Republic II"
+    }
+  },
+  "Force Scream (Improved)": {
+    "type": "talent",
+    "folder": "Jedi Talents",
+    "system": {
+      "tier": 2,
+      "activation": {
+        "type": "active",
+        "detail": "Action"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "A more powerful Force Scream dealing greater sonic damage over a wider area with deeper attribute penalties. Armor-restricted. Dark Side power — add a Setback if Light Side aligned.",
+      "source": "Star Wars: Knights of the Old Republic II"
+    }
+  },
+  "Force Scream (Master)": {
+    "type": "talent",
+    "folder": "Jedi Talents",
+    "system": {
+      "tier": 3,
+      "activation": {
+        "type": "active",
+        "detail": "Action"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "The ultimate Force Scream, dealing massive sonic damage and dramatically reducing the attributes of all enemies in range. Armor-restricted. Dark Side power — add a Setback if Light Side aligned.",
+      "source": "Star Wars: Knights of the Old Republic II"
+    }
+  },
+  "Force Fury": {
+    "type": "talent",
+    "folder": "Jedi Talents",
+    "system": {
+      "tier": 1,
+      "activation": {
+        "type": "active",
+        "detail": "Maneuver"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Channel dark side rage, dramatically increasing your Strength and Vitality while reducing your Defense. Killed enemies fuel the Fury further. Dark Side power — add a Setback if Light Side aligned.",
+      "source": "Star Wars: Knights of the Old Republic II"
+    }
+  },
+  "Force Fury (Improved)": {
+    "type": "talent",
+    "folder": "Jedi Talents",
+    "system": {
+      "tier": 2,
+      "activation": {
+        "type": "active",
+        "detail": "Maneuver"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Enhanced Force Fury that sustains the rage longer and grants an additional attack per round from heightened aggression. Dark Side power — add a Setback if Light Side aligned.",
+      "source": "Star Wars: Knights of the Old Republic II"
+    }
+  },
+  "Force Fury (Master)": {
+    "type": "talent",
+    "folder": "Jedi Talents",
+    "system": {
+      "tier": 3,
+      "activation": {
+        "type": "active",
+        "detail": "Maneuver"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "The pinnacle of Force Fury, granting exceptional combat bonuses and two additional attacks for an extended duration. Dark Side power — add a Setback if Light Side aligned.",
+      "source": "Star Wars: Knights of the Old Republic II"
+    }
+  },
+  "Force Crush": {
+    "type": "talent",
+    "folder": "Jedi Talents",
+    "system": {
+      "tier": 1,
+      "activation": {
+        "type": "active",
+        "detail": "Action"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Telekinetically crush an enemy with the full weight of the Force, dealing massive damage that bypasses most defenses. Add Difficulty dice equal to the target's Resilience rank; failure halves the damage. Armor-restricted. Dark Side power — add a Setback if Light Side aligned.",
+      "source": "Star Wars: Knights of the Old Republic II"
+    }
+  },
+  "Weapon Focus: Lightsaber": {
+    "type": "talent",
+    "folder": "Jedi Talents",
+    "system": {
+      "tier": 2,
+      "activation": {
+        "type": "passive",
+        "detail": ""
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Intensive lightsaber training grants +1 rank in the Lightsabers skill.",
+      "source": "Star Wars: Knights of the Old Republic"
+    },
+    "flags": {
+      "innateEffectData": {
+        "skillMods": {
+          "Lightsabers": 1
+        }
+      }
+    }
+  },
+  "Superior Weapon Focus: Lightsaber": {
+    "type": "talent",
+    "folder": "Jedi Talents",
+    "system": {
+      "tier": 3,
+      "activation": {
+        "type": "passive",
+        "detail": ""
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Mastery of lightsaber technique grants an additional +1 rank in the Lightsabers skill, stacking with Weapon Focus.",
+      "source": "Star Wars: Knights of the Old Republic"
+    },
+    "flags": {
+      "innateEffectData": {
+        "skillMods": {
+          "Lightsabers": 1
+        }
+      }
+    }
+  },
+  "Superior Two-Weapon Fighting": {
+    "type": "talent",
+    "folder": "Jedi Talents",
+    "system": {
+      "tier": 3,
+      "activation": {
+        "type": "active",
+        "detail": "Maneuver"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "An advanced dual-wielding technique that further reduces the difficulty of combined combat checks when fighting with two lightsabers.",
+      "source": "Star Wars: Knights of the Old Republic"
+    }
+  }
+}
