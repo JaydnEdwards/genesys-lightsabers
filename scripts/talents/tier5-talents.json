@@ -78,5 +78,21 @@
       "description": "Once per encounter, make an opposed Charm or Coercion versus Discipline check targeting one character within medium range (or earshot). If successful, the target suffers strain equal to twice your Presence, plus one additional strain per Success. You heal strain equal to the strain inflicted. If the target is incapacitated by this talent, the narrative outcome is up to your GM and the nature of your barbs.",
       "source": "Genesys Core Rulebook"
     }
+  },
+  "Sniper Shot (Master)": {
+    "type": "talent",
+    "folder": "Tier 5",
+    "system": {
+      "tier": 5,
+      "activation": {
+        "type": "active",
+        "detail": "Incidental"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "The pinnacle of ranged precision. Before making a ranged combat check, suffer 1 strain to use this talent. The attack ignores range and cover penalties and adds a Boost die. On a hit, the target must succeed on a Resilience check or become staggered until the end of their next turn.",
+      "source": "Star Wars: Knights of the Old Republic"
+    }
   }
 }

@@ -396,5 +396,21 @@
       "description": "Other characters add one Failure to any checks made to find or identify you in a crowd.",
       "source": "Genesys Core Rulebook"
     }
+  },
+  "Power Attack": {
+    "type": "talent",
+    "folder": "Tier 1",
+    "system": {
+      "tier": 1,
+      "activation": {
+        "type": "active",
+        "detail": "Incidental"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Before making a melee combat check, suffer 1 strain to use this talent. Add your Brawn rating as bonus damage to the next successful hit. Add a Setback to the check.",
+      "source": "Star Wars: Knights of the Old Republic"
+    }
   }
 }

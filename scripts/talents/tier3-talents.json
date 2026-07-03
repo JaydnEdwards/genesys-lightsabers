@@ -238,5 +238,21 @@
       "description": "Requires the Parry talent to benefit from this talent. When you suffer a hit from a melee combat check and use Parry to reduce the damage from that hit, after the attack is resolved you may spend a Despair or three Threat from the attacker's check to use this talent. Your character then automatically hits the attacker once with a Brawl or Melee weapon they are wielding, dealing the weapon's base damage plus any damage from applicable talents or abilities. Cannot be used if the original attack incapacitates your character.",
       "source": "Genesys Core Rulebook"
     }
+  },
+  "Sniper Shot (Improved)": {
+    "type": "talent",
+    "folder": "Tier 3",
+    "system": {
+      "tier": 3,
+      "activation": {
+        "type": "active",
+        "detail": "Incidental"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "An enhanced Sniper Shot. Before making a ranged combat check, suffer 1 strain to use this talent. The attack ignores Setback dice from range and cover, and adds a Boost die to the check.",
+      "source": "Star Wars: Knights of the Old Republic"
+    }
   }
 }

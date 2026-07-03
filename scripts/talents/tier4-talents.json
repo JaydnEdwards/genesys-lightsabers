@@ -173,5 +173,21 @@
       "description": "Requires the Scathing Tirade talent to benefit from this talent. You may suffer 1 strain to use the Scathing Tirade talent as a maneuver instead of an action.",
       "source": "Genesys Core Rulebook"
     }
+  },
+  "Flurry (Improved)": {
+    "type": "talent",
+    "folder": "Tier 4",
+    "system": {
+      "tier": 4,
+      "activation": {
+        "type": "active",
+        "detail": "Incidental"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "An enhanced Flurry. Before making a ranged combat check with a pistol, suffer 1 strain to use this talent. Make one additional attack against the same target using the same weapon. The Setback dice from Flurry are removed.",
+      "source": "Star Wars: Knights of the Old Republic"
+    }
   }
 }

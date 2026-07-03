@@ -190,5 +190,53 @@
       "description": "Once per round, you may suffer a number of strain no greater than your ranks in Side Step to use this talent. Until the end of your next turn, upgrade the difficulty of all ranged combat checks targeting you a number of times equal to the strain suffered.",
       "source": "Genesys Core Rulebook"
     }
+  },
+  "Power Attack (Improved)": {
+    "type": "talent",
+    "folder": "Tier 2",
+    "system": {
+      "tier": 2,
+      "activation": {
+        "type": "active",
+        "detail": "Incidental"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "An enhanced Power Attack. Before making a melee combat check, suffer 1 strain to use this talent. Add twice your Brawn rating as bonus damage to the next successful hit. The Setback die from Power Attack is removed.",
+      "source": "Star Wars: Knights of the Old Republic"
+    }
+  },
+  "Sniper Shot": {
+    "type": "talent",
+    "folder": "Tier 2",
+    "system": {
+      "tier": 2,
+      "activation": {
+        "type": "active",
+        "detail": "Incidental"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Before making a ranged combat check, suffer 1 strain to use this talent. The attack ignores Setback dice added by range, and the target cannot benefit from cover.",
+      "source": "Star Wars: Knights of the Old Republic"
+    }
+  },
+  "Flurry": {
+    "type": "talent",
+    "folder": "Tier 2",
+    "system": {
+      "tier": 2,
+      "activation": {
+        "type": "active",
+        "detail": "Incidental"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Before making a ranged combat check with a pistol, suffer 1 strain to use this talent. Make one additional attack against the same target using the same weapon. Add a Setback die to both checks.",
+      "source": "Star Wars: Knights of the Old Republic"
+    }
   }
 }
