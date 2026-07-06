@@ -254,5 +254,37 @@
       "description": "An enhanced Sniper Shot. Before making a ranged combat check, suffer 1 strain to use this talent. The attack ignores Setback dice from range and cover, and adds a Boost die to the check.",
       "source": "Star Wars: Knights of the Old Republic"
     }
+  },
+  "Galaxy Mapper": {
+    "type": "talent",
+    "folder": "Tier 3",
+    "system": {
+      "tier": 3,
+      "activation": {
+        "type": "passive",
+        "detail": ""
+      },
+      "ranked": "yes",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Remove one Setback per rank of Galaxy Mapper from all Astrogation checks. Astrogation checks take half the normal time.",
+      "source": "Star Wars: Edge of the Empire"
+    }
+  },
+  "Stalker": {
+    "type": "talent",
+    "folder": "Tier 3",
+    "system": {
+      "tier": 3,
+      "activation": {
+        "type": "passive",
+        "detail": ""
+      },
+      "ranked": "yes",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Add ranks in Stealth to your Agility when making Agility-based skill checks.",
+      "source": "Star Wars: Edge of the Empire"
+    }
   }
 }

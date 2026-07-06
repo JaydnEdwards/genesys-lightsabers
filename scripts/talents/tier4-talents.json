@@ -189,5 +189,37 @@
       "description": "An enhanced Flurry. Before making a ranged combat check with a pistol, suffer 1 strain to use this talent. Make one additional attack against the same target using the same weapon. The Setback dice from Flurry are removed.",
       "source": "Star Wars: Knights of the Old Republic"
     }
+  },
+  "Heroic Fortitude": {
+    "type": "talent",
+    "folder": "Tier 4",
+    "system": {
+      "tier": 4,
+      "activation": {
+        "type": "active",
+        "detail": "Incidental"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Once per session, spend a Story Point to ignore the effects of all Critical Injuries suffered until the end of the current encounter. Your character still suffers the Critical Injuries; they just ignore their effects.",
+      "source": "Star Wars: Age of Rebellion"
+    }
+  },
+  "Anatomy Lessons": {
+    "type": "talent",
+    "folder": "Tier 4",
+    "system": {
+      "tier": 4,
+      "activation": {
+        "type": "active",
+        "detail": "Incidental"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "After making a successful attack, spend 2 Advantage to add damage equal to your Intellect to one hit of that attack.",
+      "source": "Star Wars: Edge of the Empire"
+    }
   }
 }

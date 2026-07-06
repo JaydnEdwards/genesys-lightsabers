@@ -79,6 +79,22 @@
       "source": "Genesys Core Rulebook"
     }
   },
+  "Master Technician": {
+    "type": "talent",
+    "folder": "Tier 5",
+    "system": {
+      "tier": 5,
+      "activation": {
+        "type": "active",
+        "detail": "Maneuver"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Once per session, use this talent to reduce the difficulty of all Mechanics checks by 2 (to a minimum of Easy) until the end of the encounter.",
+      "source": "Star Wars: Age of Rebellion"
+    }
+  },
   "Sniper Shot (Master)": {
     "type": "talent",
     "folder": "Tier 5",

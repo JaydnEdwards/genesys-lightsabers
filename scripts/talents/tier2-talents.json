@@ -1,4 +1,36 @@
 {
+  "Crippling Blow": {
+    "type": "talent",
+    "folder": "Tier 2",
+    "system": {
+      "tier": 2,
+      "activation": {
+        "type": "active",
+        "detail": "Incidental"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "You may voluntarily increase the difficulty of a combat check by one to deal a crippling blow. If you succeed and deal damage to the target's wound threshold, the target suffers 1 strain whenever they move for the remainder of the encounter.",
+      "source": "Star Wars: Edge of the Empire"
+    }
+  },
+  "Lethal Blows": {
+    "type": "talent",
+    "folder": "Tier 2",
+    "system": {
+      "tier": 2,
+      "activation": {
+        "type": "passive",
+        "detail": ""
+      },
+      "ranked": "yes",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Add +10 per rank of Lethal Blows to any Critical Injury rolls made against opponents.",
+      "source": "Star Wars: Edge of the Empire"
+    }
+  },
   "Coordinated Assault": {
     "type": "talent",
     "folder": "Tier 2",
@@ -236,6 +268,38 @@
       "scalesWithRank": "no",
       "rank": 1,
       "description": "Before making a ranged combat check with a pistol, suffer 1 strain to use this talent. Make one additional attack against the same target using the same weapon. Add a Setback die to both checks.",
+      "source": "Star Wars: Knights of the Old Republic"
+    }
+  },
+  "Gearhead": {
+    "type": "talent",
+    "folder": "Tier 2",
+    "system": {
+      "tier": 2,
+      "activation": {
+        "type": "passive",
+        "detail": ""
+      },
+      "ranked": "yes",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Remove one Setback per rank of Gearhead from all Mechanics checks. Reduce the time needed to make Mechanics checks by half.",
+      "source": "Star Wars: Edge of the Empire"
+    }
+  },
+  "Integrated Arsenal": {
+    "type": "talent",
+    "folder": "Tier 2",
+    "system": {
+      "tier": 2,
+      "activation": {
+        "type": "active",
+        "detail": "Incidental"
+      },
+      "ranked": "no",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Once per round, make a combat check with an integrated secondary weapon (such as a built-in rocket launcher or wrist-mounted blaster) as an incidental, suffering 2 strain. This attack is in addition to any other actions taken this turn.",
       "source": "Star Wars: Knights of the Old Republic"
     }
   }

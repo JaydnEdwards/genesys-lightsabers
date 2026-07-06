@@ -62,6 +62,12 @@
     "label": "Macros",
     "type": "Macro",
     "path": "packs/macros"
+    },
+    {
+    "name": "skill-trees",
+    "label": "Skill Trees",
+    "type": "JournalEntry",
+    "path": "packs/skill-trees"
     }
   ],
   "esmodules": [

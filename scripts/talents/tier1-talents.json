@@ -397,6 +397,29 @@
       "source": "Genesys Core Rulebook"
     }
   },
+  "Logic Upgrade": {
+    "type": "talent",
+    "folder": "Tier 1",
+    "system": {
+      "tier": 1,
+      "activation": {
+        "type": "passive",
+        "detail": ""
+      },
+      "ranked": "yes",
+      "scalesWithRank": "no",
+      "rank": 1,
+      "description": "Each rank of Logic Upgrade increases your soak value by one, representing enhanced droid combat algorithms and reinforced plating protocols.",
+      "source": "Star Wars: Knights of the Old Republic"
+    },
+    "flags": {
+      "innateEffectData": {
+        "wielderMods": {
+          "system.soak": 1
+        }
+      }
+    }
+  },
   "Power Attack": {
     "type": "talent",
     "folder": "Tier 1",
