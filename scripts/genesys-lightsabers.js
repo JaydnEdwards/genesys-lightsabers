@@ -866,6 +866,64 @@ async function syncSkillTreeNodeCosts() {
 
   return result;
 }
+// Formats a talent Item into an HTML description card for display in a skill tree node popup.
+function buildSkillTreePageContent(item) {
+  const tier = item.system?.tier ?? "?";
+  const activation = item.system?.activation;
+  const activationType = activation?.type === "passive"
+    ? "Passive"
+    : `Active (${activation?.detail ?? "Action"})`;
+  const ranked = item.system?.ranked === "yes" ? "Ranked" : null;
+  const description = item.system?.description ?? "";
+  const source = item.system?.source ?? "";
+
+  const meta = [
+    `Tier ${tier}`,
+    activationType,
+    ranked
+  ].filter(Boolean).join(" — ");
+
+  return [
+    `<h3>${item.name}</h3>`,
+    `<p><em>${meta}</em></p>`,
+    description ? `<p>${description}</p>` : "",
+    source ? `<p><em>Source: ${source}</em></p>` : ""
+  ].join("");
+}
+
+// Writes talent descriptions into skill tree journal page content, sourced from the linked
+// compendium Item on each node. Runs after syncEquipmentItems so the compendium is fresh.
+// Diffed so a clean world doesn't rewrite every page on every load. Only touches pages that
+// have at least one itemUuid linked — manually-authored pages with no linked item are left alone.
+async function syncSkillTreeDescriptions() {
+  if (!game.modules.get(SKILL_TREE_MODULE_ID)?.active) return { updated: 0, errors: 0 };
+
+  const result = { updated: 0, errors: 0 };
+  const trees = game.journal.filter((j) => j.getFlag(SKILL_TREE_MODULE_ID, "isSkillTree"));
+
+  for (const tree of trees) {
+    for (const page of tree.pages) {
+      try {
+        const itemUuids = page.getFlag(SKILL_TREE_MODULE_ID, "itemUuids") ?? [];
+        if (itemUuids.length === 0) continue;
+
+        const item = await fromUuid(itemUuids[0]);
+        if (!item || !["talent", "ability"].includes(item.type)) continue;
+
+        const desiredContent = buildSkillTreePageContent(item);
+        if (page.text?.content === desiredContent) continue;
+
+        await page.update({ "text.content": desiredContent, "text.format": 1 });
+        result.updated++;
+      } catch (error) {
+        console.error(`[${MODULE_ID}] Skill tree description sync failed for "${page.name}":`, error);
+        result.errors++;
+      }
+    }
+  }
+
+  return result;
+}
 // --- End Skill Tree module integration -----------------------------------------------------
 
 const SKILL_MOD_AMOUNT_FLAG = "skillModAmount";
@@ -1430,6 +1488,13 @@ Hooks.once("ready", async () => {
     itemsSynced += syncResult.created.length + syncResult.updated.length;
   }
 
+  const skillTreeDescResult = await syncSkillTreeDescriptions().catch((error) => {
+    console.error(`[${MODULE_ID}] Skill tree description sync failed:`, error);
+    errors++;
+    return { updated: 0, errors: 0 };
+  });
+  errors += skillTreeDescResult.errors;
+
   const skillTreeResult = await syncSkillTreeNodeCosts().catch((error) => {
     console.error(`[${MODULE_ID}] Skill tree node cost sync failed:`, error);
     errors++;
@@ -1464,8 +1529,8 @@ Hooks.once("ready", async () => {
     }
   }
 
-  if (weaponsFixed > 0 || reflagged > 0 || itemsSynced > 0 || skillNamesFixed > 0 || skillTreeResult.updated > 0 || errors > 0) {
-    console.log(`[${MODULE_ID}] Startup refresh: ${weaponsFixed} item(s) fixed, ${reflagged} compendium item(s) reflagged, ${itemsSynced} item(s) synced, ${skillNamesFixed} skill name(s) fixed, ${skillTreeResult.updated} skill tree node cost(s) synced${errors > 0 ? `, ${errors} error(s)` : ""}`);
+  if (weaponsFixed > 0 || reflagged > 0 || itemsSynced > 0 || skillNamesFixed > 0 || skillTreeResult.updated > 0 || skillTreeDescResult.updated > 0 || errors > 0) {
+    console.log(`[${MODULE_ID}] Startup refresh: ${weaponsFixed} item(s) fixed, ${reflagged} compendium item(s) reflagged, ${itemsSynced} item(s) synced, ${skillNamesFixed} skill name(s) fixed, ${skillTreeResult.updated} skill tree node cost(s) synced, ${skillTreeDescResult.updated} skill tree description(s) synced${errors > 0 ? `, ${errors} error(s)` : ""}`);
     ui.notifications.info(`Genesys Lightsabers: refreshed ${weaponsFixed} item(s), reflagged ${reflagged} upgrade(s), synced ${itemsSynced} item(s) on startup.`);
   }
 });
