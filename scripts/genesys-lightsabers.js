@@ -1266,6 +1266,10 @@ const EQUIPMENT_DATA_SOURCES = [
   {
     dataPath: `modules/${MODULE_ID}/scripts/equipment/robes.json`,
     packId: EQUIPMENT_PACK_ID
+  },
+  {
+    dataPath: `modules/${MODULE_ID}/scripts/equipment/force-powers.json`,
+    packId: EQUIPMENT_PACK_ID
   }
 ];
 
@@ -1341,6 +1345,7 @@ async function syncEquipmentItems(dataPath, packId) {
     for (const [itemName, payload] of Object.entries(itemsData)) {
       try {
         const desiredSystem = foundry.utils.deepClone(payload.system ?? {});
+        const desiredImg = payload.img ?? null;
         const desiredCategory = payload.flags?.category ?? null;
         const desiredInnateEffectData = foundry.utils.deepClone(payload.flags?.innateEffectData ?? null);
 
@@ -1369,6 +1374,7 @@ async function syncEquipmentItems(dataPath, packId) {
               name: itemName,
               type: payload.type,
               ...(folderId ? { folder: folderId } : {}),
+              ...(desiredImg ? { img: desiredImg } : {}),
               system: desiredSystem,
               flags: {
                 [MODULE_ID]: {
@@ -1389,11 +1395,13 @@ async function syncEquipmentItems(dataPath, packId) {
         for (const key of Object.keys(desiredSystem)) {
           currentSystemSubset[key] = foundry.utils.getProperty(doc, `system.${key}`) ?? null;
         }
+        const currentImg = doc.img ?? null;
         const currentCategory = doc.getFlag(MODULE_ID, "category") ?? null;
         const currentInnateEffectData = doc.getFlag(MODULE_ID, "innateEffectData") ?? null;
 
         const needsUpdate = (
           JSON.stringify(currentSystemSubset) !== JSON.stringify(desiredSystem)
+          || (desiredImg !== null && currentImg !== desiredImg)
           || currentCategory !== desiredCategory
           || JSON.stringify(currentInnateEffectData) !== JSON.stringify(desiredInnateEffectData)
         );
@@ -1404,6 +1412,7 @@ async function syncEquipmentItems(dataPath, packId) {
         for (const [key, value] of Object.entries(desiredSystem)) {
           systemUpdate[`system.${key}`] = value;
         }
+        if (desiredImg !== null) systemUpdate.img = desiredImg;
         await doc.update(systemUpdate);
         if (desiredCategory !== null) {
           await doc.update({ [`flags.${MODULE_ID}.category`]: desiredCategory });

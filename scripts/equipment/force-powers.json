@@ -1,0 +1,308 @@
+{
+  "Force Push": {
+    "type": "weapon",
+    "folder": "Force Powers",
+    "img": "modules/genesys-lightsabers/assets/skills/forcepush.png",
+    "system": {
+      "baseDamage": 3,
+      "critical": 3,
+      "range": "short",
+      "skills": ["Force"],
+      "damageCharacteristic": "willpower",
+      "qualities": [{"name": "Disorient", "isRated": true, "rating": 1}],
+      "encumbrance": 0,
+      "price": 0,
+      "rarity": 0,
+      "description": "Unleash a telekinetic blast at a target, knocking them prone and dealing damage. Can be sustained or widened at higher tiers."
+    }
+  },
+  "Force Whirlwind": {
+    "type": "weapon",
+    "folder": "Force Powers",
+    "img": "modules/genesys-lightsabers/assets/skills/whirlwind.png",
+    "system": {
+      "baseDamage": 3,
+      "critical": 4,
+      "range": "short",
+      "skills": ["Force"],
+      "damageCharacteristic": "willpower",
+      "qualities": [{"name": "Burn", "isRated": true, "rating": 3}],
+      "encumbrance": 0,
+      "price": 0,
+      "rarity": 0,
+      "description": "Trap a target in a telekinetic vortex, holding them immobile and dealing repeated damage over several seconds."
+    }
+  },
+  "Force Wave": {
+    "type": "weapon",
+    "folder": "Force Powers",
+    "img": "modules/genesys-lightsabers/assets/skills/cycloneattack.png",
+    "system": {
+      "baseDamage": 4,
+      "critical": 3,
+      "range": "short",
+      "skills": ["Force"],
+      "damageCharacteristic": "willpower",
+      "qualities": [{"name": "Blast", "isRated": true, "rating": 5}],
+      "encumbrance": 0,
+      "price": 0,
+      "rarity": 0,
+      "description": "Release a devastating explosion of telekinetic force, hurling all nearby enemies away and dealing heavy damage across a wide area."
+    }
+  },
+  "Throw Lightsaber": {
+    "type": "weapon",
+    "folder": "Force Powers",
+    "img": "modules/genesys-lightsabers/assets/skills/saberthrow.png",
+    "system": {
+      "baseDamage": 6,
+      "critical": 2,
+      "range": "medium",
+      "skills": ["Force"],
+      "damageCharacteristic": "brawn",
+      "qualities": [],
+      "encumbrance": 0,
+      "price": 0,
+      "rarity": 0,
+      "description": "Hurl your lightsaber at a distant target dealing energy damage. The attack strikes unerringly and the saber returns to your hand."
+    }
+  },
+  "Advanced Throw Lightsaber": {
+    "type": "weapon",
+    "folder": "Force Powers",
+    "img": "modules/genesys-lightsabers/assets/skills/conaldualsaberthrowsentinal.png",
+    "system": {
+      "baseDamage": 6,
+      "critical": 2,
+      "range": "medium",
+      "skills": ["Force"],
+      "damageCharacteristic": "brawn",
+      "qualities": [],
+      "encumbrance": 0,
+      "price": 0,
+      "rarity": 0,
+      "description": "Hurl your lightsaber in a sweeping arc, striking up to three targets in sequence before returning to your hand."
+    }
+  },
+  "Force Crush": {
+    "type": "weapon",
+    "folder": "Force Powers",
+    "img": "modules/genesys-lightsabers/assets/skills/forcecrush.png",
+    "system": {
+      "baseDamage": 10,
+      "critical": 2,
+      "range": "short",
+      "skills": ["Force"],
+      "damageCharacteristic": "willpower",
+      "qualities": [{"name": "Pierce", "isRated": true, "rating": 3}, {"name": "Sunder", "isRated": false}],
+      "encumbrance": 0,
+      "price": 0,
+      "rarity": 0,
+      "description": "Telekinetically crush an enemy with the full weight of the Force. Add 2 Difficulty to this attack (Destructive). This attack has Pierce equal to your ranks in the Force skill and the Sunder quality. Add Difficulty dice equal to the target's Resilience rank; on a successful Resilience check the target's damage is halved. On a failed attack roll, the attacker suffers 3 strain. Dark Side power — add a Setback if Light Side aligned."
+    }
+  },
+  "Shock": {
+    "type": "weapon",
+    "folder": "Force Powers",
+    "img": "modules/genesys-lightsabers/assets/skills/abl_si_so_lightning_bolt.png",
+    "system": {
+      "baseDamage": 5,
+      "critical": 3,
+      "range": "short",
+      "skills": ["Force"],
+      "damageCharacteristic": "willpower",
+      "qualities": [{"name": "Burn", "isRated": true, "rating": 2}],
+      "encumbrance": 0,
+      "price": 0,
+      "rarity": 0,
+      "description": "Unleash a bolt of Force lightning at a single target, dealing electrical damage. Add Difficulty dice equal to the target's Resilience rank; failure halves the damage. Dark Side power — add a Setback if Light Side aligned."
+    }
+  },
+  "Force Lightning": {
+    "type": "weapon",
+    "folder": "Force Powers",
+    "img": "modules/genesys-lightsabers/assets/skills/abl_si_so_lightning_flash.png",
+    "system": {
+      "baseDamage": 5,
+      "critical": 3,
+      "range": "short",
+      "skills": ["Force"],
+      "damageCharacteristic": "willpower",
+      "qualities": [{"name": "Blast", "isRated": true, "rating": 3}, {"name": "Burn", "isRated": true, "rating": 2}],
+      "encumbrance": 0,
+      "price": 0,
+      "rarity": 0,
+      "description": "Project a cone of electrical Force energy that strikes multiple enemies in front of you. Add Difficulty dice equal to the target's Resilience rank; failure halves the damage. Dark Side power — add a Setback if Light Side aligned."
+    }
+  },
+  "Force Storm": {
+    "type": "weapon",
+    "folder": "Force Powers",
+    "img": "modules/genesys-lightsabers/assets/skills/forcestorm.png",
+    "system": {
+      "baseDamage": 5,
+      "critical": 3,
+      "range": "medium",
+      "skills": ["Force"],
+      "damageCharacteristic": "willpower",
+      "qualities": [{"name": "Blast", "isRated": true, "rating": 5}, {"name": "Burn", "isRated": true, "rating": 3}],
+      "encumbrance": 0,
+      "price": 0,
+      "rarity": 0,
+      "description": "Summon a catastrophic storm of Force lightning that strikes all nearby enemies with massive electrical damage. Cannot be used while wearing armor. Dark Side power — add a Setback if Light Side aligned."
+    }
+  },
+  "Wound": {
+    "type": "weapon",
+    "folder": "Force Powers",
+    "img": "modules/genesys-lightsabers/assets/skills/mara_pass_devious_wounds.png",
+    "system": {
+      "baseDamage": 5,
+      "critical": 3,
+      "range": "short",
+      "skills": ["Force"],
+      "damageCharacteristic": "willpower",
+      "qualities": [],
+      "encumbrance": 0,
+      "price": 0,
+      "rarity": 0,
+      "description": "Trigger painful spasms in a target's lungs, dealing damage. Add Difficulty dice equal to the target's Resilience rank; a successful Resilience check negates the power entirely. Dark Side power — add a Setback if Light Side aligned."
+    }
+  },
+  "Choke": {
+    "type": "weapon",
+    "folder": "Force Powers",
+    "img": "modules/genesys-lightsabers/assets/skills/choke.png",
+    "system": {
+      "baseDamage": 5,
+      "critical": 3,
+      "range": "short",
+      "skills": ["Force"],
+      "damageCharacteristic": "willpower",
+      "qualities": [{"name": "Disorient", "isRated": true, "rating": 2}],
+      "encumbrance": 0,
+      "price": 0,
+      "rarity": 0,
+      "description": "Constrict a target's throat at range, dealing damage and reducing their physical capabilities (Disorient 2). Add Difficulty dice equal to the target's Resilience rank; a successful Resilience check negates the power entirely. Dark Side power — add a Setback if Light Side aligned."
+    }
+  },
+  "Kill": {
+    "type": "weapon",
+    "folder": "Force Powers",
+    "img": "modules/genesys-lightsabers/assets/skills/sorcsage_death_brand_imp.png",
+    "system": {
+      "baseDamage": 9,
+      "critical": 2,
+      "range": "short",
+      "skills": ["Force"],
+      "damageCharacteristic": "willpower",
+      "qualities": [{"name": "Stagger", "isRated": false}],
+      "encumbrance": 0,
+      "price": 0,
+      "rarity": 0,
+      "description": "Choke the life from an enemy, dealing massive damage and staggering the target. Add Difficulty dice equal to the target's Resilience rank; a successful Resilience check halves the damage and prevents the stagger. Dark Side power — add a Setback if Light Side aligned."
+    }
+  },
+  "Drain Life": {
+    "type": "weapon",
+    "folder": "Force Powers",
+    "img": "modules/genesys-lightsabers/assets/skills/abl_si_so_force_leech.png",
+    "system": {
+      "baseDamage": 6,
+      "critical": 4,
+      "range": "short",
+      "skills": ["Force"],
+      "damageCharacteristic": "willpower",
+      "qualities": [],
+      "encumbrance": 0,
+      "price": 0,
+      "rarity": 0,
+      "description": "Drain the life force from a single target, healing yourself for the wounds dealt after soak. Add Difficulty dice equal to the target's Resilience rank; a successful Resilience check halves the damage. Cannot be used while wearing armor. Does not affect droids. Dark Side power — add a Setback if Light Side aligned."
+    }
+  },
+  "Death Field": {
+    "type": "weapon",
+    "folder": "Force Powers",
+    "img": "modules/genesys-lightsabers/assets/skills/abl_si_so_death_ripple.png",
+    "system": {
+      "baseDamage": 6,
+      "critical": 4,
+      "range": "short",
+      "skills": ["Force"],
+      "damageCharacteristic": "willpower",
+      "qualities": [{"name": "Blast", "isRated": true, "rating": 5}],
+      "encumbrance": 0,
+      "price": 0,
+      "rarity": 0,
+      "description": "A single damage roll is applied to all nearby enemies. Heal yourself for the total wounds dealt across all targets after soak. Add Difficulty dice equal to the target's Resilience rank; a successful Resilience check halves the damage. Cannot be used while wearing armor. Does not affect droids. Dark Side power — add a Setback if Light Side aligned."
+    }
+  },
+  "Affliction": {
+    "type": "weapon",
+    "folder": "Force Powers",
+    "img": "modules/genesys-lightsabers/assets/skills/lifedrain.png",
+    "system": {
+      "baseDamage": 3,
+      "critical": 4,
+      "range": "short",
+      "skills": ["Force"],
+      "damageCharacteristic": "willpower",
+      "qualities": [{"name": "Disorient", "isRated": true, "rating": 2}],
+      "encumbrance": 0,
+      "price": 0,
+      "rarity": 0,
+      "description": "Inflict a Force-induced poison that degrades all of the target's attributes over 3 rounds (Disorient 2). A successful Resilience check negates the effect entirely. Cannot be used while wearing armor. Does not affect droids or targets with Immunity: Poison. Dark Side power — add a Setback if Light Side aligned."
+    }
+  },
+  "Force Scream": {
+    "type": "weapon",
+    "folder": "Force Powers",
+    "img": "modules/genesys-lightsabers/assets/skills/forcestream.png",
+    "system": {
+      "baseDamage": 4,
+      "critical": 3,
+      "range": "short",
+      "skills": ["Force"],
+      "damageCharacteristic": "willpower",
+      "qualities": [{"name": "Blast", "isRated": true, "rating": 3}, {"name": "Disorient", "isRated": true, "rating": 1}],
+      "encumbrance": 0,
+      "price": 0,
+      "rarity": 0,
+      "description": "Release a Force-amplified scream dealing sonic damage in a forward arc (Blast 3, Disorient 1). A successful Resilience check halves the damage and negates the attribute penalty. Cannot be used while wearing armor. Does not affect droids. Dark Side power — add a Setback if Light Side aligned."
+    }
+  },
+  "Force Scream (Improved)": {
+    "type": "weapon",
+    "folder": "Force Powers",
+    "img": "modules/genesys-lightsabers/assets/skills/forcestream.png",
+    "system": {
+      "baseDamage": 6,
+      "critical": 3,
+      "range": "short",
+      "skills": ["Force"],
+      "damageCharacteristic": "willpower",
+      "qualities": [{"name": "Blast", "isRated": true, "rating": 5}, {"name": "Disorient", "isRated": true, "rating": 2}],
+      "encumbrance": 0,
+      "price": 0,
+      "rarity": 0,
+      "description": "A more powerful Force Scream that expands into a full sphere, dealing greater sonic damage to all nearby enemies (Blast 5, Disorient 2). A successful Resilience check halves the damage and negates the attribute penalty. Cannot be used while wearing armor. Does not affect droids. Dark Side power — add a Setback if Light Side aligned."
+    }
+  },
+  "Force Scream (Master)": {
+    "type": "weapon",
+    "folder": "Force Powers",
+    "img": "modules/genesys-lightsabers/assets/skills/forcestream.png",
+    "system": {
+      "baseDamage": 8,
+      "critical": 3,
+      "range": "short",
+      "skills": ["Force"],
+      "damageCharacteristic": "willpower",
+      "qualities": [{"name": "Blast", "isRated": true, "rating": 5}, {"name": "Disorient", "isRated": true, "rating": 3}, {"name": "Stagger", "isRated": false}],
+      "encumbrance": 0,
+      "price": 0,
+      "rarity": 0,
+      "description": "The ultimate Force Scream, dealing massive sonic damage and leaving all nearby enemies staggered and disoriented (Blast 5, Disorient 3, Stagger). A successful Resilience check halves the damage and negates the attribute penalty. Cannot be used while wearing armor. Does not affect droids. Dark Side power — add a Setback if Light Side aligned."
+    }
+  }
+}
